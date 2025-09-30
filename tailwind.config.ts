@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -47,6 +48,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        lottery: {
+          megasena: "hsl(var(--lottery-megasena))",
+          quina: "hsl(var(--lottery-quina))",
+          lotofacil: "hsl(var(--lottery-lotofacil))",
+          lotomania: "hsl(var(--lottery-lotomania))",
+          dupla: "hsl(var(--lottery-dupla))",
+          federal: "hsl(var(--lottery-federal))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -62,6 +71,21 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        'gradient-hero': 'var(--gradient-hero)',
+        'gradient-card': 'var(--gradient-card)',
+        'gradient-lottery': 'var(--gradient-lottery)',
+        'gradient-gold': 'var(--gradient-gold)',
+      },
+      boxShadow: {
+        'lottery': 'var(--shadow-lottery)',
+        'card-custom': 'var(--shadow-card)',
+        'glow': 'var(--shadow-glow)',
+      },
+      transitionTimingFunction: {
+        'smooth': 'var(--transition-smooth)',
+        'bounce': 'var(--transition-bounce)',
       },
       keyframes: {
         "accordion-down": {
@@ -80,10 +104,30 @@ export default {
             height: "0",
           },
         },
+        "pulse-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px hsl(var(--primary-glow) / 0.4)",
+          },
+          "50%": {
+            boxShadow: "0 0 40px hsl(var(--primary-glow) / 0.6)",
+          },
+        },
+        "bounce-in": {
+          "0%": {
+            transform: "scale(0.8) translateY(20px)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "scale(1) translateY(0)",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "bounce-in": "bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
       },
     },
   },
