@@ -26,20 +26,24 @@ interface LotteryCardProps {
 const LotteryCard = ({ lottery }: LotteryCardProps) => {
   const getColorClasses = (color: string) => {
     const colorMap: Record<string, string> = {
-      'lottery-megasena': 'from-green-600 to-green-700 border-green-500/20',
-      'lottery-quina': 'from-purple-600 to-purple-700 border-purple-500/20',
-      'lottery-lotofacil': 'from-pink-600 to-pink-700 border-pink-500/20',
-      'lottery-lotomania': 'from-orange-600 to-orange-700 border-orange-500/20',
-      'lottery-dupla': 'from-red-600 to-red-700 border-red-500/20',
-      'lottery-federal': 'from-blue-600 to-blue-700 border-blue-500/20',
+      'lottery-megasena': 'bg-[hsl(150,100%,20%)] hover:bg-[hsl(150,100%,25%)]',
+      'lottery-quina': 'bg-[hsl(276,68%,34%)] hover:bg-[hsl(276,68%,39%)]',
+      'lottery-lotofacil': 'bg-[hsl(25,91%,54%)] hover:bg-[hsl(25,91%,59%)]',
+      'lottery-lotomania': 'bg-[hsl(207,100%,28%)] hover:bg-[hsl(207,100%,33%)]',
+      'lottery-timemania': 'bg-[hsl(151,100%,29%)] hover:bg-[hsl(151,100%,34%)]',
+      'lottery-dupla': 'bg-[hsl(358,77%,48%)] hover:bg-[hsl(358,77%,53%)]',
+      'lottery-diadesorte': 'bg-[hsl(42,93%,53%)] hover:bg-[hsl(42,93%,58%)]',
+      'lottery-supersete': 'bg-[hsl(281,47%,31%)] hover:bg-[hsl(281,47%,36%)]',
+      'lottery-federal': 'bg-[hsl(220,72%,21%)] hover:bg-[hsl(220,72%,26%)]',
+      'lottery-maismilionaria': 'bg-[hsl(280,72%,30%)] hover:bg-[hsl(280,72%,35%)]',
     };
-    return colorMap[color] || 'from-gray-600 to-gray-700 border-gray-500/20';
+    return colorMap[color] || 'bg-[hsl(150,100%,20%)] hover:bg-[hsl(150,100%,25%)]';
   };
 
   return (
     <Card className="group hover:shadow-lottery transition-all duration-300 bg-gradient-card border-border/50 hover:border-primary/20 overflow-hidden">
       {/* Header with gradient */}
-      <div className={`bg-gradient-to-r ${getColorClasses(lottery.color)} p-4 relative overflow-hidden`}>
+      <div className={`${getColorClasses(lottery.color)} p-4 relative overflow-hidden transition-colors duration-300`}>
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between text-white">

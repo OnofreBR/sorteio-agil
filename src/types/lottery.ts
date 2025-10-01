@@ -98,7 +98,7 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
   timemania: {
     name: 'Timemania',
     slug: 'timemania',
-    color: 'lottery-quina',
+    color: 'lottery-timemania',
     description: 'A Timemania tem sorteios às terças, quintas e sábados.',
     drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
     minNumber: 1,
@@ -108,7 +108,7 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
   diadesorte: {
     name: 'Dia de Sorte',
     slug: 'diadesorte',
-    color: 'lottery-lotofacil',
+    color: 'lottery-diadesorte',
     description: 'O Dia de Sorte tem sorteios às terças, quintas e sábados.',
     drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
     minNumber: 1,
@@ -118,7 +118,7 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
   supersete: {
     name: 'Super Sete',
     slug: 'supersete',
-    color: 'lottery-megasena',
+    color: 'lottery-supersete',
     description: 'A Super Sete tem sorteios às segundas, quartas e sextas.',
     drawDays: ['Segunda-feira', 'Quarta-feira', 'Sexta-feira'],
     minNumber: 0,
@@ -128,7 +128,7 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
   maismilionaria: {
     name: '+Milionária',
     slug: 'maismilionaria',
-    color: 'lottery-lotomania',
+    color: 'lottery-maismilionaria',
     description: 'A +Milionária tem sorteios aos sábados.',
     drawDays: ['Sábado'],
     minNumber: 1,

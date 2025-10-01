@@ -16,8 +16,12 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
       'lottery-quina': 'from-lottery-quina/20 to-lottery-quina/5 border-lottery-quina/30',
       'lottery-lotofacil': 'from-lottery-lotofacil/20 to-lottery-lotofacil/5 border-lottery-lotofacil/30',
       'lottery-lotomania': 'from-lottery-lotomania/20 to-lottery-lotomania/5 border-lottery-lotomania/30',
+      'lottery-timemania': 'from-lottery-timemania/20 to-lottery-timemania/5 border-lottery-timemania/30',
       'lottery-dupla': 'from-lottery-dupla/20 to-lottery-dupla/5 border-lottery-dupla/30',
+      'lottery-diadesorte': 'from-lottery-diadesorte/20 to-lottery-diadesorte/5 border-lottery-diadesorte/30',
+      'lottery-supersete': 'from-lottery-supersete/20 to-lottery-supersete/5 border-lottery-supersete/30',
       'lottery-federal': 'from-lottery-federal/20 to-lottery-federal/5 border-lottery-federal/30',
+      'lottery-maismilionaria': 'from-lottery-maismilionaria/20 to-lottery-maismilionaria/5 border-lottery-maismilionaria/30',
     };
     return colorMap[color] || colorMap['lottery-megasena'];
   };
