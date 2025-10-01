@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -19,7 +20,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-smooth">
             <div className="w-10 h-10 bg-gradient-hero rounded-lg flex items-center justify-center shadow-lottery">
               <TrendingUp className="w-6 h-6 text-primary-foreground" />
             </div>
@@ -27,19 +28,20 @@ const Header = () => {
               <h1 className="text-xl font-bold text-foreground">Resultados Brasil</h1>
               <p className="text-xs text-muted-foreground">Loterias Oficiais</p>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
             {lotteries.map((lottery) => (
-              <Button 
-                key={lottery.slug}
-                variant="ghost" 
-                size="sm"
-                className="hover:bg-muted transition-smooth"
-              >
-                {lottery.name}
-              </Button>
+              <Link key={lottery.slug} to={`/${lottery.slug}`}>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="hover:bg-muted transition-smooth"
+                >
+                  {lottery.name}
+                </Button>
+              </Link>
             ))}
           </nav>
 
@@ -59,14 +61,15 @@ const Header = () => {
           <div className="lg:hidden pb-4 animate-bounce-in">
             <nav className="flex flex-col space-y-2">
               {lotteries.map((lottery) => (
-                <Button 
-                  key={lottery.slug}
-                  variant="ghost" 
-                  className="justify-start hover:bg-muted transition-smooth"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {lottery.name}
-                </Button>
+                <Link key={lottery.slug} to={`/${lottery.slug}`}>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start hover:bg-muted transition-smooth"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {lottery.name}
+                  </Button>
+                </Link>
               ))}
             </nav>
           </div>

@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import LotteryCard from '@/components/LotteryCard';
+import SEOHead from '@/components/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, TrendingUp, Clock, Star } from 'lucide-react';
+import { RefreshCw, TrendingUp, Clock, Star, Loader2 } from 'lucide-react';
+import { getAllLatestResults, formatCurrency } from '@/services/lotteryApi';
+import { LOTTERY_MAP } from '@/types/lottery';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [lastUpdate, setLastUpdate] = useState<string>('');
 
+  const { data: results, isLoading, refetch } = useQuery({
+    queryKey: ['all-lotteries'],
+    queryFn: getAllLatestResults,
+    staleTime: 1000 * 60 * 30, // 30 minutes
+  });
+
   useEffect(() => {
-    // Set last update time
     const now = new Date();
     setLastUpdate(now.toLocaleString('pt-BR', {
       timeZone: 'America/Sao_Paulo',
@@ -20,93 +30,52 @@ const Index = () => {
       hour: '2-digit',
       minute: '2-digit',
     }));
-  }, []);
+  }, [results]);
 
-  // Mock data - in a real app, this would come from an API
-  const lotteries = [
-    {
-      name: 'Mega-Sena',
-      slug: 'megasena',
-      color: 'lottery-megasena',
-      contest: 2647,
-      date: '28/09/2025',
-      numbers: [12, 18, 25, 33, 41, 52],
-      prize: 'R$ 45.000.000,00',
-      winners: 0,
-      nextContest: 2648,
-      nextDate: '01/10/2025',
-      estimatedPrize: 'R$ 55.000.000,00',
-    },
-    {
-      name: 'Quina',
-      slug: 'quina',
-      color: 'lottery-quina',
-      contest: 6234,
-      date: '29/09/2025',
-      numbers: [8, 15, 27, 44, 76],
-      prize: 'R$ 2.800.000,00',
-      winners: 1,
-      nextContest: 6235,
-      nextDate: '30/09/2025',
-      estimatedPrize: 'R$ 700.000,00',
-    },
-    {
-      name: 'Lotofácil',
-      slug: 'lotofacil',
-      color: 'lottery-lotofacil',
-      contest: 2875,
-      date: '29/09/2025',
-      numbers: [2, 3, 5, 7, 8, 11, 13, 14, 16, 18, 19, 21, 22, 23, 25],
-      prize: 'R$ 1.500.000,00',
-      winners: 3,
-      nextContest: 2876,
-      nextDate: '30/09/2025',
-      estimatedPrize: 'R$ 1.700.000,00',
-    },
-    {
-      name: 'Lotomania',
-      slug: 'lotomania',
-      color: 'lottery-lotomania',
-      contest: 2534,
-      date: '27/09/2025',
-      numbers: [5, 12, 18, 23, 28, 34, 41, 47, 52, 58, 63, 69, 74, 81, 87, 92, 95, 97, 98, 99],
-      prize: 'R$ 850.000,00',
-      winners: 0,
-      nextContest: 2535,
-      nextDate: '01/10/2025',
-      estimatedPrize: 'R$ 1.200.000,00',
-    },
-    {
-      name: 'Dupla Sena',
-      slug: 'duplasena',
-      color: 'lottery-dupla',
-      contest: 2487,
-      date: '28/09/2025',
-      numbers: [7, 14, 21, 28, 35, 42],
-      prize: 'R$ 950.000,00',
-      winners: 2,
-      nextContest: 2488,
-      nextDate: '01/10/2025',
-      estimatedPrize: 'R$ 600.000,00',
-    },
-    {
-      name: 'Federal',
-      slug: 'federal',
-      color: 'lottery-federal',
-      contest: 5712,
-      date: '28/09/2025',
-      numbers: [12345],
-      prize: 'R$ 500.000,00',
-      winners: 1,
-      nextContest: 5713,
-      nextDate: '05/10/2025',
-      estimatedPrize: 'R$ 500.000,00',
-    },
-  ];
+  const handleRefresh = async () => {
+    toast.info('Atualizando resultados...');
+    await refetch();
+    toast.success('Resultados atualizados!');
+  };
+
+  const lotteries = results?.map((result) => {
+    const lotteryInfo = LOTTERY_MAP[result.loteria];
+    return {
+      name: lotteryInfo?.name || result.loteria,
+      slug: result.loteria,
+      color: lotteryInfo?.color || 'lottery-megasena',
+      contest: result.concurso,
+      date: result.data,
+      numbers: result.dezenas,
+      prize: formatCurrency(result.premiacoes[0]?.valorPremio || 0),
+      winners: result.premiacoes[0]?.ganhadores || 0,
+      nextContest: result.proximoConcurso,
+      nextDate: result.dataProximoConcurso,
+      estimatedPrize: formatCurrency(result.valorEstimadoProximoConcurso),
+    };
+  }) || [];
+
+  const pageTitle = 'Resultados das Loterias Brasileiras - Mega-Sena, Quina, Lotofácil e Mais';
+  const pageDescription = 'Confira os resultados atualizados de todas as loterias brasileiras: Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Federal e mais. Números sorteados, prêmios e ganhadores.';
+  const canonicalUrl = 'https://numerosmegasena.netlify.app/';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Números Mega Sena - Resultados das Loterias',
+    description: pageDescription,
+    url: canonicalUrl,
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* SEO-optimized head would go here in a real app */}
+      <SEOHead
+        title={pageTitle}
+        description={pageDescription}
+        keywords="loterias, mega-sena, quina, lotofácil, resultados, números sorteados, prêmios, ganhadores"
+        canonicalUrl={canonicalUrl}
+        jsonLd={jsonLd}
+      />
       <Header />
       
       {/* Hero Section */}
@@ -161,18 +130,29 @@ const Index = () => {
             variant="outline" 
             size="sm"
             className="hover:bg-muted transition-smooth"
+            onClick={handleRefresh}
+            disabled={isLoading}
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Atualizar
           </Button>
         </div>
 
         {/* Lottery Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {lotteries.map((lottery) => (
-            <LotteryCard key={lottery.slug} lottery={lottery} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center space-y-4">
+              <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+              <p className="text-muted-foreground">Carregando resultados...</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {lotteries.map((lottery) => (
+              <LotteryCard key={lottery.slug} lottery={lottery} />
+            ))}
+          </div>
+        )}
 
         {/* SEO Content */}
         <section className="mt-16 prose prose-lg max-w-none">

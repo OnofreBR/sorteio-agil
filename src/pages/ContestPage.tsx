@@ -1,0 +1,151 @@
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import SEOHead from '@/components/SEOHead';
+import ContestDetails from '@/components/ContestDetails';
+import ContestNavigation from '@/components/ContestNavigation';
+import { getResultByContest, formatCurrency } from '@/services/lotteryApi';
+import { LOTTERY_MAP } from '@/types/lottery';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function ContestPage() {
+  const { lottery = '', contest = '' } = useParams<{ lottery: string; contest: string }>();
+  const navigate = useNavigate();
+  const contestNumber = parseInt(contest.replace('concurso-', ''));
+
+  const lotteryInfo = LOTTERY_MAP[lottery];
+
+  const { data: result, isLoading, error } = useQuery({
+    queryKey: ['lottery', lottery, contestNumber],
+    queryFn: () => getResultByContest(lottery, contestNumber),
+    retry: 1,
+    staleTime: 1000 * 60 * 60, // 1 hour
+  });
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Erro ao carregar resultado do concurso');
+    }
+  }, [error]);
+
+  if (!lotteryInfo) {
+    navigate('/');
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+            <p className="text-muted-foreground">Carregando resultado...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !result) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl font-bold text-foreground">Resultado não encontrado</h1>
+            <p className="text-muted-foreground">
+              O concurso {contestNumber} da {lotteryInfo.name} não foi encontrado.
+            </p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
+  const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes[0]?.valorPremio || 0)}.`;
+  const canonicalUrl = `https://numerosmegasena.netlify.app/${lottery}/concurso-${contestNumber}`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: pageTitle,
+    description: pageDescription,
+    image: 'https://numerosmegasena.netlify.app/logo.png',
+    datePublished: result.data,
+    author: {
+      '@type': 'Organization',
+      name: 'Números Mega Sena',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Números Mega Sena',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://numerosmegasena.netlify.app/logo.png',
+      },
+    },
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SEOHead
+        title={pageTitle}
+        description={pageDescription}
+        keywords={`${lotteryInfo.name}, concurso ${contestNumber}, resultado, números sorteados, ganhadores, prêmio`}
+        canonicalUrl={canonicalUrl}
+        jsonLd={jsonLd}
+      />
+      
+      <Header />
+
+      {/* Hero Section */}
+      <section className="bg-gradient-hero text-primary-foreground py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold">
+              {lotteryInfo.name}
+              <span className="block text-3xl md:text-4xl mt-2">
+                Concurso {contestNumber}
+              </span>
+            </h1>
+            <p className="text-xl text-primary-foreground/90">
+              Resultado completo do sorteio realizado em {result.data}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-12">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Detalhes do Concurso */}
+          <div className="lg:col-span-2">
+            <ContestDetails result={result} lotteryColor={lotteryInfo.color} />
+          </div>
+
+          {/* Navegação e Próximo Concurso */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-4">
+              <ContestNavigation
+                lottery={lottery}
+                currentContest={contestNumber}
+                nextContest={result.proximoConcurso}
+                nextDate={result.dataProximoConcurso}
+                estimatedPrize={result.valorEstimadoProximoConcurso}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

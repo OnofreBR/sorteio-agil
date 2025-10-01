@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -100,10 +101,12 @@ const LotteryCard = ({ lottery }: LotteryCardProps) => {
               </p>
               <p className="text-lg font-bold text-primary">{lottery.estimatedPrize}</p>
             </div>
-            <Button size="sm" variant="hero">
-              <Eye className="w-4 h-4 mr-2" />
-              Ver Detalhes
-            </Button>
+            <Link to={`/${lottery.slug}/concurso-${lottery.contest}`}>
+              <Button size="sm" variant="hero">
+                <Eye className="w-4 h-4 mr-2" />
+                Ver Detalhes
+              </Button>
+            </Link>
           </div>
         </div>
       </CardContent>
