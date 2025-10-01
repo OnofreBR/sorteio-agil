@@ -20,8 +20,6 @@ export default function ContestPage() {
   const lottery = rawLottery.toLowerCase().replace(/-/g, '').replace(/\+/g, 'mais');
   const contestNumber = parseInt(params.contest || '0');
 
-  console.log(`🔍 ContestPage: lottery=${lottery}, contestNumber=${contestNumber}, raw=${rawLottery}`);
-
   const lotteryInfo = LOTTERY_MAP[lottery];
 
   const { data: result, isLoading, error } = useQuery({
@@ -85,7 +83,7 @@ export default function ContestPage() {
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
   const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const canonicalUrl = `${window.location.origin}/${lottery}/concurso-${contestNumber}`;
+  const canonicalUrl = `${window.location.origin}/${rawLottery}/concurso/${contestNumber}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -137,7 +135,7 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 2,
           name: lotteryInfo.name,
-          item: `${window.location.origin}/${lottery}`,
+          item: `${window.location.origin}/${rawLottery}`,
         },
         {
           '@type': 'ListItem',
