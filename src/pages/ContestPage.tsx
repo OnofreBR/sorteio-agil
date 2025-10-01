@@ -82,6 +82,7 @@ export default function ContestPage() {
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
+      url: 'https://numerosmegasena.netlify.app',
     },
     publisher: {
       '@type': 'Organization',
@@ -90,6 +91,46 @@ export default function ContestPage() {
         '@type': 'ImageObject',
         url: 'https://numerosmegasena.netlify.app/logo.png',
       },
+      url: 'https://numerosmegasena.netlify.app',
+    },
+    mainEntity: {
+      '@type': 'Event',
+      name: `${lotteryInfo.name} - Concurso ${contestNumber}`,
+      description: pageDescription,
+      startDate: result.data,
+      location: {
+        '@type': 'Place',
+        name: result.local,
+      },
+      offers: result.premiacoes.map(prize => ({
+        '@type': 'Offer',
+        name: prize.descricao,
+        price: prize.valorPremio,
+        priceCurrency: 'BRL',
+      })),
+    },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Início',
+          item: 'https://numerosmegasena.netlify.app/',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: lotteryInfo.name,
+          item: `https://numerosmegasena.netlify.app/${lottery}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: `Concurso ${contestNumber}`,
+          item: canonicalUrl,
+        },
+      ],
     },
   };
 

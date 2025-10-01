@@ -65,6 +65,19 @@ const Index = () => {
     name: 'Números Mega Sena - Resultados das Loterias',
     description: pageDescription,
     url: canonicalUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${canonicalUrl}?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Números Mega Sena',
+      url: canonicalUrl,
+    },
   };
 
   return (

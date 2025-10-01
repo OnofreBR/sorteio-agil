@@ -25,8 +25,8 @@ const Header = () => {
               <TrendingUp className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Resultados Brasil</h1>
-              <p className="text-xs text-muted-foreground">Loterias Oficiais</p>
+              <span className="text-xl font-bold text-foreground">Números Mega Sena</span>
+              <p className="text-xs text-muted-foreground">Resultados Oficiais</p>
             </div>
           </Link>
 

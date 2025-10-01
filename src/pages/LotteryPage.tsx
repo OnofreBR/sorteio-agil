@@ -60,6 +60,33 @@ export default function LotteryPage() {
     name: pageTitle,
     description: pageDescription,
     url: canonicalUrl,
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Início',
+          item: 'https://numerosmegasena.netlify.app/',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: lotteryInfo.name,
+          item: canonicalUrl,
+        },
+      ],
+    },
+    mainEntity: result ? {
+      '@type': 'Event',
+      name: `${lotteryInfo.name} - Concurso ${result.concurso}`,
+      description: `Resultado do concurso ${result.concurso} da ${lotteryInfo.name}`,
+      startDate: result.data,
+      location: {
+        '@type': 'Place',
+        name: result.local,
+      },
+    } : undefined,
   };
 
   return (

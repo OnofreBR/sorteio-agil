@@ -22,4 +22,7 @@ User-agent: CCBot
 Disallow: /
 
 # Sitemap location
-Sitemap: https://resultados-brasil.lovable.app/sitemap.xml
+Sitemap: https://numerosmegasena.netlify.app/sitemap.xml
+
+# IndexNow Key Location
+IndexNow-Key-Location: https://numerosmegasena.netlify.app/indexnow-9d9bd943c4614e13ac83acf67dd4e940.txt

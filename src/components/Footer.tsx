@@ -15,7 +15,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center shadow-lottery">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold text-foreground">Resultados Brasil</span>
+              <span className="text-lg font-bold text-foreground">Números Mega Sena</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Seu portal oficial para acompanhar os resultados das principais loterias brasileiras. 
@@ -110,7 +110,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Resultados Brasil. Todos os direitos reservados.
+            © {currentYear} Números Mega Sena. Todos os direitos reservados.
           </p>
           <div className="flex items-center space-x-4 text-xs text-muted-foreground">
             <span>Jogue com responsabilidade</span>
