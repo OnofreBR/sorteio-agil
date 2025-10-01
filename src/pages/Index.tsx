@@ -17,9 +17,10 @@ const Index = () => {
   const { data: results, isLoading, refetch } = useQuery({
     queryKey: ['all-lotteries'],
     queryFn: getAllLatestResults,
-    staleTime: 0, // Always fetch fresh data
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: 'always',
+    retry: 2,
   });
 
   useEffect(() => {

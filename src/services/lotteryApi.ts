@@ -12,16 +12,23 @@ export class LotteryApiError extends Error {
   }
 }
 
+function buildUrl(endpoint: string): string {
+  const separator = endpoint.includes('?') ? '&' : '?';
+  const cacheBuster = Date.now();
+  return `${API_URL}${endpoint}${separator}token=${API_TOKEN}&_=${cacheBuster}`;
+}
+
 async function fetchApi<T>(endpoint: string): Promise<T> {
+  const url = buildUrl(endpoint);
+  
   try {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      headers: {
-        'Authorization': `Bearer ${API_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
+    const response = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store',
     });
 
     if (!response.ok) {
+      console.warn(`API error: ${response.status} - ${url}`);
       throw new LotteryApiError(
         `Erro ao buscar dados: ${response.statusText}`,
         response.status
@@ -47,17 +54,7 @@ export async function getLatestResult(lottery: string): Promise<LotteryResult> {
     throw new LotteryApiError('Loteria não encontrada');
   }
 
-  try {
-    return await fetchApi<LotteryResult>(`/resultado?loteria=${lottery}`);
-  } catch (error) {
-    // Fallback to mock data if API fails
-    const mockData = getMockLotteryResult(lottery);
-    if (mockData) {
-      console.warn(`API failed, using mock data for ${lottery}`);
-      return mockData;
-    }
-    throw error;
-  }
+  return await fetchApi<LotteryResult>(`/resultado?loteria=${lottery}`);
 }
 
 export async function getResultByContest(
@@ -73,17 +70,7 @@ export async function getResultByContest(
     throw new LotteryApiError('Loteria não encontrada');
   }
 
-  try {
-    return await fetchApi<LotteryResult>(`/resultado?loteria=${lottery}&concurso=${contest}`);
-  } catch (error) {
-    // Fallback to mock data if API fails
-    const mockData = getMockLotteryResult(lottery);
-    if (mockData) {
-      console.warn(`API failed, using mock data for ${lottery} contest ${contest}`);
-      return { ...mockData, concurso: contest };
-    }
-    throw error;
-  }
+  return await fetchApi<LotteryResult>(`/resultado?loteria=${lottery}&concurso=${contest}`);
 }
 
 export async function getAllLatestResults(): Promise<LotteryResult[]> {

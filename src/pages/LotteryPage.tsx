@@ -21,9 +21,10 @@ export default function LotteryPage() {
   const { data: result, isLoading, error } = useQuery({
     queryKey: ['lottery', lottery, 'latest'],
     queryFn: () => getLatestResult(lottery),
-    staleTime: 0, // Always fetch fresh data
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: 'always',
+    retry: 2,
   });
 
   useEffect(() => {
