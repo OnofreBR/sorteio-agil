@@ -12,6 +12,92 @@ export class LotteryApiError extends Error {
   }
 }
 
+// Map API lottery names to slugs
+function getLotterySlugFromName(nome: string): string {
+  const nameMap: Record<string, string> = {
+    'MEGA-SENA': 'megasena',
+    'MEGA SENA': 'megasena',
+    'QUINA': 'quina',
+    'LOTOFÁCIL': 'lotofacil',
+    'LOTOFACIL': 'lotofacil',
+    'LOTOMANIA': 'lotomania',
+    'DUPLA-SENA': 'duplasena',
+    'DUPLA SENA': 'duplasena',
+    'FEDERAL': 'federal',
+    'TIMEMANIA': 'timemania',
+    'DIA DE SORTE': 'diadesorte',
+    'SUPER SETE': 'supersete',
+    'SUPERSETE': 'supersete',
+    '+MILIONÁRIA': 'maismilionaria',
+    'MAIS MILIONARIA': 'maismilionaria',
+    'LOTECA': 'loteca',
+  };
+  
+  const normalizedName = nome.toUpperCase().trim();
+  return nameMap[normalizedName] || nome.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Transform API response to our expected format
+function transformApiResponse(apiData: any): LotteryResult {
+  const slug = getLotterySlugFromName(apiData.nome || apiData.loteria || '');
+  
+  // Format date from ISO to DD/MM/YYYY
+  const formatDate = (isoDate: string): string => {
+    if (!isoDate) return '';
+    if (isoDate.includes('/')) return isoDate; // Already formatted
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  // Transform prizes from API format to our format
+  const transformPremiacoes = (premiacao: any): any[] => {
+    if (!premiacao) return [];
+    
+    // Handle array format (already correct)
+    if (Array.isArray(premiacao)) {
+      return premiacao.map((p: any, index: number) => ({
+        descricao: p.descricao || p.nome || `Faixa ${index + 1}`,
+        faixa: p.faixa || index + 1,
+        ganhadores: p.ganhadores || p.quantidade_ganhadores || 0,
+        valorPremio: p.valorPremio || p.valor_total || 0,
+      }));
+    }
+    
+    // Handle single object format from API
+    if (premiacao.faixas && Array.isArray(premiacao.faixas)) {
+      return premiacao.faixas.map((p: any, index: number) => ({
+        descricao: p.nome || p.descricao || `Faixa ${index + 1}`,
+        faixa: index + 1,
+        ganhadores: p.quantidade_ganhadores || p.ganhadores || 0,
+        valorPremio: p.valor_total || p.valorPremio || 0,
+      }));
+    }
+    
+    return [];
+  };
+
+  return {
+    loteria: slug,
+    concurso: apiData.concurso || apiData.numero_concurso || 0,
+    data: formatDate(apiData.data || apiData.data_concurso || ''),
+    local: apiData.local || apiData.local_sorteio || '',
+    dezenasOrdemSorteio: apiData.dezenasOrdemSorteio || apiData.dezenas_ordem_sorteio || apiData.dezenas || [],
+    dezenas: apiData.dezenas || [],
+    trevos: apiData.trevos || apiData.trevosSorteados || undefined,
+    mesSorte: apiData.mesSorte || apiData.nome_mes_sorte || undefined,
+    premiacoes: transformPremiacoes(apiData.premiacoes || apiData.premiacao),
+    estadosPremiados: apiData.estadosPremiados || apiData.estados_premiados || undefined,
+    observacao: apiData.observacao || apiData.nome_time_coracao || undefined,
+    acumulou: apiData.acumulou ?? (apiData.premiacoes?.[0]?.ganhadores === 0 || apiData.premiacao?.faixas?.[0]?.quantidade_ganhadores === 0),
+    proximoConcurso: apiData.proximoConcurso || apiData.concurso_proximo || 0,
+    dataProximoConcurso: formatDate(apiData.dataProximoConcurso || apiData.data_proximo_concurso || ''),
+    valorEstimadoProximoConcurso: apiData.valorEstimadoProximoConcurso || apiData.valor_estimado_proximo_concurso || 0,
+  };
+}
+
 function buildUrl(endpoint: string): string {
   const separator = endpoint.includes('?') ? '&' : '?';
   const cacheBuster = Date.now();
@@ -36,6 +122,12 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
     }
 
     const data = await response.json();
+    
+    // Transform API response to our expected format
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      return transformApiResponse(data) as T;
+    }
+    
     return data;
   } catch (error) {
     if (error instanceof LotteryApiError) {
