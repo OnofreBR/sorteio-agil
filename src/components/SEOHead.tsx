@@ -14,9 +14,11 @@ export default function SEOHead({
   description,
   keywords,
   canonicalUrl,
-  ogImage = 'https://numerosmegasena.netlify.app/logo.png',
+  ogImage,
   jsonLd,
 }: SEOHeadProps) {
+  const defaultOgImage = typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png';
+  const finalOgImage = ogImage || defaultOgImage;
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -40,7 +42,7 @@ export default function SEOHead({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content={ogImage} />
+      <meta property="og:image" content={finalOgImage} />
       <meta property="og:image:alt" content={title} />
       <meta property="og:locale" content="pt_BR" />
       <meta property="og:site_name" content="Números Mega Sena - Resultados das Loterias" />
@@ -49,7 +51,7 @@ export default function SEOHead({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image" content={finalOgImage} />
       <meta name="twitter:image:alt" content={title} />
 
       {/* Additional SEO */}

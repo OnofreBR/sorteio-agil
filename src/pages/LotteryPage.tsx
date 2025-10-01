@@ -55,7 +55,7 @@ export default function LotteryPage() {
 
   const pageTitle = `${lotteryInfo.name} - Resultados, Números e Prêmios Atualizados`;
   const pageDescription = `Confira todos os resultados da ${lotteryInfo.name}. ${lotteryInfo.description} Sorteios realizados ${lotteryInfo.drawDays.join(', ')}.`;
-  const canonicalUrl = `https://numerosmegasena.netlify.app/${lottery}`;
+  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}/${lottery}` : `/${lottery}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -70,7 +70,7 @@ export default function LotteryPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: 'https://numerosmegasena.netlify.app/',
+          item: typeof window !== 'undefined' ? window.location.origin + '/' : '/',
         },
         {
           '@type': 'ListItem',

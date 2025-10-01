@@ -12,12 +12,15 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ContestPage() {
-  // Formato de URL: /maismilionaria/concurso-289
   const params = useParams();
   const navigate = useNavigate();
   
-  const lottery = params.lottery || '';
+  // Normalize slug: mega-sena → megasena, +milionaria → maismilionaria
+  const rawLottery = params.lottery || '';
+  const lottery = rawLottery.toLowerCase().replace(/-/g, '').replace(/\+/g, 'mais');
   const contestNumber = parseInt(params.contest || '0');
+
+  console.log(`🔍 ContestPage: lottery=${lottery}, contestNumber=${contestNumber}, raw=${rawLottery}`);
 
   const lotteryInfo = LOTTERY_MAP[lottery];
 
@@ -37,7 +40,14 @@ export default function ContestPage() {
   }, [error]);
 
   if (!lotteryInfo) {
+    console.warn(`⚠️ Lottery not found in map: ${lottery}`);
     navigate('/');
+    return null;
+  }
+
+  if (!contestNumber || contestNumber < 1) {
+    console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
+    navigate(`/${lottery}`);
     return null;
   }
 

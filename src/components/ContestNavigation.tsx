@@ -25,12 +25,19 @@ export default function ContestNavigation({
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center justify-between gap-4">
-            <Link to={`/${lottery}/concurso-${currentContest - 1}`} className="flex-1">
-              <Button variant="outline" className="w-full gap-2">
+            {currentContest > 1 ? (
+              <Link to={`/${lottery}/concurso-${currentContest - 1}`} className="flex-1">
+                <Button variant="outline" className="w-full gap-2">
+                  <ChevronLeft className="w-4 h-4" />
+                  Concurso Anterior
+                </Button>
+              </Link>
+            ) : (
+              <Button variant="outline" className="w-full gap-2" disabled>
                 <ChevronLeft className="w-4 h-4" />
                 Concurso Anterior
               </Button>
-            </Link>
+            )}
             
             <Link to={`/${lottery}/concurso-${currentContest + 1}`} className="flex-1">
               <Button variant="outline" className="w-full gap-2">
@@ -43,7 +50,7 @@ export default function ContestNavigation({
       </Card>
 
       {/* Próximo Concurso */}
-      {nextContest && nextDate && estimatedPrize && (
+      {nextContest && nextDate && (
         <Card className="bg-gradient-card border-primary/30">
           <CardContent className="pt-6">
             <div className="text-center space-y-3">

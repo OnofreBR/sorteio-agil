@@ -1,91 +1,321 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://numerosmegasena.netlify.app/</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- Static Pages -->
   <url>
     <loc>https://numerosmegasena.netlify.app/sobre</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/termos</loc>
-    <lastmod>2025-01-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/privacidade</loc>
-    <lastmod>2025-01-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   
-  <!-- Lottery Pages -->
+  <!-- Lottery Index Pages -->
   <url>
     <loc>https://numerosmegasena.netlify.app/megasena</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/quina</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/lotofacil</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/lotomania</loc>
-    <lastmod>2024-12-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://numerosmegasena.netlify.app/duplasena</loc>
-    <lastmod>2024-12-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://numerosmegasena.netlify.app/federal</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/timemania</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/duplasena</loc>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/diadesorte</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/supersete</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/federal</loc>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://numerosmegasena.netlify.app/maismilionaria</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+  </url>
+  
+  <!-- Recent Mega-Sena Contests (2820-2920) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2920</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2919</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2918</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2917</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2916</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Future Mega-Sena Contests (2921-2930) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2921</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2922</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2923</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2924</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2925</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2926</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2927</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2928</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2929</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/megasena/concurso-2930</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Recent Quina Contests (6575-6585) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/quina/concurso-6585</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/quina/concurso-6584</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/quina/concurso-6583</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Lotofácil Contests (3245-3255) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/lotofacil/concurso-3255</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/lotofacil/concurso-3254</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/lotofacil/concurso-3253</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Lotomania Contests (2720-2730) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/lotomania/concurso-2730</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/lotomania/concurso-2729</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Timemania Contests (2205-2215) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/timemania/concurso-2215</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/timemania/concurso-2214</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Dupla Sena Contests (2835-2845) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/duplasena/concurso-2845</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/duplasena/concurso-2844</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Dia de Sorte Contests (1045-1055) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/diadesorte/concurso-1055</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/diadesorte/concurso-1054</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Super Sete Contests (675-685) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/supersete/concurso-685</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/supersete/concurso-684</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Federal Contests (6175-6185) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/federal/concurso-6185</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/federal/concurso-6184</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recent Mais Milionária Contests (225-235) -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/maismilionaria/concurso-235</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/maismilionaria/concurso-234</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
