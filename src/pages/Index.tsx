@@ -10,19 +10,20 @@ import { RefreshCw, TrendingUp, Clock, Star, Loader2 } from 'lucide-react';
 import { getAllLatestResults, formatCurrency } from '@/services/lotteryApi';
 import { LOTTERY_MAP } from '@/types/lottery';
 import { toast } from 'sonner';
-
 const Index = () => {
   const [lastUpdate, setLastUpdate] = useState<string>('');
-
-  const { data: results, isLoading, refetch } = useQuery({
+  const {
+    data: results,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: ['all-lotteries'],
     queryFn: getAllLatestResults,
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
-    retry: 2,
+    retry: 2
   });
-
   useEffect(() => {
     const now = new Date();
     setLastUpdate(now.toLocaleString('pt-BR', {
@@ -31,17 +32,15 @@ const Index = () => {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit',
+      minute: '2-digit'
     }));
   }, [results]);
-
   const handleRefresh = async () => {
     toast.info('Atualizando resultados...');
     await refetch();
     toast.success('Resultados atualizados!');
   };
-
-  const lotteries = results?.map((result) => {
+  const lotteries = results?.map(result => {
     const lotteryInfo = LOTTERY_MAP[result.loteria];
     return {
       name: lotteryInfo?.name || result.loteria,
@@ -57,14 +56,12 @@ const Index = () => {
       estimatedPrize: formatCurrency(result.valorEstimadoProximoConcurso),
       mesSorte: result.mesSorte,
       trevos: result.trevos,
-      observacao: result.observacao,
+      observacao: result.observacao
     };
   }).filter(lottery => lottery.numbers.length > 0) || [];
-
   const pageTitle = 'Resultados das Loterias Brasileiras - Mega-Sena, Quina, Lotofácil e Mais';
   const pageDescription = 'Confira os resultados atualizados de todas as loterias brasileiras: Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Federal e mais. Números sorteados, prêmios e ganhadores.';
   const canonicalUrl = 'https://numerosmegasena.netlify.app/';
-
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -75,26 +72,18 @@ const Index = () => {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${canonicalUrl}?q={search_term_string}`,
+        urlTemplate: `${canonicalUrl}?q={search_term_string}`
       },
-      'query-input': 'required name=search_term_string',
+      'query-input': 'required name=search_term_string'
     },
     publisher: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
-      url: canonicalUrl,
-    },
+      url: canonicalUrl
+    }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
-      <SEOHead
-        title={pageTitle}
-        description={pageDescription}
-        keywords="loterias, mega-sena, quina, lotofácil, resultados, números sorteados, prêmios, ganhadores"
-        canonicalUrl={canonicalUrl}
-        jsonLd={jsonLd}
-      />
+  return <div className="min-h-screen bg-background">
+      <SEOHead title={pageTitle} description={pageDescription} keywords="loterias, mega-sena, quina, lotofácil, resultados, números sorteados, prêmios, ganhadores" canonicalUrl={canonicalUrl} jsonLd={jsonLd} />
       <Header />
       
       {/* Hero Section */}
@@ -112,10 +101,9 @@ const Index = () => {
                 Loterias Brasileiras
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-primary-foreground/90 leading-relaxed">
-              Acompanhe os resultados mais recentes da Mega-Sena, Quina, Lotofácil e todas as 
-              principais loterias do Brasil em tempo real.
-            </p>
+            <p className="text-xl md:text-2xl text-primary-foreground/90 leading-relaxed">Acompanhe os resultados mais recentes da Mega-Sena, Quina, Lotofácil e 
+todas as principais loterias do Brasil em tempo real.
+          </p>
           </div>
         </div>
       </section>
@@ -132,33 +120,21 @@ const Index = () => {
             </p>
           </div>
           
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="hover:bg-muted transition-smooth"
-            onClick={handleRefresh}
-            disabled={isLoading}
-          >
+          <Button variant="outline" size="sm" className="hover:bg-muted transition-smooth" onClick={handleRefresh} disabled={isLoading}>
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Atualizar
           </Button>
         </div>
 
         {/* Lottery Cards Grid */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20">
+        {isLoading ? <div className="flex items-center justify-center py-20">
             <div className="text-center space-y-4">
               <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
               <p className="text-muted-foreground">Carregando resultados...</p>
             </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {lotteries.map((lottery) => (
-              <LotteryCard key={lottery.slug} lottery={lottery} />
-            ))}
-          </div>
-        )}
+          </div> : <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {lotteries.map(lottery => <LotteryCard key={lottery.slug} lottery={lottery} />)}
+          </div>}
 
         {/* SEO Content */}
         <section className="mt-16 prose prose-lg max-w-none">
@@ -168,11 +144,10 @@ const Index = () => {
             </h2>
             <div className="grid md:grid-cols-2 gap-8 text-muted-foreground">
               <div className="space-y-4">
-                <p>
-                  Acompanhe os resultados oficiais das principais loterias do Brasil. 
-                  Nosso site oferece informações atualizadas sobre Mega-Sena, Quina, 
-                  Lotofácil, Lotomania, Dupla Sena e Federal.
-                </p>
+                <p>Acompanhe os resultados oficiais das principais loterias do Brasil. 
+Nosso site oferece informações atualizadas sobre Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Dia de Sorte, Timemania, Super Sete, Mais Milionária e 
+Loteria Federal.
+              </p>
                 <p>
                   Todos os resultados são obtidos diretamente da Caixa Econômica Federal 
                   e apresentados de forma clara e organizada para sua consulta.
@@ -183,10 +158,7 @@ const Index = () => {
                   Além dos números sorteados, você encontra informações sobre prêmios, 
                   quantidade de ganhadores e estimativas para os próximos concursos.
                 </p>
-                <p>
-                  Lembre-se sempre de jogar com responsabilidade e consultar os 
-                  resultados oficiais na Caixa Econômica Federal.
-                </p>
+                <p>Lembre-se sempre de jogar com responsabilidade.</p>
               </div>
             </div>
           </div>
@@ -194,8 +166,6 @@ const Index = () => {
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
