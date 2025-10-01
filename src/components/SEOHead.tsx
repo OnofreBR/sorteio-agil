@@ -45,7 +45,7 @@ export default function SEOHead({
       <meta property="og:image" content={finalOgImage} />
       <meta property="og:image:alt" content={title} />
       <meta property="og:locale" content="pt_BR" />
-      <meta property="og:site_name" content="Números Mega Sena - Resultados das Loterias" />
+      <meta property="og:site_name" content="Números Mega Sena" />
 
       {/* Twitter Cards */}
       <meta name="twitter:card" content="summary_large_image" />

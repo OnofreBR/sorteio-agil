@@ -90,7 +90,7 @@ export default function ContestPage() {
     '@type': 'Article',
     headline: pageTitle,
     description: pageDescription,
-    image: 'https://numerosmegasena.netlify.app/logo.png',
+    image: `${window.location.origin}/logo.png`,
     datePublished: result.data,
     author: {
       '@type': 'Organization',

@@ -65,7 +65,7 @@ const Index = () => {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Números Mega Sena - Resultados das Loterias',
+    name: 'Números Mega Sena',
     description: pageDescription,
     url: canonicalUrl,
     potentialAction: {
