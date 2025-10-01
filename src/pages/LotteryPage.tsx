@@ -165,10 +165,10 @@ export default function LotteryPage() {
                     <TrendingUp className="w-6 h-6 text-primary mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground">Prêmio Principal</p>
                     <p className="text-2xl font-bold text-foreground">
-                      {formatCurrency(result.premiacoes[0]?.valorPremio || 0)}
+                      {formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {result.premiacoes[0]?.ganhadores || 0} ganhador(es)
+                      {result.premiacoes?.[0]?.ganhadores || 0} ganhador(es)
                     </p>
                   </div>
 

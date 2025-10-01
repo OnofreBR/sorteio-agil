@@ -71,7 +71,7 @@ export default function ContestPage() {
   }
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
-  const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes[0]?.valorPremio || 0)}.`;
+  const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
   const canonicalUrl = `https://numerosmegasena.netlify.app/${lottery}/concurso-${contestNumber}`;
 
   const jsonLd = {
@@ -104,12 +104,12 @@ export default function ContestPage() {
         '@type': 'Place',
         name: result.local,
       },
-      offers: result.premiacoes.map(prize => ({
+      offers: result.premiacoes?.map(prize => ({
         '@type': 'Offer',
         name: prize.descricao,
         price: prize.valorPremio,
         priceCurrency: 'BRL',
-      })),
+      })) || [],
     },
     breadcrumb: {
       '@type': 'BreadcrumbList',
