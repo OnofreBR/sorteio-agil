@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import AdSenseAd from '@/components/AdSenseAd';
 import ContestDetails from '@/components/ContestDetails';
 import ContestNavigation from '@/components/ContestNavigation';
 import { getResultByContest, formatCurrency } from '@/services/lotteryApi';
@@ -178,15 +179,25 @@ export default function ContestPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
+        {/* Ad Space - Top */}
+        <div className="mb-8">
+          <AdSenseAd format="auto" responsive={true} className="text-center" />
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Detalhes do Concurso */}
           <div className="lg:col-span-2">
             <ContestDetails result={result} lotteryColor={lotteryInfo.color} />
+            
+            {/* Ad Space - After Details */}
+            <div className="mt-8">
+              <AdSenseAd format="auto" responsive={true} className="text-center" />
+            </div>
           </div>
 
           {/* Navegação e Próximo Concurso */}
           <div className="lg:col-span-1">
-            <div className="sticky top-4">
+            <div className="sticky top-4 space-y-6">
               <ContestNavigation
                 lottery={lottery}
                 currentContest={contestNumber}
@@ -194,6 +205,9 @@ export default function ContestPage() {
                 nextDate={result.dataProximoConcurso}
                 estimatedPrize={result.valorEstimadoProximoConcurso}
               />
+              
+              {/* Ad Space - Sidebar */}
+              <AdSenseAd format="vertical" responsive={true} className="text-center" />
             </div>
           </div>
         </div>

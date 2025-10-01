@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import LotteryCard from '@/components/LotteryCard';
 import SEOHead from '@/components/SEOHead';
+import AdSenseAd from '@/components/AdSenseAd';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, TrendingUp, Clock, Star, Loader2 } from 'lucide-react';
@@ -126,6 +127,11 @@ todas as principais loterias do Brasil em tempo real.
           </Button>
         </div>
 
+        {/* Ad Space - Top */}
+        <div className="mb-8">
+          <AdSenseAd format="auto" responsive={true} className="text-center" />
+        </div>
+
         {/* Lottery Cards Grid */}
         {isLoading ? <div className="flex items-center justify-center py-20">
             <div className="text-center space-y-4">
@@ -133,8 +139,23 @@ todas as principais loterias do Brasil em tempo real.
               <p className="text-muted-foreground">Carregando resultados...</p>
             </div>
           </div> : <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {lotteries.map(lottery => <LotteryCard key={lottery.slug} lottery={lottery} />)}
+            {lotteries.map((lottery, index) => (
+              <div key={lottery.slug}>
+                <LotteryCard lottery={lottery} />
+                {/* Ad between every 4 lottery cards */}
+                {(index + 1) % 4 === 0 && index < lotteries.length - 1 && (
+                  <div className="col-span-1 lg:col-span-2 my-6">
+                    <AdSenseAd format="auto" responsive={true} className="text-center" />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>}
+
+        {/* Ad Space - Bottom */}
+        <div className="mt-8">
+          <AdSenseAd format="auto" responsive={true} className="text-center" />
+        </div>
 
         {/* SEO Content */}
         <section className="mt-16 prose prose-lg max-w-none">
