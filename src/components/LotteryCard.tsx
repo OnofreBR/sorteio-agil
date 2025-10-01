@@ -62,7 +62,7 @@ const LotteryCard = ({ lottery }: LotteryCardProps) => {
             Números Sorteados
           </h4>
           <div className="flex flex-wrap gap-2">
-            {lottery.numbers.map((number, index) => (
+            {lottery.numbers?.map((number, index) => (
               lottery.slug === 'federal' ? (
                 <div
                   key={index}
