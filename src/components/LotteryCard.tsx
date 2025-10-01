@@ -158,7 +158,7 @@ const LotteryCard = ({ lottery }: LotteryCardProps) => {
               </p>
               <p className="text-lg font-bold text-primary">{lottery.estimatedPrize}</p>
             </div>
-            <Link to={`/${lottery.slug}-concurso-${lottery.contest}`}>
+            <Link to={`/${lottery.slug}/concurso-${lottery.contest}`}>
               <Button size="sm" variant="hero">
                 <Eye className="w-4 h-4 mr-2" />
                 Ver Detalhes
