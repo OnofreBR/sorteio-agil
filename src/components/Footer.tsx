@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { TrendingUp } from 'lucide-react';
-
 const Footer = () => {
-  return (
-    <footer className="bg-muted/50 border-t border-border mt-16">
+  return <footer className="bg-muted/50 border-t border-border mt-16">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* Brand Section */}
@@ -24,11 +22,7 @@ const Footer = () => {
           {/* Legal Section */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Aviso Legal</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Este é um site independente de resultados de loterias. Não possuímos vínculo com a Caixa 
-              Econômica Federal. Para conferência oficial de apostas premiadas, consulte os canais 
-              oficiais da Caixa.
-            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">Este é um site independente de resultados de loterias. Não possuímos vínculo com a Caixa Econômica Federal.</p>
           </div>
         </div>
 
@@ -45,8 +39,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
