@@ -1,0 +1,52 @@
+[build]
+  publish = "dist"
+  command = "npm run build && node scripts/generate-future-pages.js"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/:lottery/concurso-:contest"
+  to = "/:lottery-concurso-:contest"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    X-Robots-Tag = "index, follow, max-image-preview:large"
+
+[[headers]]
+  for = "/sitemap*.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/xml"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Prerender configuração (opcional com Netlify plugin)
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+  [plugins.inputs]
+    buildDir = "dist"
+    exclude = [
+      "/404.html"
+    ]

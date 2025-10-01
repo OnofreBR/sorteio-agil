@@ -1,0 +1,27 @@
+# Netlify redirects file - SEO Optimized
+# https://docs.netlify.com/routing/redirects/
+
+# Redirects 301 para novo formato de URL SEO-friendly
+# De: /megasena/concurso-2919 -> Para: /mega-sena-concurso-2919
+/:lottery/concurso-:contest  /:lottery-concurso-:contest  301!
+
+# Redirect de URLs antigas sem hífen
+/megasena/*  /mega-sena-:splat  301!
+/lotofacil/*  /lotofacil-:splat  301!
+/quina/*  /quina-:splat  301!
+/lotomania/*  /lotomania-:splat  301!
+/timemania/*  /timemania-:splat  301!
+/duplasena/*  /dupla-sena-:splat  301!
+/federal/*  /federal-:splat  301!
+/diadesorte/*  /dia-de-sorte-:splat  301!
+/supersete/*  /super-sete-:splat  301!
+/maismilionaria/*  /mais-milionaria-:splat  301!
+
+# Force HTTPS
+http://numerosmegasena.netlify.app/*  https://numerosmegasena.netlify.app/:splat  301!
+
+# Trailing slash redirect (normalização)
+/*  /:splat  301!
+
+# SPA routing - all other requests serve index.html with 200
+/*  /index.html  200

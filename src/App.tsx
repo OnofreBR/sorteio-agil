@@ -26,8 +26,13 @@ const App = () => (
             <Route path="/sobre" element={<Sobre />} />
             <Route path="/termos" element={<Termos />} />
             <Route path="/privacidade" element={<Privacidade />} />
+            
+            {/* Novo formato de URL SEO-friendly: /mega-sena-concurso-2919 */}
+            <Route path="/:lottery-concurso-:contest" element={<ContestPage />} />
+            
+            {/* Página de índice por loteria (opcional) */}
             <Route path="/:lottery" element={<LotteryPage />} />
-            <Route path="/:lottery/:contest" element={<ContestPage />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

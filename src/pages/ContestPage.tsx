@@ -12,9 +12,25 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ContestPage() {
-  const { lottery = '', contest = '' } = useParams<{ lottery: string; contest: string }>();
+  // Novo formato de URL: /mega-sena-concurso-2919
+  const params = useParams();
   const navigate = useNavigate();
-  const contestNumber = parseInt(contest.replace('concurso-', ''));
+  
+  // Extrair lottery e contest do novo formato de URL
+  const urlPath = window.location.pathname.slice(1); // Remove leading /
+  const match = urlPath.match(/^(.+)-concurso-(\d+)$/);
+  
+  let lottery = '';
+  let contestNumber = 0;
+  
+  if (match) {
+    lottery = match[1]; // e.g., "mega-sena"
+    contestNumber = parseInt(match[2]); // e.g., 2919
+  } else {
+    // Fallback para formato antigo (será redirecionado pelo _redirects)
+    lottery = params.lottery || '';
+    contestNumber = parseInt((params.contest || '').replace('concurso-', ''));
+  }
 
   const lotteryInfo = LOTTERY_MAP[lottery];
 
@@ -72,7 +88,7 @@ export default function ContestPage() {
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
   const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const canonicalUrl = `https://numerosmegasena.netlify.app/${lottery}/concurso-${contestNumber}`;
+  const canonicalUrl = `https://numerosmegasena.netlify.app/${lottery}-concurso-${contestNumber}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',

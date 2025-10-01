@@ -1,0 +1,68 @@
+# Cabeçalhos SEO otimizados para Netlify
+
+# Headers globais
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Cache para assets estáticos (1 ano)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache para imagens (1 mês)
+/*.jpg
+  Cache-Control: public, max-age=2592000
+/*.jpeg
+  Cache-Control: public, max-age=2592000
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.webp
+  Cache-Control: public, max-age=2592000
+/*.avif
+  Cache-Control: public, max-age=2592000
+/*.svg
+  Cache-Control: public, max-age=2592000
+
+# Cache para fontes (1 ano)
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+# Sem cache para HTML (páginas devem ser sempre atualizadas)
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  X-Robots-Tag: index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+# Sitemap e robots com cache curto
+/sitemap*.xml
+  Cache-Control: public, max-age=3600
+  X-Robots-Tag: noindex
+  Content-Type: application/xml
+
+/robots.txt
+  Cache-Control: public, max-age=3600
+  X-Robots-Tag: noindex
+
+# IndexNow key file
+/indexnow-*.txt
+  Cache-Control: public, max-age=86400
+  X-Robots-Tag: noindex
+  Content-Type: text/plain
+
+# Preload de recursos críticos
+/
+  Link: </assets/index.css>; rel=preload; as=style
+  Link: <https://fonts.googleapis.com>; rel=preconnect
+  Link: <https://fonts.gstatic.com>; rel=preconnect; crossorigin
+
+# Headers específicos para páginas de concurso (conteúdo dinâmico)
+/*-concurso-*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  X-Robots-Tag: index, follow, max-image-preview:large
+  Vary: Accept-Encoding
