@@ -22,7 +22,9 @@ export default function ContestPage() {
     queryKey: ['lottery', lottery, contestNumber],
     queryFn: () => getResultByContest(lottery, contestNumber),
     retry: 1,
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 0, // Always fetch fresh data
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {

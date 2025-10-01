@@ -17,7 +17,9 @@ const Index = () => {
   const { data: results, isLoading, refetch } = useQuery({
     queryKey: ['all-lotteries'],
     queryFn: getAllLatestResults,
-    staleTime: 1000 * 60 * 30, // 30 minutes
+    staleTime: 0, // Always fetch fresh data
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
@@ -52,6 +54,9 @@ const Index = () => {
       nextContest: result.proximoConcurso,
       nextDate: result.dataProximoConcurso,
       estimatedPrize: formatCurrency(result.valorEstimadoProximoConcurso),
+      mesSorte: result.mesSorte,
+      trevos: result.trevos,
+      observacao: result.observacao,
     };
   }) || [];
 
@@ -110,19 +115,6 @@ const Index = () => {
               Acompanhe os resultados mais recentes da Mega-Sena, Quina, Lotofácil e todas as 
               principais loterias do Brasil em tempo real.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Button 
-                size="lg" 
-                variant="gold"
-              >
-                <TrendingUp className="w-5 h-5 mr-2" />
-                Ver Todos os Resultados
-              </Button>
-              <div className="flex items-center text-primary-foreground/80 text-sm">
-                <Clock className="w-4 h-4 mr-2" />
-                Última atualização: {lastUpdate}
-              </div>
-            </div>
           </div>
         </div>
       </section>

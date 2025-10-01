@@ -3,7 +3,7 @@ import { getMockLotteryResult, getAllMockResults } from './mockData';
 
 const API_URL = 'https://apiloterias.com.br/app';
 const API_TOKEN = 'JY8FOJADU04L1YQ';
-const USE_MOCK_DATA = true; // Set to false when API is working
+const USE_MOCK_DATA = false; // Using real API data
 
 export class LotteryApiError extends Error {
   constructor(message: string, public statusCode?: number) {
@@ -102,6 +102,7 @@ export async function getAllLatestResults(): Promise<LotteryResult[]> {
     'diadesorte',
     'supersete',
     'maismilionaria',
+    'loteca',
   ];
 
   try {

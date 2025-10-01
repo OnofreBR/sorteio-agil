@@ -135,4 +135,14 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
     maxNumber: 50,
     numbersDrawn: 6,
   },
+  loteca: {
+    name: 'Loteca',
+    slug: 'loteca',
+    color: 'lottery-federal',
+    description: 'A Loteca tem sorteios aos sábados.',
+    drawDays: ['Sábado'],
+    minNumber: 1,
+    maxNumber: 14,
+    numbersDrawn: 14,
+  },
 };

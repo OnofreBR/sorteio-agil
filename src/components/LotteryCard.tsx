@@ -17,6 +17,9 @@ interface LotteryCardProps {
     nextContest: number;
     nextDate: string;
     estimatedPrize: string;
+    mesSorte?: string;
+    trevos?: number[];
+    observacao?: string;
   };
 }
 
@@ -80,6 +83,46 @@ const LotteryCard = ({ lottery }: LotteryCardProps) => {
             ))}
           </div>
         </div>
+
+        {/* Trevos - Mais Milionária */}
+        {lottery.trevos && lottery.trevos.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Trevos da Sorte
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {lottery.trevos.map((trevo, index) => (
+                <div
+                  key={index}
+                  className="w-12 h-12 rounded-full bg-gradient-gold text-secondary-foreground font-bold text-lg flex items-center justify-center shadow-glow animate-bounce-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {trevo.toString().padStart(2, '0')}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mês da Sorte - Dia de Sorte */}
+        {lottery.mesSorte && (
+          <div className="bg-gradient-lottery rounded-lg p-4">
+            <h4 className="text-sm font-medium text-primary-foreground uppercase tracking-wide mb-2">
+              Mês da Sorte
+            </h4>
+            <p className="text-xl font-bold text-primary-foreground">{lottery.mesSorte}</p>
+          </div>
+        )}
+
+        {/* Time do Coração - Timemania */}
+        {lottery.slug === 'timemania' && lottery.observacao && (
+          <div className="bg-gradient-lottery rounded-lg p-4">
+            <h4 className="text-sm font-medium text-primary-foreground uppercase tracking-wide mb-2">
+              Time do Coração
+            </h4>
+            <p className="text-xl font-bold text-primary-foreground">{lottery.observacao}</p>
+          </div>
+        )}
 
         {/* Informações do prêmio */}
         <div className="grid grid-cols-2 gap-4">

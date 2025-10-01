@@ -444,6 +444,38 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     dataProximoConcurso: '28/12/2024',
     valorEstimadoProximoConcurso: 150000000,
   },
+  loteca: {
+    loteria: 'loteca',
+    concurso: 1147,
+    data: '28/09/2025',
+    local: 'ESPAÇO DA SORTE em SÃO PAULO, SP',
+    dezenasOrdemSorteio: [1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 1],
+    dezenas: [1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 1],
+    premiacoes: [
+      {
+        descricao: '14 acertos',
+        faixa: 1,
+        ganhadores: 0,
+        valorPremio: 0,
+      },
+      {
+        descricao: '13 acertos',
+        faixa: 2,
+        ganhadores: 5,
+        valorPremio: 28540.32,
+      },
+      {
+        descricao: '12 acertos',
+        faixa: 3,
+        ganhadores: 142,
+        valorPremio: 1005.42,
+      },
+    ],
+    acumulou: true,
+    proximoConcurso: 1148,
+    dataProximoConcurso: '05/10/2025',
+    valorEstimadoProximoConcurso: 850000,
+  },
 };
 
 export function getMockLotteryResult(lottery: string): LotteryResult | null {
