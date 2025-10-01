@@ -14,10 +14,7 @@ const Footer = () => {
               <span className="text-lg font-bold text-foreground">Resultados das principais loterias brasileiras, 
 atualizados em tempo real. </span>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Resultados das principais loterias brasileiras, atualizados em tempo real.
-              Confira os números sorteados e acompanhe seus jogos.
-            </p>
+            
           </div>
 
           {/* Legal Section */}
