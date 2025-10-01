@@ -144,10 +144,7 @@ todas as principais loterias do Brasil em tempo real.
             </h2>
             <div className="grid md:grid-cols-2 gap-8 text-muted-foreground">
               <div className="space-y-4">
-                <p>Acompanhe os resultados oficiais das principais loterias do Brasil. 
-Nosso site oferece informações atualizadas sobre Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Dia de Sorte, Timemania, Super Sete, Mais Milionária e 
-Loteria Federal.
-              </p>
+                <p>Acompanhe informações atualizadas sobre Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Dia de Sorte, Timemania, Super Sete, Mais Milionária e  Loteria Federal.</p>
                 <p>
                   Todos os resultados são obtidos diretamente da Caixa Econômica Federal 
                   e apresentados de forma clara e organizada para sua consulta.
