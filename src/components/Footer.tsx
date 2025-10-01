@@ -11,7 +11,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center shadow-lottery">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold text-foreground">Números Mega Sena</span>
+              <span className="text-lg font-bold text-foreground">Resultados das principais loterias brasileiras, atualizados em tempo real. </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Resultados das principais loterias brasileiras, atualizados em tempo real.
