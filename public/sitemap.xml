@@ -2,10 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://numerosmegasena.netlify.app/</loc>
-    <lastmod>2024-12-23</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
+  
+  <!-- Static Pages -->
+  <url>
+    <loc>https://numerosmegasena.netlify.app/sobre</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/termos</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://numerosmegasena.netlify.app/privacidade</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Lottery Pages -->
   <url>
     <loc>https://numerosmegasena.netlify.app/megasena</loc>
     <lastmod>2024-12-23</lastmod>

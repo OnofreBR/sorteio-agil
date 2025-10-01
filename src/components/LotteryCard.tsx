@@ -60,13 +60,23 @@ const LotteryCard = ({ lottery }: LotteryCardProps) => {
           </h4>
           <div className="flex flex-wrap gap-2">
             {lottery.numbers.map((number, index) => (
-              <div
-                key={index}
-                className="w-12 h-12 rounded-full bg-gradient-hero text-primary-foreground font-bold text-lg flex items-center justify-center shadow-lottery animate-bounce-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {number.toString().padStart(2, '0')}
-              </div>
+              lottery.slug === 'federal' ? (
+                <div
+                  key={index}
+                  className="px-4 py-3 rounded-lg bg-gradient-hero text-primary-foreground font-bold text-xl flex items-center justify-center shadow-lottery animate-bounce-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {number.toString().padStart(5, '0')}
+                </div>
+              ) : (
+                <div
+                  key={index}
+                  className="w-12 h-12 rounded-full bg-gradient-hero text-primary-foreground font-bold text-lg flex items-center justify-center shadow-lottery animate-bounce-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {number.toString().padStart(2, '0')}
+                </div>
+              )
             ))}
           </div>
         </div>

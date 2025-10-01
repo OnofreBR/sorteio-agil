@@ -6,13 +6,10 @@ import { Button } from '@/components/ui/button';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const lotteries = [
-    { name: 'Mega-Sena', slug: 'megasena', color: 'lottery-megasena' },
-    { name: 'Quina', slug: 'quina', color: 'lottery-quina' },
-    { name: 'Lotofácil', slug: 'lotofacil', color: 'lottery-lotofacil' },
-    { name: 'Lotomania', slug: 'lotomania', color: 'lottery-lotomania' },
-    { name: 'Dupla Sena', slug: 'duplasena', color: 'lottery-dupla' },
-    { name: 'Federal', slug: 'federal', color: 'lottery-federal' },
+  const menuItems = [
+    { name: 'Sobre', path: '/sobre' },
+    { name: 'Termos', path: '/termos' },
+    { name: 'Privacidade', path: '/privacidade' },
   ];
 
   return (
@@ -32,14 +29,14 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
-            {lotteries.map((lottery) => (
-              <Link key={lottery.slug} to={`/${lottery.slug}`}>
+            {menuItems.map((item) => (
+              <Link key={item.path} to={item.path}>
                 <Button 
                   variant="ghost" 
                   size="sm"
                   className="hover:bg-muted transition-smooth"
                 >
-                  {lottery.name}
+                  {item.name}
                 </Button>
               </Link>
             ))}
@@ -60,14 +57,14 @@ const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden pb-4 animate-bounce-in">
             <nav className="flex flex-col space-y-2">
-              {lotteries.map((lottery) => (
-                <Link key={lottery.slug} to={`/${lottery.slug}`}>
+              {menuItems.map((item) => (
+                <Link key={item.path} to={item.path}>
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start hover:bg-muted transition-smooth"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {lottery.name}
+                    {item.name}
                   </Button>
                 </Link>
               ))}

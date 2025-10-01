@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import LotteryPage from "./pages/LotteryPage";
 import ContestPage from "./pages/ContestPage";
 import NotFound from "./pages/NotFound";
+import Sobre from "./pages/Sobre";
+import Termos from "./pages/Termos";
+import Privacidade from "./pages/Privacidade";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +23,9 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="/termos" element={<Termos />} />
+            <Route path="/privacidade" element={<Privacidade />} />
             <Route path="/:lottery" element={<LotteryPage />} />
             <Route path="/:lottery/:contest" element={<ContestPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
