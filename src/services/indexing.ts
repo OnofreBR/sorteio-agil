@@ -1,7 +1,7 @@
 const INDEXNOW_KEY = '9d9bd943c4614e13ac83acf67dd4e940';
 const GOOGLE_INDEXING_KEY = 'fe03a75d34d990c8c7807ec32b4d453f4e9b87c8';
 const GOOGLE_INDEXING_ID = '107787472085621987686';
-const SITE_URL = 'https://numerosmegasena.netlify.app';
+const SITE_URL = typeof window !== 'undefined' ? window.location.origin : '';
 
 interface IndexNowPayload {
   host: string;
@@ -100,7 +100,7 @@ export async function submitBatchToGoogleIndexing(urls: string[]): Promise<numbe
 }
 
 export async function indexNewResult(lottery: string, contest: number): Promise<void> {
-  const url = `${SITE_URL}/${lottery}-concurso-${contest}`;
+  const url = `${SITE_URL}/${lottery}/concurso-${contest}`;
   
   console.log(`🔄 Indexing new result: ${lottery} concurso ${contest}`);
   
@@ -117,7 +117,7 @@ export async function indexNewResult(lottery: string, contest: number): Promise<
  */
 export async function indexMultipleContests(contests: Array<{ lottery: string; contest: number }>): Promise<void> {
   const urls = contests.map(({ lottery, contest }) => 
-    `${SITE_URL}/${lottery}-concurso-${contest}`
+    `${SITE_URL}/${lottery}/concurso-${contest}`
   );
   
   console.log(`🔄 Indexing ${urls.length} URLs...`);

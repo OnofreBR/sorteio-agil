@@ -1,1 +1,10 @@
 project_id = "otxrugwhfikkcrmatltl"
+
+[functions.indexing]
+verify_jwt = false
+
+[functions.sitemap]
+verify_jwt = false
+
+[functions.lottery-webhook]
+verify_jwt = false
