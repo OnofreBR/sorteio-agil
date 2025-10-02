@@ -30,6 +30,7 @@ export default function ContestPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
+    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {

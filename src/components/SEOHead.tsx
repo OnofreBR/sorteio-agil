@@ -17,7 +17,7 @@ export default function SEOHead({
   ogImage,
   jsonLd,
 }: SEOHeadProps) {
-  const defaultOgImage = typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png';
+  const defaultOgImage = '/logo.png';
   const finalOgImage = ogImage || defaultOgImage;
   return (
     <Helmet>
