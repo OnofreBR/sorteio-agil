@@ -84,7 +84,7 @@ export default function ContestPage() {
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
   const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const canonicalUrl = `${window.location.origin}/${rawLottery}/concurso/${contestNumber}`;
+  const canonicalUrl = `${window.location.origin}/${rawLottery}/concurso-${contestNumber}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
