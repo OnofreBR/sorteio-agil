@@ -30,6 +30,7 @@ export default function ContestPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
+    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {
@@ -84,14 +85,15 @@ export default function ContestPage() {
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
   const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const canonicalUrl = `${window.location.origin}/${rawLottery}/concurso-${contestNumber}`;
+  const baseOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const canonicalUrl = `${baseOrigin}/${rawLottery}/concurso-${contestNumber}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: pageTitle,
     description: pageDescription,
-    image: `${window.location.origin}/logo.png`,
+    image: `${baseOrigin || ''}/logo.png`,
     datePublished: result.data,
     dateModified: result.data,
     wordCount: 500,
@@ -103,18 +105,18 @@ export default function ContestPage() {
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
-      url: window.location.origin,
+      url: baseOrigin || '/',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
       logo: {
         '@type': 'ImageObject',
-        url: `${window.location.origin}/logo.png`,
+        url: `${baseOrigin || ''}/logo.png`,
         width: 512,
         height: 512,
       },
-      url: window.location.origin,
+      url: baseOrigin || '/',
     },
     mainEntity: {
       '@type': 'Event',
@@ -145,7 +147,7 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 2,
           name: lotteryInfo.name,
-          item: `${window.location.origin}/${rawLottery}`,
+          item: `${baseOrigin || ''}/${rawLottery}`,
         },
         {
           '@type': 'ListItem',
