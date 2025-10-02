@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import logo from '@/assets/logo.png';
 
 const Footer = () => {
   return (
@@ -9,16 +8,22 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center space-x-3">
-              <img src={logo} alt="Números Mega Sena Logo" className="h-10 w-auto" />
+            <Link href="/" className="flex items-center space-x-3">
+              <span className="text-xl font-bold">Números Mega Sena</span>
             </Link>
-            <p className="text-sm text-muted-foreground">Resultados das principais loterias brasileiras, atualizados em tempo real.</p>
+            <p className="text-sm text-muted-foreground">
+              Resultados das principais loterias brasileiras, atualizados em tempo real.
+            </p>
           </div>
 
           {/* Legal Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Aviso Legal</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">Este é um site independente de resultados de loterias. Não possuímos vínculo com a Caixa Econômica Federal.</p>
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+              Aviso Legal
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Este é um site independente de resultados de loterias. Não possuímos vínculo com a Caixa Econômica Federal.
+            </p>
           </div>
         </div>
 
