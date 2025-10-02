@@ -39,6 +39,16 @@ export default function ContestPage() {
     }
   }, [error]);
 
+  useEffect(() => {
+    console.log('[ContestPage] route', { lottery, rawLottery, contestNumber });
+  }, []);
+
+  useEffect(() => {
+    if (result) {
+      console.log('[ContestPage] data loaded', { concurso: result.concurso, loteria: result.loteria });
+    }
+  }, [result]);
+
   if (!lotteryInfo) {
     console.warn(`⚠️ Lottery not found in map: ${lottery}`);
     navigate('/');
