@@ -1,4 +1,4 @@
-import { hydrateRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -17,8 +17,7 @@ const queryClient = new QueryClient({
 });
 
 if (rootElement) {
-  hydrateRoot(
-    rootElement,
+  const app = (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <BrowserRouter>
@@ -27,4 +26,10 @@ if (rootElement) {
       </HelmetProvider>
     </QueryClientProvider>
   );
+
+  if (rootElement.hasChildNodes()) {
+    hydrateRoot(rootElement, app);
+  } else {
+    createRoot(rootElement).render(app);
+  }
 }
