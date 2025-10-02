@@ -5,11 +5,21 @@ import "./index.css";
 
 const rootElement = document.getElementById("root")!;
 
-// Read server-injected state
+// Read server-injected state (only if it's valid JSON, not a placeholder comment)
 const stateElement = document.getElementById("__RQ_STATE");
-const dehydratedState = stateElement 
-  ? JSON.parse(stateElement.textContent || "{}")
-  : undefined;
+let dehydratedState = undefined;
+
+if (stateElement && stateElement.textContent) {
+  const content = stateElement.textContent.trim();
+  // Only parse if it's not a comment placeholder and not empty
+  if (content && !content.startsWith('<!--') && content !== '{}') {
+    try {
+      dehydratedState = JSON.parse(content);
+    } catch (e) {
+      console.warn('Failed to parse dehydrated state, using undefined:', e);
+    }
+  }
+}
 
 // Create QueryClient with hydrated state
 const queryClient = new QueryClient({
