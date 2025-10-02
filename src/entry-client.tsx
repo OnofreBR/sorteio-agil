@@ -11,8 +11,9 @@ let dehydratedState = undefined;
 
 if (stateElement && stateElement.textContent) {
   const content = stateElement.textContent.trim();
-  // Only parse if it's not a comment placeholder and not empty
-  if (content && !content.startsWith('<!--') && content !== '{}') {
+  // Only parse if content appears to be valid JSON (starts with { or [)
+  const firstChar = content[0];
+  if (firstChar === '{' || firstChar === '[') {
     try {
       dehydratedState = JSON.parse(content);
     } catch (e) {
