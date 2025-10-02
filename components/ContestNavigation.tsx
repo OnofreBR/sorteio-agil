@@ -1,69 +1,84 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { formatCurrency } from '@/services/lotteryApi';
 
 interface ContestNavigationProps {
   lottery: string;
   currentContest: number;
-  nextContest?: { contest: number; prize: number };
-  previousContest?: number;
+  nextContest?: number;
+  nextDate?: string;
+  estimatedPrize?: number;
 }
 
-const ContestNavigation = ({
+export default function ContestNavigation({
   lottery,
   currentContest,
   nextContest,
-  previousContest,
-}: ContestNavigationProps) => {
+  nextDate,
+  estimatedPrize,
+}: ContestNavigationProps) {
   return (
-    <div className="flex justify-between items-center mb-4 p-4 bg-white rounded-lg shadow-md">
-      {/* Previous Contest Button */}
-      {previousContest ? (
-        <Link href={`/${lottery}/concurso/${previousContest}`} passHref>
-          <Button variant="outline">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Anterior
-          </Button>
-        </Link>
-      ) : (
-        <Button variant="outline" disabled>
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Anterior
-        </Button>
+    <div className="space-y-6">
+      {/* Navegação de Concursos */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between gap-4">
+            {currentContest > 1 ? (
+              <Link className="flex-1" href={`/${lottery}/concurso/${currentContest - 1}`}>
+                <Button className="w-full gap-2" variant="outline">
+                  <ChevronLeft className="w-4 h-4" />
+                  Concurso Anterior
+                </Button>
+              </Link>
+            ) : (
+              <Button className="w-full gap-2" disabled variant="outline">
+                <ChevronLeft className="w-4 h-4" />
+                Concurso Anterior
+              </Button>
+            )}
+
+            <Link className="flex-1" href={`/${lottery}/concurso/${currentContest + 1}`}>
+              <Button className="w-full gap-2" variant="outline">
+                Concurso Seguinte
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Próximo Concurso */}
+      {nextContest && nextDate && (
+        <Card className="bg-gradient-card border-primary/30">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-3">
+              <div className="flex items-center justify-center gap-2 text-primary">
+                <TrendingUp className="w-5 h-5" />
+                <p className="font-semibold">Próximo Concurso</p>
+              </div>
+              <p className="text-3xl font-bold text-foreground">
+                {nextContest}
+              </p>
+              <p className="text-muted-foreground">{nextDate}</p>
+              <div className="pt-2">
+                <p className="text-sm text-muted-foreground">Prêmio Estimado</p>
+                <p className="text-2xl font-bold bg-gradient-gold bg-clip-text text-transparent">
+                  {formatCurrency(estimatedPrize)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Next Contest Info */}
-      <div className="text-center">
-        {nextContest ? (
-          <>
-            <p className="text-sm text-gray-600">Próximo Concurso: {nextContest.contest}</p>
-            <p className="font-bold text-green-600 flex items-center justify-center">
-              <TrendingUp className="mr-1 h-5 w-5" />
-              {formatCurrency(nextContest.prize)}
-            </p>
-          </>
-        ) : (
-          <p className="text-sm text-gray-500">Este é o concurso mais recente.</p>
-        )}
-      </div>
-
-      {/* Next Contest Button */}
-      {nextContest ? (
-        <Link href={`/${lottery}/concurso/${nextContest.contest}`} passHref>
-          <Button variant="outline">
-            Próximo
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
-      ) : (
-        <Button variant="outline" disabled>
-          Próximo
-          <ChevronRight className="ml-2 h-4 w-4" />
+      {/* Link para Página da Loteria */}
+      <Link href={`/${lottery}`}>
+        <Button className="w-full" variant="outline">
+          Ver Todos os Resultados da {lottery}
         </Button>
-      )}
+      </Link>
     </div>
   );
-};
-
-export default ContestNavigation;
+}
