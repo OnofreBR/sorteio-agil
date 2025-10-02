@@ -30,7 +30,6 @@ export default function ContestPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
-    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export default function ContestPage() {
     return null;
   }
 
-  if (typeof window === 'undefined' || isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -66,7 +65,7 @@ export default function ContestPage() {
     );
   }
 
-  if (error || (typeof window !== 'undefined' && !result)) {
+  if (error || !result) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -85,15 +84,14 @@ export default function ContestPage() {
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
   const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const baseOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-  const canonicalUrl = `${baseOrigin}/${rawLottery}/concurso-${contestNumber}`;
+  const canonicalUrl = `/${rawLottery}/concurso-${contestNumber}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: pageTitle,
     description: pageDescription,
-    image: `${baseOrigin || ''}/logo.png`,
+    image: '/logo.png',
     datePublished: result.data,
     dateModified: result.data,
     wordCount: 500,
@@ -105,18 +103,18 @@ export default function ContestPage() {
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
-      url: baseOrigin || '/',
+      url: '/',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
       logo: {
         '@type': 'ImageObject',
-        url: `${baseOrigin || ''}/logo.png`,
+        url: '/logo.png',
         width: 512,
         height: 512,
       },
-      url: baseOrigin || '/',
+      url: '/',
     },
     mainEntity: {
       '@type': 'Event',
@@ -141,13 +139,13 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: baseOrigin || '/',
+          item: '/',
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: lotteryInfo.name,
-          item: `${baseOrigin || ''}/${rawLottery}`,
+          item: `/${rawLottery}`,
         },
         {
           '@type': 'ListItem',

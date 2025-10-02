@@ -37,7 +37,7 @@ const Index = () => {
     }));
   }, [results]);
 
-  if (typeof window === 'undefined' || isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -78,7 +78,7 @@ const Index = () => {
   }).filter(lottery => lottery.numbers.length > 0) || [];
   const pageTitle = 'Resultados das Loterias Brasileiras - Mega-Sena, Quina, Lotofácil e Mais';
   const pageDescription = 'Confira os resultados atualizados de todas as loterias brasileiras: Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Federal e mais. Números sorteados, prêmios e ganhadores.';
-  const canonicalUrl = typeof window !== 'undefined' ? window.location.origin + '/' : '/';
+  const canonicalUrl = '/';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

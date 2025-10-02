@@ -17,35 +17,40 @@ const LOTTERIES = [
   'maismilionaria'
 ];
 
-const API_BASE = 'https://servicebus2.caixa.gov.br/portaldeloterias/api';
-const API_TOKEN = 'ZmFiOGNlYzQtY2E2My00YzQ4LWI5MTktODAxOTAxNDljOGVj';
+const API_BASE = 'https://apiloterias.com.br/app/resultado';
+const API_TOKEN = 'JY8FOJADU04L1YQ';
 
-// Mapeia nomes da API para slugs
-const getLotterySlug = (nome) => {
-  const map = {
-    'megasena': 'mega-sena',
-    'lotofacil': 'lotofacil',
-    'quina': 'quina',
-    'lotomania': 'lotomania',
-    'timemania': 'timemania',
-    'duplasena': 'dupla-sena',
-    'diadesorte': 'dia-de-sorte',
-    'supersete': 'super-sete',
-    'maismilionaria': 'mais-milionaria'
+// Transform API response to match app format
+function transformApiResponse(apiData) {
+  // Format date from ISO to DD/MM/YYYY
+  const formatDate = (isoDate) => {
+    if (!isoDate) return '';
+    if (isoDate.includes('/')) return isoDate;
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
-  return map[nome] || nome;
-};
+
+  return {
+    numero: apiData.concurso || apiData.numero_concurso || 0,
+    data: formatDate(apiData.data || apiData.data_concurso || ''),
+    dezenas: apiData.dezenas || [],
+    premiacoes: apiData.premiacoes || apiData.premiacao?.faixas || [],
+  };
+}
 
 // Fetch da API de loterias
 async function fetchLotteryData(lottery, contest = null) {
-  const slug = getLotterySlug(lottery);
   const url = contest 
-    ? `${API_BASE}/${slug}/${contest}?token=${API_TOKEN}`
-    : `${API_BASE}/${slug}?token=${API_TOKEN}`;
+    ? `${API_BASE}?loteria=${lottery}&concurso=${contest}&token=${API_TOKEN}`
+    : `${API_BASE}?loteria=${lottery}&token=${API_TOKEN}`;
   
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Erro ao buscar ${lottery}`);
-  return response.json();
+  const data = await response.json();
+  return transformApiResponse(data);
 }
 
 // Carrega o template HTML
@@ -113,9 +118,9 @@ async function generateStaticPages() {
       console.log(`  Gerando concursos ${startContest} a ${latestContest} para ${lottery}...`);
       
       for (let contest = startContest; contest <= latestContest; contest++) {
-        const url = `/${lottery}/concurso/${contest}`;
+        const url = `/${lottery}/concurso-${contest}`;
         const { html, helmet } = render(url);
-        const contestPath = path.join(distPath, lottery, 'concurso', contest.toString(), 'index.html');
+        const contestPath = path.join(distPath, lottery, `concurso-${contest}`, 'index.html');
         saveHtml(contestPath, injectHtml(template, html, helmet));
       }
       

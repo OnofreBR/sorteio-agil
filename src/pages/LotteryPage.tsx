@@ -25,7 +25,6 @@ export default function LotteryPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
-    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function LotteryPage() {
     return null;
   }
 
-  if (typeof window === 'undefined' || isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -56,7 +55,7 @@ export default function LotteryPage() {
 
   const pageTitle = `${lotteryInfo.name} - Resultados, Números e Prêmios Atualizados`;
   const pageDescription = `Confira todos os resultados da ${lotteryInfo.name}. ${lotteryInfo.description} Sorteios realizados ${lotteryInfo.drawDays.join(', ')}.`;
-  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}/${lottery}` : `/${lottery}`;
+  const canonicalUrl = `/${lottery}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -71,7 +70,7 @@ export default function LotteryPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: typeof window !== 'undefined' ? window.location.origin + '/' : '/',
+          item: '/',
         },
         {
           '@type': 'ListItem',
