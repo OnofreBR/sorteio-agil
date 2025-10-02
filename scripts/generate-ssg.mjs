@@ -14,7 +14,9 @@ const LOTTERIES = [
   'duplasena',
   'diadesorte',
   'supersete',
-  'maismilionaria'
+  'maismilionaria',
+  'federal',
+  'loteca',
 ];
 
 const API_BASE = 'https://apiloterias.com.br/app/resultado';
@@ -113,8 +115,8 @@ async function generateStaticPages() {
       const latestData = await fetchLotteryData(lottery);
       const latestContest = latestData.numero;
       
-      // Gera últimos 20 concursos
-      const startContest = Math.max(1, latestContest - 19);
+      // Gera últimos 30 concursos para cobrir mais navegação
+      const startContest = Math.max(1, latestContest - 29);
       console.log(`  Gerando concursos ${startContest} a ${latestContest} para ${lottery}...`);
       
       for (let contest = startContest; contest <= latestContest; contest++) {

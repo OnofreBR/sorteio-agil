@@ -49,16 +49,31 @@ export default function ContestPage() {
     }
   }, [result]);
 
-  if (!lotteryInfo) {
-    console.warn(`⚠️ Lottery not found in map: ${lottery}`);
-    navigate('/');
-    return null;
-  }
+  // Client-side redirects only to keep SSR markup deterministic
+  useEffect(() => {
+    if (!lotteryInfo) {
+      console.warn(`⚠️ Lottery not found in map: ${lottery}`);
+      navigate('/');
+    } else if (!contestNumber || contestNumber < 1) {
+      console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
+      navigate(`/${lottery}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lotteryInfo, contestNumber, lottery]);
 
-  if (!contestNumber || contestNumber < 1) {
-    console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
-    navigate(`/${lottery}`);
-    return null;
+  if (!lotteryInfo || !contestNumber || contestNumber < 1) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   if (typeof window === 'undefined' || isLoading) {
