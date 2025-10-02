@@ -25,7 +25,6 @@ export default function LotteryPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
-    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {
@@ -39,14 +38,14 @@ export default function LotteryPage() {
     return null;
   }
 
-  if (typeof window === 'undefined' || isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-20 flex items-center justify-center">
           <div className="text-center space-y-4">
             <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-            <p className="text-muted-foreground">Carregando...</p>
+            <p className="text-muted-foreground">Carregando dados...</p>
           </div>
         </div>
         <Footer />
@@ -56,7 +55,7 @@ export default function LotteryPage() {
 
   const pageTitle = `${lotteryInfo.name} - Resultados, Números e Prêmios Atualizados`;
   const pageDescription = `Confira todos os resultados da ${lotteryInfo.name}. ${lotteryInfo.description} Sorteios realizados ${lotteryInfo.drawDays.join(', ')}.`;
-  const canonicalUrl = `/${lottery}`;
+  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}/${lottery}` : `/${lottery}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -71,7 +70,7 @@ export default function LotteryPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: '/',
+          item: typeof window !== 'undefined' ? window.location.origin + '/' : '/',
         },
         {
           '@type': 'ListItem',

@@ -23,8 +23,7 @@ const Index = () => {
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
-    retry: 2,
-    enabled: typeof window !== 'undefined',
+    retry: 2
   });
   useEffect(() => {
     const now = new Date();
@@ -37,22 +36,6 @@ const Index = () => {
       minute: '2-digit'
     }));
   }, [results]);
-
-  if (typeof window === 'undefined' || isLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-            <p className="text-muted-foreground">Carregando...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   const handleRefresh = async () => {
     toast.info('Atualizando resultados...');
     await refetch();
@@ -79,7 +62,7 @@ const Index = () => {
   }).filter(lottery => lottery.numbers.length > 0) || [];
   const pageTitle = 'Resultados das Loterias Brasileiras - Mega-Sena, Quina, Lotofácil e Mais';
   const pageDescription = 'Confira os resultados atualizados de todas as loterias brasileiras: Mega-Sena, Quina, Lotofácil, Lotomania, Dupla Sena, Federal e mais. Números sorteados, prêmios e ganhadores.';
-  const canonicalUrl = '/';
+  const canonicalUrl = typeof window !== 'undefined' ? window.location.origin + '/' : '/';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
+import logo from '@/assets/logo.png';
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-3">
-              <img src="/logo.png" alt="Números Mega Sena Logo" className="h-10 w-auto" />
+              <img src={logo} alt="Números Mega Sena Logo" className="h-10 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground">Resultados das principais loterias brasileiras, atualizados em tempo real.</p>
           </div>

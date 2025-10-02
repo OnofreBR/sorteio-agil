@@ -3,37 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 const SITE_URL = typeof window !== 'undefined' ? window.location.origin : '';
 
 /**
- * Log indexing attempt to database for monitoring
- */
-async function logIndexingAttempt(
-  url: string, 
-  service: 'google' | 'indexnow' | 'batch',
-  status: 'success' | 'error' | 'pending',
-  responseData?: any,
-  errorMessage?: string
-): Promise<void> {
-  try {
-    await supabase.from('indexing_logs').insert({
-      url,
-      service,
-      status,
-      response_data: responseData,
-      error_message: errorMessage,
-    });
-  } catch (error) {
-    console.error('Failed to log indexing attempt:', error);
-  }
-}
-
-/**
  * Submits URLs to the Cloud indexing function (secure server-side indexing)
  */
 export async function submitToIndexing(urls: string[]): Promise<boolean> {
   try {
     console.log(`🔄 Submitting ${urls.length} URLs to Cloud indexing function...`);
-    
-    // Log pending status
-    await Promise.all(urls.map(url => logIndexingAttempt(url, 'batch', 'pending')));
     
     const { data, error } = await supabase.functions.invoke('indexing', {
       body: { urls, type: 'URL_UPDATED' },
@@ -41,23 +15,13 @@ export async function submitToIndexing(urls: string[]): Promise<boolean> {
 
     if (error) {
       console.error('❌ Cloud indexing error:', error);
-      await Promise.all(urls.map(url => 
-        logIndexingAttempt(url, 'batch', 'error', null, error.message)
-      ));
       return false;
     }
 
     console.log('✅ Cloud indexing response:', data);
-    await Promise.all(urls.map(url => 
-      logIndexingAttempt(url, 'batch', 'success', data)
-    ));
     return data?.success || false;
   } catch (error) {
     console.error('❌ Error calling Cloud indexing:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    await Promise.all(urls.map(url => 
-      logIndexingAttempt(url, 'batch', 'error', null, errorMessage)
-    ));
     return false;
   }
 }

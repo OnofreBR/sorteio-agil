@@ -84,7 +84,7 @@ function transformApiResponse(apiData: any): LotteryResult {
     loteria: slug,
     concurso: apiData.concurso || apiData.numero_concurso || 0,
     data: formatDate(apiData.data || apiData.data_concurso || ''),
-    local: apiData.local || apiData.local_sorteio || apiData.local_realizacao || '',
+    local: apiData.local || apiData.local_sorteio || '',
     dezenasOrdemSorteio: apiData.dezenasOrdemSorteio || apiData.dezenas_ordem_sorteio || apiData.dezenas || [],
     dezenas: apiData.dezenas || [],
     trevos: apiData.trevos || apiData.trevosSorteados || undefined,

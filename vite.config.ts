@@ -28,7 +28,4 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-  ssr: {
-    noExternal: ['react-router-dom', 'react-helmet-async', '@tanstack/react-query'],
-  },
 }));

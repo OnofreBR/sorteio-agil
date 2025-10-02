@@ -17,10 +17,10 @@ export default function SEOHead({
   ogImage,
   jsonLd,
 }: SEOHeadProps) {
-  const defaultOgImage = '/logo.png';
+  const defaultOgImage = typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png';
   const finalOgImage = ogImage || defaultOgImage;
   return (
-    <Helmet htmlAttributes={{ lang: 'pt-BR' }}>
+    <Helmet>
       {/* Basic Meta Tags */}
       <title>{title}</title>
       <meta name="description" content={description} />
@@ -29,6 +29,9 @@ export default function SEOHead({
       
       {/* Robots */}
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      
+      {/* Language */}
+      <html lang="pt-BR" />
       
       {/* Mobile Optimization */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />

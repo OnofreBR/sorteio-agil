@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import logo from '@/assets/logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +19,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-smooth">
-            <img src="/logo.png" alt="Números Mega Sena Logo" className="h-[90px] w-[90px]" />
+            <img src={logo} alt="Números Mega Sena Logo" className="h-[90px] w-[90px]" />
           </Link>
 
           {/* Desktop Navigation */}
