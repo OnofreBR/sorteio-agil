@@ -27,8 +27,10 @@ if (rootElement) {
     </QueryClientProvider>
   );
 
+  const hasSSRMarkup = !!rootElement.firstElementChild; // ignore comment nodes like <!--app-html-->
+
   try {
-    if (rootElement.hasChildNodes()) {
+    if (hasSSRMarkup) {
       hydrateRoot(rootElement, app);
     } else {
       createRoot(rootElement).render(app);
