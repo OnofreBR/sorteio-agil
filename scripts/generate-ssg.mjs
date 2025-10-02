@@ -54,6 +54,8 @@ async function generateSSG() {
   if (!fs.existsSync(distPath)) {
     fs.mkdirSync(distPath, { recursive: true });
   }
+  
+  console.log('📡 Server renderer loaded, ready for async data fetching...');
 
   const routes = [];
 
@@ -86,12 +88,17 @@ async function generateSSG() {
 
   for (const route of routes) {
     try {
-      const { html, head } = render(route);
+      // Await render (now async with data prefetching)
+      const { html, head, state } = await render(route);
 
-      // Inject HTML and head into template
+      // Serialize state for client hydration
+      const stateJson = JSON.stringify(state || {});
+
+      // Inject HTML, head, and state into template
       const finalHtml = template
         .replace('<!--app-head-->', head || '')
-        .replace('<div id="root"></div>', `<div id="root">${html}</div>`);
+        .replace('<!--app-html-->', html || '')
+        .replace('<!--app-state-->', stateJson);
 
       // Determine file path
       let filePath;

@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, dehydrate } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -12,17 +12,34 @@ import Sobre from "./pages/Sobre";
 import Termos from "./pages/Termos";
 import Privacidade from "./pages/Privacidade";
 import RedirectOldContest from "./pages/RedirectOldContest";
+import { getResultByContest } from "./services/lotteryApi";
 
-export function render(url: string) {
+export async function render(url: string) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // Disable automatic fetching during SSR
-        enabled: false,
+        staleTime: 1000 * 60 * 5, // 5 minutes
         retry: false,
       },
     },
   });
+
+  // Detect contest pages and prefetch data
+  const contestMatch = url.match(/^\/([^/]+)\/concurso-(\d+)/);
+  if (contestMatch) {
+    const [, lottery, contestStr] = contestMatch;
+    const contest = parseInt(contestStr, 10);
+    
+    try {
+      // Prefetch contest data
+      await queryClient.prefetchQuery({
+        queryKey: ['lottery-result', lottery, contest],
+        queryFn: () => getResultByContest(lottery, contest),
+      });
+    } catch (error) {
+      console.warn(`SSR prefetch failed for ${lottery} ${contest}:`, error);
+    }
+  }
 
   const helmetContext: { helmet?: any } = {};
 
@@ -52,6 +69,9 @@ export function render(url: string) {
   );
 
   const { helmet } = helmetContext;
+  
+  // Serialize React Query state for client hydration
+  const dehydratedState = dehydrate(queryClient);
 
   return {
     html,
@@ -63,5 +83,6 @@ export function render(url: string) {
         ${helmet.script?.toString() || ""}
       `
       : "",
+    state: dehydratedState,
   };
 }
