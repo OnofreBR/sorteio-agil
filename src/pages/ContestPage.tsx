@@ -30,7 +30,23 @@ export default function ContestPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
+    enabled: typeof window !== 'undefined', // Only fetch on client
   });
+
+  // SSR-safe navigation - only on client
+  useEffect(() => {
+    if (!lotteryInfo) {
+      console.warn(`⚠️ Lottery not found in map: ${lottery}`);
+      navigate('/');
+    }
+  }, [lotteryInfo, lottery, navigate]);
+
+  useEffect(() => {
+    if (!contestNumber || contestNumber < 1) {
+      console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
+      navigate(`/${lottery}`);
+    }
+  }, [contestNumber, lottery, navigate]);
 
   useEffect(() => {
     if (error) {
@@ -38,15 +54,12 @@ export default function ContestPage() {
     }
   }, [error]);
 
+  // SSR-safe: render loading state if no lotteryInfo
   if (!lotteryInfo) {
-    console.warn(`⚠️ Lottery not found in map: ${lottery}`);
-    navigate('/');
     return null;
   }
 
   if (!contestNumber || contestNumber < 1) {
-    console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
-    navigate(`/${lottery}`);
     return null;
   }
 
@@ -83,15 +96,19 @@ export default function ContestPage() {
   }
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
-  const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const canonicalUrl = `${window.location.origin}/${rawLottery}/concurso/${contestNumber}`;
+  const pageDescription = result 
+    ? `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`
+    : `Resultado do concurso ${contestNumber} da ${lotteryInfo.name}.`;
+  const canonicalUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/${rawLottery}/concurso-${contestNumber}`
+    : `/${rawLottery}/concurso-${contestNumber}`;
 
-  const jsonLd = {
+  const jsonLd = result ? {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: pageTitle,
     description: pageDescription,
-    image: `${window.location.origin}/logo.png`,
+    image: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
     datePublished: result.data,
     dateModified: result.data,
     wordCount: 500,
@@ -103,18 +120,18 @@ export default function ContestPage() {
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
-      url: window.location.origin,
+      url: typeof window !== 'undefined' ? window.location.origin : '/',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
       logo: {
         '@type': 'ImageObject',
-        url: `${window.location.origin}/logo.png`,
+        url: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
         width: 512,
         height: 512,
       },
-      url: window.location.origin,
+      url: typeof window !== 'undefined' ? window.location.origin : '/',
     },
     mainEntity: {
       '@type': 'Event',
@@ -139,13 +156,13 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: window.location.origin,
+          item: typeof window !== 'undefined' ? window.location.origin : '/',
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: lotteryInfo.name,
-          item: `${window.location.origin}/${rawLottery}`,
+          item: typeof window !== 'undefined' ? `${window.location.origin}/${rawLottery}` : `/${rawLottery}`,
         },
         {
           '@type': 'ListItem',
@@ -155,7 +172,7 @@ export default function ContestPage() {
         },
       ],
     },
-  };
+  } : undefined;
 
   return (
     <div className="min-h-screen bg-background">

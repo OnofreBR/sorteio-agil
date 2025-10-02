@@ -24,6 +24,3 @@ Disallow: /
 # Sitemap location (dinâmico via Edge Function)
 Sitemap: https://otxrugwhfikkcrmatltl.supabase.co/functions/v1/sitemap
 Sitemap: https://otxrugwhfikkcrmatltl.supabase.co/functions/v1/sitemap-news
-
-# IndexNow Key Location  
-IndexNow-Key-Location: https://numerosmegasena.netlify.app/indexnow-9d9bd943c4614e13ac83acf67dd4e940.txt

@@ -25,7 +25,15 @@ export default function LotteryPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
+    enabled: typeof window !== 'undefined', // Only fetch on client
   });
+
+  // SSR-safe navigation - only on client
+  useEffect(() => {
+    if (!lotteryInfo) {
+      navigate('/');
+    }
+  }, [lotteryInfo, navigate]);
 
   useEffect(() => {
     if (error) {
@@ -33,8 +41,8 @@ export default function LotteryPage() {
     }
   }, [error]);
 
+  // SSR-safe: render null if no lotteryInfo
   if (!lotteryInfo) {
-    navigate('/');
     return null;
   }
 
