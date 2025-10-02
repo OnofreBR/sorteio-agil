@@ -30,7 +30,6 @@ export default function ContestPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
-    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {
@@ -39,51 +38,26 @@ export default function ContestPage() {
     }
   }, [error]);
 
-  useEffect(() => {
-    console.log('[ContestPage] route', { lottery, rawLottery, contestNumber });
-  }, []);
-
-  useEffect(() => {
-    if (result) {
-      console.log('[ContestPage] data loaded', { concurso: result.concurso, loteria: result.loteria });
-    }
-  }, [result]);
-
-  // Client-side redirects only to keep SSR markup deterministic
-  useEffect(() => {
-    if (!lotteryInfo) {
-      console.warn(`⚠️ Lottery not found in map: ${lottery}`);
-      navigate('/');
-    } else if (!contestNumber || contestNumber < 1) {
-      console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
-      navigate(`/${lottery}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lotteryInfo, contestNumber, lottery]);
-
-  if (!lotteryInfo || !contestNumber || contestNumber < 1) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-            <p className="text-muted-foreground">Carregando...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+  if (!lotteryInfo) {
+    console.warn(`⚠️ Lottery not found in map: ${lottery}`);
+    navigate('/');
+    return null;
   }
 
-  if (typeof window === 'undefined' || isLoading) {
+  if (!contestNumber || contestNumber < 1) {
+    console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
+    navigate(`/${lottery}`);
+    return null;
+  }
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-20 flex items-center justify-center">
           <div className="text-center space-y-4">
             <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-            <p className="text-muted-foreground">Carregando...</p>
+            <p className="text-muted-foreground">Carregando resultado...</p>
           </div>
         </div>
         <Footer />
@@ -110,37 +84,28 @@ export default function ContestPage() {
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
   const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
-  const canonicalUrl = `/${rawLottery}/concurso-${contestNumber}`;
+  const canonicalUrl = `${window.location.origin}/${rawLottery}/concurso/${contestNumber}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
+    '@type': 'Article',
     headline: pageTitle,
     description: pageDescription,
-    image: '/logo.png',
+    image: `${window.location.origin}/logo.png`,
     datePublished: result.data,
-    dateModified: result.data,
-    wordCount: 500,
-    articleSection: 'Resultados de Loterias',
-    speakable: {
-      '@type': 'SpeakableSpecification',
-      cssSelector: ['h1', '.contest-numbers', '.prize-info'],
-    },
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
-      url: '/',
+      url: window.location.origin,
     },
     publisher: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
       logo: {
         '@type': 'ImageObject',
-        url: '/logo.png',
-        width: 512,
-        height: 512,
+        url: `${window.location.origin}/logo.png`,
       },
-      url: '/',
+      url: window.location.origin,
     },
     mainEntity: {
       '@type': 'Event',
@@ -165,13 +130,13 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: '/',
+          item: window.location.origin,
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: lotteryInfo.name,
-          item: `/${rawLottery}`,
+          item: `${window.location.origin}/${rawLottery}`,
         },
         {
           '@type': 'ListItem',

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface AdSenseAdProps {
   slot?: string;
@@ -14,16 +14,8 @@ const AdSenseAd = ({
   className = ''
 }: AdSenseAdProps) => {
   const adRef = useRef<HTMLModElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Only render ads on client-side to avoid SSR hydration mismatch
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) return;
-    
     try {
       // Check if adsbygoogle is loaded
       if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
@@ -32,12 +24,7 @@ const AdSenseAd = ({
     } catch (error) {
       console.error('AdSense error:', error);
     }
-  }, [isMounted]);
-
-  // Don't render during SSR to avoid hydration mismatch
-  if (!isMounted) {
-    return <div className={`adsense-container ${className}`} style={{ minHeight: '250px' }} />;
-  }
+  }, []);
 
   return (
     <div className={`adsense-container ${className}`}>

@@ -21,9 +21,8 @@ Allow: /
 User-agent: CCBot
 Disallow: /
 
-# Sitemap location (dinâmico via Edge Function)
-Sitemap: https://otxrugwhfikkcrmatltl.supabase.co/functions/v1/sitemap
-Sitemap: https://otxrugwhfikkcrmatltl.supabase.co/functions/v1/sitemap-news
+# Sitemap location
+Sitemap: https://numerosmegasena.netlify.app/sitemap.xml
 
-# IndexNow Key Location (atualizar com domínio de produção)
-# IndexNow-Key-Location: https://seu-dominio.com/indexnow-9d9bd943c4614e13ac83acf67dd4e940.txt
+# IndexNow Key Location
+IndexNow-Key-Location: https://numerosmegasena.netlify.app/indexnow-9d9bd943c4614e13ac83acf67dd4e940.txt

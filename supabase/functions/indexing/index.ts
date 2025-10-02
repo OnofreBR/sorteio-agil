@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,37 +8,9 @@ const corsHeaders = {
 const GOOGLE_API_KEY = Deno.env.get('GOOGLE_INDEXING_API_KEY');
 const INDEXNOW_KEY = Deno.env.get('INDEXNOW_KEY');
 
-// Initialize Supabase client for logging
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
 interface IndexingRequest {
   urls: string[];
   type?: 'URL_UPDATED' | 'URL_DELETED';
-}
-
-/**
- * Log indexing attempt to database
- */
-async function logIndexing(
-  url: string,
-  service: 'google' | 'indexnow',
-  status: 'success' | 'error',
-  responseData?: any,
-  errorMessage?: string
-) {
-  try {
-    await supabase.from('indexing_logs').insert({
-      url,
-      service,
-      status,
-      response_data: responseData,
-      error_message: errorMessage,
-    });
-  } catch (error) {
-    console.error('Failed to log indexing:', error);
-  }
 }
 
 async function submitToGoogleIndexing(url: string, type: string = 'URL_UPDATED'): Promise<boolean> {
@@ -55,21 +26,16 @@ async function submitToGoogleIndexing(url: string, type: string = 'URL_UPDATED')
       body: JSON.stringify({ url, type }),
     });
 
-    const responseData = await response.json().catch(() => ({}));
-
     if (response.ok) {
       console.log(`✅ Google Indexing: ${url}`);
-      await logIndexing(url, 'google', 'success', responseData);
       return true;
     } else {
-      console.error(`❌ Google Indexing error for ${url}:`, responseData);
-      await logIndexing(url, 'google', 'error', responseData, responseData.error?.message);
+      const errorData = await response.json().catch(() => ({}));
+      console.error(`❌ Google Indexing error for ${url}:`, errorData);
       return false;
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`❌ Google Indexing exception for ${url}:`, errorMessage);
-    await logIndexing(url, 'google', 'error', null, errorMessage);
+    console.error(`❌ Google Indexing exception for ${url}:`, error);
     return false;
   }
 }
@@ -92,20 +58,15 @@ async function submitToIndexNow(urls: string[]): Promise<boolean> {
       body: JSON.stringify(payload),
     });
 
-    if (response.ok || response.status === 202) {
+    if (response.ok) {
       console.log(`✅ IndexNow: ${urls.length} URLs submitted`);
-      await Promise.all(urls.map(url => logIndexing(url, 'indexnow', 'success')));
       return true;
     } else {
-      const errorText = await response.text();
-      console.error(`❌ IndexNow error:`, errorText);
-      await Promise.all(urls.map(url => logIndexing(url, 'indexnow', 'error', null, errorText)));
+      console.error(`❌ IndexNow error:`, await response.text());
       return false;
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`❌ IndexNow exception:`, errorMessage);
-    await Promise.all(urls.map(url => logIndexing(url, 'indexnow', 'error', null, errorMessage)));
+    console.error(`❌ IndexNow exception:`, error);
     return false;
   }
 }
