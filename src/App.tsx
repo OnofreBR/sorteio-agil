@@ -21,7 +21,8 @@ const App = () => (
       <Route path="/termos" element={<Termos />} />
       <Route path="/privacidade" element={<Privacidade />} />
       {/* Formato de URL: /maismilionaria/concurso-289 */}
-      <Route path="/:lottery/concurso-:contest" element={<ContestPage />} />
+      <Route path="/:lottery/concurso-:contest/*" element={<ContestPage />} />
+      <Route path="/:lottery/concurso/:contest" element={<ContestPage />} />
       {/* Página de índice por loteria */}
       <Route path="/:lottery" element={<LotteryPage />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
