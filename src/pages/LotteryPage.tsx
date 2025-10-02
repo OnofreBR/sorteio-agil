@@ -39,7 +39,7 @@ export default function LotteryPage() {
     return null;
   }
 
-  if (isLoading) {
+  if (typeof window === 'undefined' || isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
