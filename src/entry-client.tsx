@@ -27,9 +27,15 @@ if (rootElement) {
     </QueryClientProvider>
   );
 
-  if (rootElement.hasChildNodes()) {
-    hydrateRoot(rootElement, app);
-  } else {
+  try {
+    if (rootElement.hasChildNodes()) {
+      hydrateRoot(rootElement, app);
+    } else {
+      createRoot(rootElement).render(app);
+    }
+  } catch (e) {
+    console.warn('Hydration failed, falling back to client render:', e);
+    rootElement.innerHTML = '';
     createRoot(rootElement).render(app);
   }
 }
