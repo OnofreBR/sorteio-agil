@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Sobre from "./pages/Sobre";
 import Termos from "./pages/Termos";
 import Privacidade from "./pages/Privacidade";
+import RedirectOldContest from "./pages/RedirectOldContest";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,9 @@ const App = () => (
             
             {/* Formato de URL: /maismilionaria/concurso-289 */}
             <Route path="/:lottery/concurso-:contest" element={<ContestPage />} />
+            
+            {/* Redirect old format to new format */}
+            <Route path="/:lottery/concurso/:contest" element={<RedirectOldContest />} />
             
             {/* Página de índice por loteria */}
             <Route path="/:lottery" element={<LotteryPage />} />

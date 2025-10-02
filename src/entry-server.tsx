@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Sobre from "./pages/Sobre";
 import Termos from "./pages/Termos";
 import Privacidade from "./pages/Privacidade";
+import RedirectOldContest from "./pages/RedirectOldContest";
 
 export function render(url: string) {
   const queryClient = new QueryClient({
@@ -32,6 +33,7 @@ export function render(url: string) {
       <Route path="/termos" element={<Termos />} />
       <Route path="/privacidade" element={<Privacidade />} />
       <Route path="/:lottery/concurso-:contest" element={<ContestPage />} />
+      <Route path="/:lottery/concurso/:contest" element={<RedirectOldContest />} />
       <Route path="/:lottery" element={<LotteryPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
