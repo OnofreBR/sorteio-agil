@@ -65,8 +65,48 @@ function generateSitemapXml(urls: SitemapUrl[]): string {
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
 ${urlEntries}
+</urlset>`;
+}
+
+function generateNewsSitemap(siteUrl: string, results: any[]): string {
+  const today = new Date();
+  const twoDaysAgo = new Date(today.getTime() - 48 * 60 * 60 * 1000);
+  
+  const newsEntries = results
+    .filter(result => {
+      const resultDate = new Date(result.data || result.data_concurso);
+      return resultDate >= twoDaysAgo;
+    })
+    .map(result => {
+      const lottery = Object.keys(LOTTERY_MAP).find(
+        (key) => LOTTERY_MAP[key].id === result.tipo
+      );
+      if (!lottery || !result.concurso) return '';
+      
+      const lotteryName = LOTTERY_MAP[lottery].name;
+      const publicationDate = new Date(result.data || result.data_concurso).toISOString();
+      
+      return `  <url>
+    <loc>${siteUrl}/${lottery}/concurso-${result.concurso}</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Números Mega Sena</news:name>
+        <news:language>pt</news:language>
+      </news:publication>
+      <news:publication_date>${publicationDate}</news:publication_date>
+      <news:title>${lotteryName} Concurso ${result.concurso} - Resultado</news:title>
+      <news:keywords>loteria, ${lotteryName}, resultado, concurso ${result.concurso}</news:keywords>
+    </news:news>
+  </url>`;
+    })
+    .filter(entry => entry !== '')
+    .join('\n');
+  
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+${newsEntries}
 </urlset>`;
 }
 
@@ -171,7 +211,24 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const siteUrl = `${url.protocol}//${url.host}`;
+    const pathname = url.pathname;
     
+    // Check if requesting news sitemap
+    if (pathname.includes('news')) {
+      console.log('🔄 Generating Google News sitemap...');
+      const results = await fetchLatestResults();
+      const newsSitemap = generateNewsSitemap(siteUrl, results);
+      
+      return new Response(newsSitemap, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=1800', // 30 minutes for news
+        },
+      });
+    }
+    
+    // Regular sitemap
     const sitemap = await generateSitemap(siteUrl);
 
     return new Response(sitemap, {

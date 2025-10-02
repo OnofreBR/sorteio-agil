@@ -1,5 +1,6 @@
 import { LotteryResult } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
+import { indexNewResult } from './indexing';
 
 const API_URL = 'https://apiloterias.com.br/app';
 const API_TOKEN = 'JY8FOJADU04L1YQ';
@@ -162,7 +163,16 @@ export async function getResultByContest(
     throw new LotteryApiError('Loteria não encontrada');
   }
 
-  return await fetchApi<LotteryResult>(`/resultado?loteria=${lottery}&concurso=${contest}`);
+  const result = await fetchApi<LotteryResult>(`/resultado?loteria=${lottery}&concurso=${contest}`);
+  
+  // Trigger indexing for new results (fire and forget)
+  if (result && result.concurso) {
+    indexNewResult(lottery, result.concurso).catch(err => {
+      console.warn('⚠️ Indexing failed (non-critical):', err);
+    });
+  }
+  
+  return result;
 }
 
 export async function getAllLatestResults(): Promise<LotteryResult[]> {

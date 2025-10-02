@@ -19,11 +19,11 @@ const Termos = () => {
         title="Termos de Uso - Números Mega Sena | Condições de Uso do Portal"
         description="Termos de Uso do portal Números Mega Sena. Leia nossas condições de uso e políticas do site."
         keywords="termos de uso, condições, política, números mega sena"
-        canonicalUrl="https://numerosmegasena.netlify.app/termos"
+        canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/termos` : '/termos'}
         jsonLd={jsonLd}
       />
       <Helmet>
-        <link rel="canonical" href="https://numerosmegasena.netlify.app/termos" />
+        <link rel="canonical" href={typeof window !== 'undefined' ? `${window.location.origin}/termos` : '/termos'} />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">

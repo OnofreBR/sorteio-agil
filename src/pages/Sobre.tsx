@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
-import { ChevronRight, Shield, Clock, Users, CheckCircle } from 'lucide-react';
+import Breadcrumb from '@/components/Breadcrumb';
+import FAQSection from '@/components/FAQSection';
+import { Shield, Clock, Users, CheckCircle } from 'lucide-react';
 
 const Sobre = () => {
   const jsonLd = {
@@ -15,7 +16,7 @@ const Sobre = () => {
       '@type': 'Organization',
       name: 'Números Mega Sena',
       description: 'Portal de resultados das loterias brasileiras',
-      url: 'https://numerosmegasena.netlify.app',
+      url: typeof window !== 'undefined' ? window.location.origin : '',
       foundingDate: '2020',
       areaServed: 'BR',
     },
@@ -27,25 +28,21 @@ const Sobre = () => {
         title="Sobre - Números Mega Sena | Portal de Confiança para Resultados de Loterias"
         description="Conheça o Números das Loterias, o portal de confiança para resultados oficiais das loterias brasileiras com mais de 5 anos de experiência."
         keywords="sobre números mega sena, portal loterias, resultados oficiais, experiência, confiança"
-        canonicalUrl="https://numerosmegasena.netlify.app/sobre"
+        canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/sobre` : '/sobre'}
         jsonLd={jsonLd}
       />
       <Helmet>
-        <link rel="canonical" href="https://numerosmegasena.netlify.app/sobre" />
+        <link rel="canonical" href={typeof window !== 'undefined' ? `${window.location.origin}/sobre` : '/sobre'} />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
         <main className="flex-1">
-          {/* Breadcrumb */}
-          <nav className="container mx-auto px-4 py-4" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <li><Link to="/" className="hover:text-foreground transition-colors">Início</Link></li>
-              <ChevronRight className="w-4 h-4" />
-              <li className="text-foreground font-medium">Sobre</li>
-            </ol>
-          </nav>
+          <Breadcrumb items={[
+            { name: 'Início', path: '/' },
+            { name: 'Sobre', path: '/sobre' },
+          ]} />
 
           {/* Hero Section */}
           <section className="bg-gradient-hero py-16 text-primary-foreground">
@@ -178,6 +175,11 @@ const Sobre = () => {
                   entretenimento, e não como fonte de renda ou solução para problemas financeiros. Aposte apenas 
                   o que você pode perder e sempre com moderação.
                 </p>
+              </div>
+
+              {/* FAQ Section */}
+              <div className="mt-12">
+                <FAQSection />
               </div>
             </div>
           </section>

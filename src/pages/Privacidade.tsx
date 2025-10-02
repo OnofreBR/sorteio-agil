@@ -19,11 +19,11 @@ const Privacidade = () => {
         title="Política de Privacidade - Números Mega Sena | Proteção de Dados"
         description="Política de Privacidade do portal Números Mega Sena. Saiba como coletamos, usamos e protegemos suas informações."
         keywords="política de privacidade, proteção de dados, privacidade, números mega sena"
-        canonicalUrl="https://numerosmegasena.netlify.app/privacidade"
+        canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/privacidade` : '/privacidade'}
         jsonLd={jsonLd}
       />
       <Helmet>
-        <link rel="canonical" href="https://numerosmegasena.netlify.app/privacidade" />
+        <link rel="canonical" href={typeof window !== 'undefined' ? `${window.location.origin}/privacidade` : '/privacidade'} />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">

@@ -88,11 +88,18 @@ export default function ContestPage() {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'NewsArticle',
     headline: pageTitle,
     description: pageDescription,
     image: `${window.location.origin}/logo.png`,
     datePublished: result.data,
+    dateModified: result.data,
+    wordCount: 500,
+    articleSection: 'Resultados de Loterias',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.contest-numbers', '.prize-info'],
+    },
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
@@ -104,6 +111,8 @@ export default function ContestPage() {
       logo: {
         '@type': 'ImageObject',
         url: `${window.location.origin}/logo.png`,
+        width: 512,
+        height: 512,
       },
       url: window.location.origin,
     },
