@@ -1,112 +1,48 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { create, getNumericDate } from "https://deno.land/x/djwt@v2.8/mod.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const GOOGLE_API_KEY = Deno.env.get('GOOGLE_INDEXING_API_KEY');
 const INDEXNOW_KEY = Deno.env.get('INDEXNOW_KEY');
+
+// Initialize Supabase client for logging
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 interface IndexingRequest {
   urls: string[];
   type?: 'URL_UPDATED' | 'URL_DELETED';
 }
 
-interface GoogleCredentials {
-  client_email: string;
-  private_key: string;
-}
-
-// Load Google Service Account credentials
-async function loadGoogleCredentials(): Promise<GoogleCredentials | null> {
+/**
+ * Log indexing attempt to database
+ */
+async function logIndexing(
+  url: string,
+  service: 'google' | 'indexnow',
+  status: 'success' | 'error',
+  responseData?: any,
+  errorMessage?: string
+) {
   try {
-    const credentialsPath = new URL('./google-credentials.json', import.meta.url).pathname;
-    const credentialsText = await Deno.readTextFile(credentialsPath);
-    const credentials = JSON.parse(credentialsText);
-    return {
-      client_email: credentials.client_email,
-      private_key: credentials.private_key,
-    };
-  } catch (error) {
-    console.error('❌ Failed to load Google credentials:', error);
-    return null;
-  }
-}
-
-// Generate JWT for Google API authentication
-async function generateGoogleJWT(credentials: GoogleCredentials): Promise<string> {
-  const now = Math.floor(Date.now() / 1000);
-  
-  const payload = {
-    iss: credentials.client_email,
-    scope: 'https://www.googleapis.com/auth/indexing',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: getNumericDate(3600), // 1 hour
-    iat: now,
-  };
-
-  // Import private key
-  const privateKeyPem = credentials.private_key;
-  const pemHeader = "-----BEGIN PRIVATE KEY-----";
-  const pemFooter = "-----END PRIVATE KEY-----";
-  const pemContents = privateKeyPem.substring(
-    pemHeader.length,
-    privateKeyPem.length - pemFooter.length - 1
-  ).replace(/\s/g, '');
-  
-  const binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
-  
-  const key = await crypto.subtle.importKey(
-    'pkcs8',
-    binaryDer,
-    {
-      name: 'RSASSA-PKCS1-v1_5',
-      hash: 'SHA-256',
-    },
-    false,
-    ['sign']
-  );
-
-  const jwt = await create({ alg: 'RS256', typ: 'JWT' }, payload, key);
-  return jwt;
-}
-
-// Get OAuth2 access token from Google
-async function getGoogleAccessToken(credentials: GoogleCredentials): Promise<string | null> {
-  try {
-    const jwt = await generateGoogleJWT(credentials);
-    
-    const response = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        assertion: jwt,
-      }).toString(),
+    await supabase.from('indexing_logs').insert({
+      url,
+      service,
+      status,
+      response_data: responseData,
+      error_message: errorMessage,
     });
-
-    if (!response.ok) {
-      const error = await response.text();
-      console.error('❌ Failed to get access token:', error);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.access_token;
   } catch (error) {
-    console.error('❌ Error getting access token:', error);
-    return null;
+    console.error('Failed to log indexing:', error);
   }
 }
 
-async function submitToGoogleIndexing(
-  url: string, 
-  accessToken: string, 
-  type: string = 'URL_UPDATED'
-): Promise<boolean> {
+async function submitToGoogleIndexing(url: string, type: string = 'URL_UPDATED'): Promise<boolean> {
   try {
     console.log(`🔄 Submitting to Google Indexing: ${url}`);
     
@@ -114,21 +50,26 @@ async function submitToGoogleIndexing(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${GOOGLE_API_KEY}`,
       },
       body: JSON.stringify({ url, type }),
     });
 
+    const responseData = await response.json().catch(() => ({}));
+
     if (response.ok) {
       console.log(`✅ Google Indexing: ${url}`);
+      await logIndexing(url, 'google', 'success', responseData);
       return true;
     } else {
-      const errorData = await response.json().catch(() => ({}));
-      console.error(`❌ Google Indexing error for ${url}:`, errorData);
+      console.error(`❌ Google Indexing error for ${url}:`, responseData);
+      await logIndexing(url, 'google', 'error', responseData, responseData.error?.message);
       return false;
     }
   } catch (error) {
-    console.error(`❌ Google Indexing exception for ${url}:`, error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`❌ Google Indexing exception for ${url}:`, errorMessage);
+    await logIndexing(url, 'google', 'error', null, errorMessage);
     return false;
   }
 }
@@ -153,13 +94,18 @@ async function submitToIndexNow(urls: string[]): Promise<boolean> {
 
     if (response.ok || response.status === 202) {
       console.log(`✅ IndexNow: ${urls.length} URLs submitted`);
+      await Promise.all(urls.map(url => logIndexing(url, 'indexnow', 'success')));
       return true;
     } else {
-      console.error(`❌ IndexNow error:`, await response.text());
+      const errorText = await response.text();
+      console.error(`❌ IndexNow error:`, errorText);
+      await Promise.all(urls.map(url => logIndexing(url, 'indexnow', 'error', null, errorText)));
       return false;
     }
   } catch (error) {
-    console.error(`❌ IndexNow exception:`, error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`❌ IndexNow exception:`, errorMessage);
+    await Promise.all(urls.map(url => logIndexing(url, 'indexnow', 'error', null, errorMessage)));
     return false;
   }
 }
@@ -181,27 +127,13 @@ serve(async (req) => {
 
     console.log(`📨 Received indexing request for ${urls.length} URLs`);
 
-    // Load Google credentials and get access token
-    const credentials = await loadGoogleCredentials();
-    let googleSuccessCount = 0;
-    
-    if (credentials) {
-      const accessToken = await getGoogleAccessToken(credentials);
-      
-      if (accessToken) {
-        const googleResults = await Promise.all(
-          urls.map(url => submitToGoogleIndexing(url, accessToken, type))
-        );
-        googleSuccessCount = googleResults.filter(r => r).length;
-      } else {
-        console.error('❌ Failed to obtain Google access token');
-      }
-    } else {
-      console.error('❌ Google credentials not available');
-    }
+    // Submit to both services in parallel
+    const [indexNowResult, googleResults] = await Promise.all([
+      submitToIndexNow(urls),
+      Promise.all(urls.map(url => submitToGoogleIndexing(url, type))),
+    ]);
 
-    // Submit to IndexNow
-    const indexNowResult = await submitToIndexNow(urls);
+    const googleSuccessCount = googleResults.filter(r => r).length;
 
     const result = {
       success: true,

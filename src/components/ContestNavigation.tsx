@@ -26,7 +26,7 @@ export default function ContestNavigation({
         <CardContent className="pt-6">
           <div className="flex items-center justify-between gap-4">
             {currentContest > 1 ? (
-              <Link to={`/${lottery}/concurso-${currentContest - 1}`} className="flex-1">
+              <Link to={`/${lottery}/concurso-${currentContest - 1}`} className="flex-1"> 
                 <Button variant="outline" className="w-full gap-2">
                   <ChevronLeft className="w-4 h-4" />
                   Concurso Anterior

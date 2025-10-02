@@ -30,23 +30,8 @@ export default function ContestPage() {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
     retry: 2,
-    enabled: typeof window !== 'undefined', // Only fetch on client
+    enabled: typeof window !== 'undefined',
   });
-
-  // SSR-safe navigation - only on client
-  useEffect(() => {
-    if (!lotteryInfo) {
-      console.warn(`⚠️ Lottery not found in map: ${lottery}`);
-      navigate('/');
-    }
-  }, [lotteryInfo, lottery, navigate]);
-
-  useEffect(() => {
-    if (!contestNumber || contestNumber < 1) {
-      console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
-      navigate(`/${lottery}`);
-    }
-  }, [contestNumber, lottery, navigate]);
 
   useEffect(() => {
     if (error) {
@@ -54,23 +39,51 @@ export default function ContestPage() {
     }
   }, [error]);
 
-  // SSR-safe: render loading state if no lotteryInfo
-  if (!lotteryInfo) {
-    return null;
-  }
+  useEffect(() => {
+    console.log('[ContestPage] route', { lottery, rawLottery, contestNumber });
+  }, []);
 
-  if (!contestNumber || contestNumber < 1) {
-    return null;
-  }
+  useEffect(() => {
+    if (result) {
+      console.log('[ContestPage] data loaded', { concurso: result.concurso, loteria: result.loteria });
+    }
+  }, [result]);
 
-  if (isLoading) {
+  // Client-side redirects only to keep SSR markup deterministic
+  useEffect(() => {
+    if (!lotteryInfo) {
+      console.warn(`⚠️ Lottery not found in map: ${lottery}`);
+      navigate('/');
+    } else if (!contestNumber || contestNumber < 1) {
+      console.warn(`⚠️ Invalid contest number: ${contestNumber}, redirecting to /${lottery}`);
+      navigate(`/${lottery}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lotteryInfo, contestNumber, lottery]);
+
+  if (!lotteryInfo || !contestNumber || contestNumber < 1) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-20 flex items-center justify-center">
           <div className="text-center space-y-4">
             <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-            <p className="text-muted-foreground">Carregando resultado...</p>
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (typeof window === 'undefined' || isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+            <p className="text-muted-foreground">Carregando...</p>
           </div>
         </div>
         <Footer />
@@ -96,19 +109,15 @@ export default function ContestPage() {
   }
 
   const pageTitle = `${lotteryInfo.name} Concurso ${contestNumber} - Resultado e Ganhadores`;
-  const pageDescription = result 
-    ? `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`
-    : `Resultado do concurso ${contestNumber} da ${lotteryInfo.name}.`;
-  const canonicalUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}/${rawLottery}/concurso-${contestNumber}`
-    : `/${rawLottery}/concurso-${contestNumber}`;
+  const pageDescription = `Resultado completo do concurso ${contestNumber} da ${lotteryInfo.name}. Números sorteados: ${result.dezenas.join(', ')}. ${result.acumulou ? 'Acumulou!' : `${result.premiacoes?.[0]?.ganhadores || 0} ganhadores`}. Prêmio: ${formatCurrency(result.premiacoes?.[0]?.valorPremio || 0)}.`;
+  const canonicalUrl = `/${rawLottery}/concurso-${contestNumber}`;
 
-  const jsonLd = result ? {
+  const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: pageTitle,
     description: pageDescription,
-    image: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
+    image: '/logo.png',
     datePublished: result.data,
     dateModified: result.data,
     wordCount: 500,
@@ -120,18 +129,18 @@ export default function ContestPage() {
     author: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
-      url: typeof window !== 'undefined' ? window.location.origin : '/',
+      url: '/',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Números Mega Sena',
       logo: {
         '@type': 'ImageObject',
-        url: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
+        url: '/logo.png',
         width: 512,
         height: 512,
       },
-      url: typeof window !== 'undefined' ? window.location.origin : '/',
+      url: '/',
     },
     mainEntity: {
       '@type': 'Event',
@@ -156,13 +165,13 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: typeof window !== 'undefined' ? window.location.origin : '/',
+          item: '/',
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: lotteryInfo.name,
-          item: typeof window !== 'undefined' ? `${window.location.origin}/${rawLottery}` : `/${rawLottery}`,
+          item: `/${rawLottery}`,
         },
         {
           '@type': 'ListItem',
@@ -172,7 +181,7 @@ export default function ContestPage() {
         },
       ],
     },
-  } : undefined;
+  };
 
   return (
     <div className="min-h-screen bg-background">
