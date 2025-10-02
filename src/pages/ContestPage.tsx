@@ -51,7 +51,7 @@ export default function ContestPage() {
     return null;
   }
 
-  if (isLoading) {
+  if (typeof window === 'undefined' || isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -66,7 +66,7 @@ export default function ContestPage() {
     );
   }
 
-  if (error || !result) {
+  if (error || (typeof window !== 'undefined' && !result)) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -141,7 +141,7 @@ export default function ContestPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Início',
-          item: window.location.origin,
+          item: baseOrigin || '/',
         },
         {
           '@type': 'ListItem',
