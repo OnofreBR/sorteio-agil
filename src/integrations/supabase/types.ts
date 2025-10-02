@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      indexing_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: string
+          response_data: Json | null
+          service: string
+          status: string
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          response_data?: Json | null
+          service: string
+          status: string
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          response_data?: Json | null
+          service?: string
+          status?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
