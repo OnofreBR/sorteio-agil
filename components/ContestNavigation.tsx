@@ -1,8 +1,8 @@
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { formatCurrency } from '@/services/lotteryApi';
+import Link from 'next/link';
 
 interface ContestNavigationProps {
   lottery: string;
@@ -26,21 +26,21 @@ export default function ContestNavigation({
         <CardContent className="pt-6">
           <div className="flex items-center justify-between gap-4">
             {currentContest > 1 ? (
-              <Link className="flex-1" href={`/${lottery}/concurso/${currentContest - 1}`}>
-                <Button className="w-full gap-2" variant="outline">
+              <Link href={`/${lottery}/concurso/${currentContest - 1}`} className="flex-1">
+                <Button variant="outline" className="w-full gap-2">
                   <ChevronLeft className="w-4 h-4" />
                   Concurso Anterior
                 </Button>
               </Link>
             ) : (
-              <Button className="w-full gap-2" disabled variant="outline">
+              <Button variant="outline" className="w-full gap-2" disabled>
                 <ChevronLeft className="w-4 h-4" />
                 Concurso Anterior
               </Button>
             )}
-
-            <Link className="flex-1" href={`/${lottery}/concurso/${currentContest + 1}`}>
-              <Button className="w-full gap-2" variant="outline">
+            
+            <Link href={`/${lottery}/concurso/${currentContest + 1}`} className="flex-1">
+              <Button variant="outline" className="w-full gap-2">
                 Concurso Seguinte
                 <ChevronRight className="w-4 h-4" />
               </Button>
@@ -74,8 +74,8 @@ export default function ContestNavigation({
       )}
 
       {/* Link para Página da Loteria */}
-      <Link href={`/${lottery}`}>
-        <Button className="w-full" variant="outline">
+  <Link href={`/${lottery}`}>
+        <Button variant="outline" className="w-full">
           Ver Todos os Resultados da {lottery}
         </Button>
       </Link>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -158,7 +158,7 @@ const LotteryCard = ({ lottery }: LotteryCardProps) => {
               </p>
               <p className="text-lg font-bold text-primary">{lottery.estimatedPrize}</p>
             </div>
-            <Link to={`/${lottery.slug}/concurso/${lottery.contest || lottery.nextContest}`}>
+            <Link href={`/${lottery.slug}/concurso/${lottery.contest || lottery.nextContest}`}>
               <Button 
                 size="sm" 
                 variant="hero"

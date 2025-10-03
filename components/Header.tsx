@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo.png';
@@ -18,14 +18,14 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-smooth">
+          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-smooth">
             <img src={logo} alt="Números Mega Sena Logo" className="h-[90px] w-[90px]" />
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
-              <Link key={item.path} to={item.path}>
+              <Link key={item.path} href={item.path}>
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -53,7 +53,7 @@ const Header = () => {
           <div className="lg:hidden pb-4 animate-bounce-in">
             <nav className="flex flex-col space-y-2">
               {menuItems.map((item) => (
-                <Link key={item.path} to={item.path}>
+                <Link key={item.path} href={item.path}>
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start hover:bg-muted transition-smooth"
