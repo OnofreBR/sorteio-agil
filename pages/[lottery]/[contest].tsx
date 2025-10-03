@@ -45,7 +45,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
   if (!contest || !lottery) {
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <p>Carregando...</p>
+            Carregando...
         </div>
     );
   }
@@ -56,7 +56,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
       <SEOHead
         title={`Resultado ${lottery.display_name} ${contest.contest_number} - Veja os Números!`}
         description={`Resultado do concurso ${contest.contest_number} da ${lottery.display_name} de ${formatDate(new Date(contest.draw_date))}. ✅ Clique para ver os números sorteados, a premiação e os ganhadores.`}
-        canonicalUrl={`https://numerosmegasena.com.br/${lottery.name}/concurso/${contest.contest_number}`}
+        canonical={`https://numerosmegasena.com.br/${lottery.name}/concurso/${contest.contest_number}`}
         lotteryName={lottery.display_name}
         contestNumber={contest.contest_number}
         drawDate={new Date(contest.draw_date).toISOString()}
@@ -72,12 +72,12 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
           {/* Header da Página */}
           <div className="flex items-center justify-between">
             <Link href={`/${lottery.name}`}>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button className="flex items-center gap-2" variant="outline">
                 <ArrowLeft className="h-4 w-4" />
                 Voltar para {lottery.display_name}
               </Button>
             </Link>
-            <Badge variant="secondary" className="text-lg px-4 py-2">
+            <Badge className="text-lg px-4 py-2" variant="secondary">
               {lottery.display_name}
             </Badge>
           </div>
@@ -100,7 +100,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
                 <div className="text-right">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Calendar className="h-4 w-4" />
-                    <span>{formatDate(new Date(contest.draw_date))}</span>
+                    {formatDate(new Date(contest.draw_date))}
                   </div>
                 </div>
               </div>
