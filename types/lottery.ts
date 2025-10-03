@@ -34,6 +34,24 @@ export interface LotteryInfo {
   numbersDrawn: number;
 }
 
+// ADIÇÃO DOS TIPOS QUE FALTAVAM
+export interface Contest {
+  id: number;
+  lottery_id: number;
+  contest_number: number;
+  draw_date: string;
+  drawn_numbers: number[];
+  total_collected: number;
+  next_contest_prize: number | null;
+}
+
+export interface Lottery {
+  id: number;
+  name: string;
+  display_name: string;
+}
+// FIM DA ADIÇÃO
+
 export const LOTTERY_MAP: Record<string, LotteryInfo> = {
   megasena: {
     name: 'Mega-Sena',
