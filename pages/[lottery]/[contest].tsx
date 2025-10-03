@@ -57,14 +57,6 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
         title={`Resultado ${lottery.display_name} ${contest.contest_number} - Veja os Números!`}
         description={`Resultado do concurso ${contest.contest_number} da ${lottery.display_name} de ${formatDate(new Date(contest.draw_date))}. ✅ Clique para ver os números sorteados, a premiação e os ganhadores.`}
         canonical={`https://numerosmegasena.com.br/${lottery.name}/concurso/${contest.contest_number}`}
-        lotteryName={lottery.display_name}
-        contestNumber={contest.contest_number}
-        drawDate={new Date(contest.draw_date).toISOString()}
-        breadcrumbs={[
-          { name: 'Início', url: '/' },
-          { name: lottery.display_name, url: `/${lottery.name}` },
-          { name: `Concurso ${contest.contest_number}`, url: `/${lottery.name}/concurso/${contest.contest_number}` }
-        ]}
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
