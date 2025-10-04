@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
-import { formatCurrency } from '@/services/lotteryApi';
+import { formatCurrency } from '@/utils/formatters';
 import Link from 'next/link';
 
 interface ContestNavigationProps {
@@ -74,7 +74,7 @@ export default function ContestNavigation({
       )}
 
       {/* Link para Página da Loteria */}
-  <Link href={`/${lottery}`}>
+      <Link href={`/${lottery}`}>
         <Button variant="outline" className="w-full">
           Ver Todos os Resultados da {lottery}
         </Button>
