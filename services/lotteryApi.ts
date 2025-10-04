@@ -1,8 +1,9 @@
 import { LotteryResult } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
-const API_URL = 'https://apiloterias.com.br/app';
-const API_TOKEN = 'JY8FOJADU04L1YQ';
+// Use environment variables for API configuration
+const RESULTS_API_URL = process.env.NEXT_PUBLIC_RESULTS_API_URL || process.env.RESULTS_API_URL || 'https://apiloterias.com.br/app';
+const RESULTS_API_TOKEN = process.env.NEXT_PUBLIC_RESULTS_API_TOKEN || process.env.RESULTS_API_TOKEN || 'JY8FOJADU04L1YQ';
 const USE_MOCK_DATA = false; // Using real API data
 
 export class LotteryApiError extends Error {
@@ -101,7 +102,7 @@ function transformApiResponse(apiData: any): LotteryResult {
 function buildUrl(endpoint: string): string {
   const separator = endpoint.includes('?') ? '&' : '?';
   const cacheBuster = Date.now();
-  return `${API_URL}${endpoint}${separator}token=${API_TOKEN}&_=${cacheBuster}`;
+  return `${RESULTS_API_URL}${endpoint}${separator}token=${RESULTS_API_TOKEN}&_=${cacheBuster}`;
 }
 
 async function fetchApi<T>(endpoint: string): Promise<T> {
@@ -111,6 +112,9 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
     const response = await fetch(url, {
       method: 'GET',
       cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
@@ -133,6 +137,7 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
     if (error instanceof LotteryApiError) {
       throw error;
     }
+    console.error('Error connecting to API:', error);
     throw new LotteryApiError('Erro ao conectar com a API');
   }
 }
