@@ -1,7 +1,7 @@
 import { LotteryResult } from '@/types/lottery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency, formatDate } from '@/services/lotteryApi';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Calendar, MapPin, TrendingUp, Users } from 'lucide-react';
 
 interface ContestDetailsProps {
@@ -103,7 +103,7 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
             <Users className="w-5 h-5 text-primary" />
             <div>
               <p className="text-sm">Status</p>
-              <Badge variant={result.acumulou ? "destructive" : "default"}>
+              <Badge variant={result.acumulou ? 'destructive' : 'default'}>
                 {result.acumulou ? 'Acumulou' : 'Com Ganhadores'}
               </Badge>
             </div>
