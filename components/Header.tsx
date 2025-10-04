@@ -32,48 +32,48 @@ const Header = () => {
         
         {/* Menu Mobile */}
         <div className="md:hidden relative">
-          <button 
+          <button
             className="text-white p-2 hover:bg-green-600 rounded-lg transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
             </svg>
           </button>
           
           {mobileMenuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Início
               </Link>
-              <Link 
-                href="/contests" 
+              <Link
+                href="/contests"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Concursos
               </Link>
-              <Link 
-                href="/statistics" 
+              <Link
+                href="/statistics"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Estatísticas
               </Link>
-              <Link 
-                href="/about" 
+              <Link
+                href="/about"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Sobre
               </Link>
-              <Link 
-                href="/contact" 
+              <Link
+                href="/contact"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
