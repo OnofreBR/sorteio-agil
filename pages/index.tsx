@@ -40,10 +40,9 @@ export default function Home() {
       <SEOHead
         title="Números Mega Sena - Resultados das Loterias Brasileiras"
         description="Confira os resultados, estatísticas e informações das principais loterias do Brasil. Mega Sena, Quina, Lotofácil e muito mais."
-        canonicalUrl="https://loteriasresultados.com.br/"
+        canonical="https://loteriasresultados.com.br/"
         ogImage="/logo.png"
         keywords="mega sena, quina, lotofácil, loterias, resultados, estatísticas, sorteio"
-        jsonLd={jsonLd}
       />
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6 text-center">Loterias Disponíveis</h1>
