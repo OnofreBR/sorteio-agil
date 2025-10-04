@@ -1,28 +1,38 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import Head from 'next/head'; // Importação correta para Next.js
-import { ArrowLeft, Calendar, DollarSign, Hash, Trophy } from 'lucide-react';
-
-// Corrigir os caminhos de importação
-import { supabase } from '../../integrations/supabase/client';
-import { Contest } from '../../types/lottery'; // Ajuste para o tipo correto se necessário
-import { Lottery } from '../../types/lottery';
+import { ArrowLeft, Calendar, DollarSign, Hash, Trophy, MapPin } from 'lucide-react';
+import { getResultByContest, formatCurrency, formatDate } from '../../services/lotteryApi';
+import { indexNewResult } from '../../services/indexing';
+import { LotteryResult } from '../../types/lottery';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { formatCurrency, formatDate } from '../../lib/utils';
-import SEOHead from '../../components/SEOHead'; // Importar o componente SEOHead
+import SEOHead from '../../components/SEOHead';
 
 interface ContestPageProps {
-  contest: Contest | null;
-  lottery: Lottery | null;
+  result: LotteryResult | null;
   error?: string;
 }
 
-const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) => {
-  const router = useRouter();
+// Mapa de nomes amigáveis das loterias
+const LOTTERY_NAMES: Record<string, string> = {
+  megasena: 'Mega-Sena',
+  quina: 'Quina',
+  lotofacil: 'Lotofácil',
+  lotomania: 'Lotomania',
+  duplasena: 'Dupla Sena',
+  federal: 'Federal',
+  timemania: 'Timemania',
+  diadesorte: 'Dia de Sorte',
+  supersete: 'Super Sete',
+  maismilionaria: '+Milionária',
+  loteca: 'Loteca',
+};
 
+const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
+  const router = useRouter();
+  
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -42,35 +52,38 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
     );
   }
 
-  if (!contest || !lottery) {
+  if (!result) {
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            Carregando...
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        Carregando...
+      </div>
     );
   }
 
+  const lotteryName = LOTTERY_NAMES[result.loteria] || result.loteria;
+  const previousContest = result.concurso - 1;
+
   return (
     <>
-      {/* IMPLEMENTAÇÃO CRÍTICA DO SEOHEAD */}
       <SEOHead
-        title={`Resultado ${lottery.display_name} ${contest.contest_number} - Veja os Números!`}
-        description={`Resultado do concurso ${contest.contest_number} da ${lottery.display_name} de ${formatDate(new Date(contest.draw_date))}. ✅ Clique para ver os números sorteados, a premiação e os ganhadores.`}
-        canonical={`https://numerosmegasena.com.br/${lottery.name}/concurso/${contest.contest_number}`}
+        title={`Resultado ${lotteryName} Concurso ${result.concurso} - Números Sorteados`}
+        description={`Resultado completo do concurso ${result.concurso} da ${lotteryName} realizado em ${result.data}. Confira os números sorteados, premiação completa e ganhadores.`}
+        canonical={`https://numerosmegasena.com.br/${result.loteria}/${result.concurso}`}
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header da Página */}
-          <div className="flex items-center justify-between">
-            <Link href={`/${lottery.name}`}>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <Link href="/">
               <Button className="flex items-center gap-2" variant="outline">
                 <ArrowLeft className="h-4 w-4" />
-                Voltar para {lottery.display_name}
+                Voltar para Home
               </Button>
             </Link>
+            
             <Badge className="text-lg px-4 py-2" variant="secondary">
-              {lottery.display_name}
+              {lotteryName}
             </Badge>
           </div>
 
@@ -82,23 +95,38 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
                   <Hash className="h-8 w-8 text-blue-600" />
                   <div>
                     <CardTitle className="text-2xl">
-                      Concurso {contest.contest_number}
+                      Concurso {result.concurso}
                     </CardTitle>
                     <p className="text-gray-600 mt-1">
-                      {lottery.display_name}
+                      {lotteryName}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right space-y-1">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Calendar className="h-4 w-4" />
-                    {formatDate(new Date(contest.draw_date))}
+                    {result.data}
                   </div>
+                  {result.local && (
+                    <div className="flex items-center gap-2 text-gray-500 text-sm">
+                      <MapPin className="h-4 w-4" />
+                      {result.local}
+                    </div>
+                  )}
                 </div>
               </div>
             </CardHeader>
 
             <CardContent className="space-y-6">
+              {/* Status de Acumulação */}
+              {result.acumulou && (
+                <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4">
+                  <p className="text-yellow-800 font-semibold text-center">
+                    🎲 ACUMULOU!
+                  </p>
+                </div>
+              )}
+
               {/* Números Sorteados */}
               <div>
                 <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -106,11 +134,11 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
                   Números Sorteados
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {contest.drawn_numbers.map((number) => (
+                  {result.dezenas.map((number) => (
                     <Badge
                       key={number}
                       variant="default"
-                      className="text-lg px-4 py-2"
+                      className="text-lg px-4 py-2 bg-blue-600 hover:bg-blue-700"
                     >
                       {String(number).padStart(2, '0')}
                     </Badge>
@@ -118,40 +146,113 @@ const ContestPage: NextPage<ContestPageProps> = ({ contest, lottery, error }) =>
                 </div>
               </div>
 
-              {/* Informações de Prêmio */}
-              <div className="grid md:grid-cols-2 gap-6">
+              {/* Trevos (para +Milionária) */}
+              {result.trevos && result.trevos.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Trevos da Sorte</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {result.trevos.map((trevo) => (
+                      <Badge
+                        key={trevo}
+                        variant="outline"
+                        className="text-lg px-4 py-2 border-green-500 text-green-700"
+                      >
+                        🍀 {String(trevo).padStart(2, '0')}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Mês da Sorte (para Dia de Sorte) */}
+              {result.mesSorte && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Mês da Sorte</h3>
+                  <Badge variant="outline" className="text-lg px-4 py-2">
+                    📅 {result.mesSorte}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Time do Coração (para Timemania) */}
+              {result.observacao && result.loteria === 'timemania' && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Time do Coração</h3>
+                  <Badge variant="outline" className="text-lg px-4 py-2">
+                    ⚽ {result.observacao}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Premiação */}
+              {result.premiacoes && result.premiacoes.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                    Premiação
+                  </h3>
+                  <div className="space-y-2">
+                    {result.premiacoes.map((premio, index) => (
+                      <Card key={index} className={index === 0 ? 'bg-green-50 border-green-200' : ''}>
+                        <CardContent className="py-3 px-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="font-semibold">{premio.descricao}</p>
+                              <p className="text-sm text-gray-600">
+                                {premio.ganhadores} {premio.ganhadores === 1 ? 'ganhador' : 'ganhadores'}
+                              </p>
+                            </div>
+                            <p className="text-lg font-bold text-green-700">
+                              {formatCurrency(premio.valorPremio)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Informações do Próximo Concurso */}
+              {result.proximoConcurso && result.valorEstimadoProximoConcurso && (
                 <Card className="bg-blue-50 border-blue-200">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <DollarSign className="h-5 w-5 text-blue-600" />
-                      Total Arrecadado
-                    </CardTitle>
+                    <CardTitle className="text-lg">Próximo Concurso</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold text-blue-700">
-                      {formatCurrency(contest.total_collected)}
-                    </p>
+                  <CardContent className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Concurso:</span>
+                      <span className="font-semibold">{result.proximoConcurso}</span>
+                    </div>
+                    {result.dataProximoConcurso && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Data:</span>
+                        <span className="font-semibold">{result.dataProximoConcurso}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Prêmio Estimado:</span>
+                      <span className="font-bold text-blue-700">
+                        {formatCurrency(result.valorEstimadoProximoConcurso)}
+                      </span>
+                    </div>
                   </CardContent>
                 </Card>
-
-                {contest.next_contest_prize && (
-                  <Card className="bg-green-50 border-green-200">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Trophy className="h-5 w-5 text-green-600" />
-                        Prêmio Próximo Concurso
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-2xl font-bold text-green-700">
-                        {formatCurrency(contest.next_contest_prize)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+              )}
             </CardContent>
           </Card>
+
+          {/* Botão Concurso Anterior */}
+          {previousContest > 0 && (
+            <div className="flex justify-center">
+              <Link href={`/${result.loteria}/${previousContest}`}>
+                <Button size="lg" className="gap-2">
+                  <ArrowLeft className="h-5 w-5" />
+                  Ver Concurso Anterior ({previousContest})
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -162,37 +263,39 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { lottery, contest } = context.params as { lottery: string; contest: string };
 
   try {
-    const { data: lotteryData, error: lotteryError } = await supabase
-      .from('lotteries')
-      .select('*')
-      .eq('name', lottery)
-      .single();
+    // Extrair número do concurso da URL amigável (ex: "concurso-2750" -> 2750)
+    const contestNumber = contest.includes('-') 
+      ? parseInt(contest.split('-')[1]) 
+      : parseInt(contest);
 
-    if (lotteryError || !lotteryData) {
-      return { props: { error: `Loteria '${lottery}' não encontrada.` } };
+    if (isNaN(contestNumber)) {
+      return { 
+        props: { 
+          error: `Número de concurso inválido: ${contest}` 
+        } 
+      };
     }
 
-    const { data: contestData, error: contestError } = await supabase
-      .from('contests')
-      .select('*')
-      .eq('lottery_id', lotteryData.id)
-      .eq('contest_number', parseInt(contest))
-      .single();
+    // Buscar dados do concurso na API
+    const result = await getResultByContest(lottery, contestNumber);
 
-    if (contestError || !contestData) {
-        return { props: { error: `Concurso ${contest} da ${lotteryData.display_name} não encontrado.` } };
-    }
+    // Indexar a página (IndexNow + Google Indexing)
+    // Esta chamada é assíncrona mas não bloqueamos a resposta
+    indexNewResult(lottery, contestNumber).catch(err => {
+      console.error('Erro ao indexar:', err);
+    });
 
     return {
       props: {
-        contest: contestData,
-        lottery: lotteryData,
+        result,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Server-side error:', error);
     return {
-      props: { error: 'Ocorreu um erro no servidor ao buscar os dados.' },
+      props: { 
+        error: error.message || 'Erro ao buscar dados do concurso.' 
+      },
     };
   }
 };
