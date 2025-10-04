@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { LotteryResult } from '@/types/lottery';
 import { LOTTERY_MAP } from '@/types/lottery';
-import { formatCurrency } from '@/services/lotteryApi';
+import { formatCurrency } from '@/utils/formatters';
 
 interface CardResultadoLoteriaProps {
   resultado: LotteryResult;
