@@ -49,7 +49,11 @@ export default function Home() {
         <h1 className="text-3xl font-bold mb-6 text-center">Loterias Disponíveis</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {LOTERIAS.map((lot) => (
-            <Link key={lot.slug} href={`/${lot.slug}`} className="group block p-6 rounded-lg shadow-lg bg-white hover:bg-gray-50 transition">
+            <Link
+              key={lot.slug}
+              href={`/${lot.slug}`}
+              className="group block p-6 rounded-lg shadow-lg bg-white hover:bg-gray-50 transition"
+            >
               <div className="flex flex-col items-center">
                 <Image
                   src={lot.image}
@@ -57,7 +61,6 @@ export default function Home() {
                   width={80}
                   height={80}
                   priority
-                  loading="eager"
                   className="mb-4 rounded-full border border-gray-200 shadow"
                 />
                 <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">{lot.name}</h2>
