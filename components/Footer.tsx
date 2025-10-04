@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import logo from '@/assets/logo.png';
 import Image from 'next/image';
 
 const Footer = () => {
@@ -10,8 +9,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-3">
-              <Image src={logo} alt="Números Mega Sena Logo" className="h-10 w-auto" />
+            <Link className="flex items-center space-x-3" href="/">
+              <Image src="/logo.png" alt="Números Mega Sena Logo" className="h-10 w-auto" width={40} height={40} />
             </Link>
             <p className="text-sm text-muted-foreground">Resultados das principais loterias brasileiras, atualizados em tempo real.</p>
           </div>
