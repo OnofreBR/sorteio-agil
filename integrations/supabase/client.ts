@@ -2,16 +2,19 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: typeof window !== 'undefined' ? localStorage : undefined,
-    persistSession: true,
-    autoRefreshToken: true,
-  }
-});
+// Create a dummy client if credentials are not provided
+export const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+  ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        storage: typeof window !== 'undefined' ? localStorage : undefined,
+        persistSession: true,
+        autoRefreshToken: true,
+      }
+    })
+  : null as any; // Placeholder when Supabase is not configured
