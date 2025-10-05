@@ -3,7 +3,7 @@ import SEOHead from '@/components/SEOHead';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CardResultadoLoteria from '@/components/CardResultadoLoteria';
-import { getAllLatestResults } from '@/services/lotteryApi';
+import { getAllLotteryResults } from '@/services/lotteryApi';
 import { LotteryResult } from '@/types/lottery';
 import { useState } from 'react';
 
@@ -39,7 +39,7 @@ export default function Home({ resultados }: HomeProps) {
               Resultados Oficiais
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-              Resultados das<br className="md:hidden" />
+              Resultados das<br className="md:hidden"/>
               <span className="md:inline"> </span>Loterias Brasileiras
             </h1>
             <p className="text-lg md:text-xl text-blue-50 max-w-3xl mx-auto leading-relaxed">
@@ -120,7 +120,7 @@ export default function Home({ resultados }: HomeProps) {
       </main>
       
       <Footer />
-
+      
       {/* JSON-LD para SEO */}
       <script
         type="application/ld+json"
@@ -144,7 +144,7 @@ export default function Home({ resultados }: HomeProps) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const resultados = await getAllLatestResults();
+    const resultados = await getAllLotteryResults();
     
     return {
       props: {
