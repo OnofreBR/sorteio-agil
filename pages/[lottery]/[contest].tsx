@@ -2,18 +2,7 @@ import React from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Calendar,
-  DollarSign,
-  Hash,
-  Trophy,
-  MapPin,
-  Building2,
-  Info,
-  PieChart,
-  Users,
-} from 'lucide-react';
+import { ArrowLeft, Calendar, DollarSign, Hash, Trophy, MapPin, Building2, Info, PieChart, Users } from 'lucide-react';
 import { getResultByContest } from '../../services/lotteryApi';
 import { indexNewResult } from '../../services/indexing';
 import { LotteryResult } from '../../types/lottery';
@@ -28,6 +17,7 @@ interface ContestPageProps {
   error?: string;
 }
 
+// generic safe helper
 const safe = <T,>(v: T | null | undefined, fallback: T): T => (v ?? fallback);
 
 const LOTTERY_NAMES: Record<string, string> = {
@@ -44,37 +34,38 @@ const LOTTERY_NAMES: Record<string, string> = {
   loteca: 'Loteca',
 };
 
-const Section = ({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) => (
+const Section: React.FC<{ title: string; icon?: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
   <div className="space-y-3">
     <h3 className="text-lg font-semibold flex items-center gap-2">{icon}{title}</h3>
     <div className="space-y-2">{children}</div>
   </div>
 );
 
-const KV = ({ label, value }: { label: string; value?: React.ReactNode }) => (
+const KV: React.FC<{ label: string; value?: React.ReactNode }> = ({ label, value }) => (
   <div className="flex justify-between gap-4 text-sm">
     <span className="text-gray-600">{label}</span>
     <span className="font-medium text-gray-900 text-right break-words">{value ?? '-'}</span>
   </div>
 );
 
-const List = ({ items }: { items?: Array<string | number> | null }) => (
+const List: React.FC<{ items?: Array<string | number> | null }> = ({ items }) => (
   <ul className="list-disc pl-5 space-y-1">
     {Array.isArray(items) && items.length > 0 ? (
-      items.map((it, idx) => <li key={idx} className="text-sm text-gray-800">{String(it)}</li>)
+      items.map((it, idx) => (
+        <li className="text-sm text-gray-800" key={idx}>{String(it)}</li>
+      ))
     ) : (
       <li className="text-sm text-gray-500">-</li>
     )}
   </ul>
 );
 
-const Pill = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <Badge variant="secondary" className={`px-3 py-1 ${className}`}>{children}</Badge>
+const Pill: React.FC<{ className?: string; children: React.ReactNode }> = ({ className = '', children }) => (
+  <Badge className={`px-3 py-1 ${className}`} variant="secondary">{children}</Badge>
 );
 
 const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
   const router = useRouter();
-
   const [activeTab, setActiveTab] = React.useState<'geral' | 'premios' | 'locais' | 'estatisticas' | 'json'>('geral');
 
   if (error) {
@@ -86,7 +77,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">{error}</p>
-            <Button variant="outline" onClick={() => router.back()}>
+            <Button onClick={() => router.back()} variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
             </Button>
           </CardContent>
@@ -100,8 +91,6 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
   }
 
   const lotteryName = LOTTERY_NAMES[result.loteria] || result.loteria;
-  const previousContest = safe(result.concurso, 0) - 1;
-
   const dezenas = Array.isArray(result.dezenas) ? result.dezenas : [];
   const trevos = Array.isArray((result as any).trevos) ? ((result as any).trevos as Array<string | number>) : [];
   const premiacoes = Array.isArray((result as any).premiacoes) ? ((result as any).premiacoes as any[]) : [];
@@ -121,7 +110,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <Link href="/">
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button className="flex items-center gap-2" variant="outline">
                 <ArrowLeft className="h-4 w-4" /> Voltar para Home
               </Button>
             </Link>
@@ -150,6 +139,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                 </div>
               </div>
             </CardHeader>
+
             <CardContent className="space-y-6">
               {result.acumulou && (
                 <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4">
@@ -164,8 +154,8 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                   { id: 'locais', label: 'Locais/Ganhadores' },
                   { id: 'estatisticas', label: 'Estatísticas' },
                   { id: 'json', label: 'JSON bruto' },
-                ].map(t => (
-                  <Button key={t.id} variant={activeTab === (t.id as any) ? 'default' : 'secondary'} onClick={() => setActiveTab(t.id as any)}>
+                ].map((t) => (
+                  <Button key={t.id} variant={activeTab === (t.id as any) ? 'default' : 'outline'} onClick={() => setActiveTab(t.id as any)}>
                     {t.label}
                   </Button>
                 ))}
@@ -176,7 +166,9 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                   <Section title="Números Sorteados" icon={<Trophy className="h-5 w-5 text-yellow-600" />}>
                     <div className="flex flex-wrap gap-2">
                       {dezenas.map((n: any) => (
-                        <Badge key={String(n)} className="text-lg px-4 py-2 bg-blue-600 hover:bg-blue-700">{String(n).padStart(2, '0')}</Badge>
+                        <Badge className="text-lg px-4 py-2 bg-blue-600 hover:bg-blue-700" key={String(n)}>
+                          {String(n).padStart(2, '0')}
+                        </Badge>
                       ))}
                     </div>
                   </Section>
@@ -185,32 +177,30 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                     <Section title="Trevos da Sorte">
                       <div className="flex flex-wrap gap-2">
                         {trevos.map((t) => (
-                          <Badge key={String(t)} variant="outline" className="text-lg px-4 py-2 border-green-500 text-green-700">🍀 {String(t).padStart(2, '0')}</Badge>
+                          <Badge className="text-lg px-4 py-2 border-green-500 text-green-700" key={String(t)} variant="outline">
+                            🍀 {String(t).padStart(2, '0')}
+                          </Badge>
                         ))}
                       </div>
                     </Section>
                   )}
 
                   {(result as any).mesSorte && (
-                    <Section title="Mês da Sorte">
-                      <Pill>📅 {(result as any).mesSorte}</Pill>
-                    </Section>
+                    <Section title="Mês da Sorte">📅 {(result as any).mesSorte}</Section>
                   )}
 
                   {result.loteria === 'timemania' && result.observacao && (
-                    <Section title="Time do Coração">
-                      <Pill>⚽ {result.observacao}</Pill>
-                    </Section>
+                    <Section title="Time do Coração">⚽ {result.observacao}</Section>
                   )}
 
                   <Section title="Informações Financeiras" icon={<DollarSign className="h-5 w-5 text-green-600" />}>
                     <div className="grid md:grid-cols-2 gap-3">
-                      <KV label="Arrecadação total" value={result.arrecadacao ? formatCurrency(result.arrecadacao as any) : '-'} />
-                      <KV label="Acumulado principal" value={(result as any).acumulado != null ? formatCurrency((result as any).acumulado) : '-'} />
+                      <KV label="Arrecadação total" value={result.arrecadacao != null ? formatCurrency(result.arrecadacao as any) : '-'} />
+                      <KV label="Acumulado principal" value={(result as any).acumuladoPrincipal != null ? formatCurrency((result as any).acumuladoPrincipal) : '-'} />
                       <KV label="Acumulado especial" value={(result as any).acumuladoEspecial != null ? formatCurrency((result as any).acumuladoEspecial) : '-'} />
-                      <KV label="Acumulado final zero" value={(result as any).acumuladoFinalZero != null ? formatCurrency((result as any).acumuladoFinalZero) : '-'} />
-                      <KV label="Valor estimado próximo concurso" value={result.valorEstimadoProximoConcurso != null ? formatCurrency(result.valorEstimadoProximoConcurso) : '-'} />
-                      <KV label="Concurso próximo" value={result.proximoConcurso ?? '-'} />
+                      <KV label="Acumulado final zero" value={(result as any).acumuladoFinal_0 != null ? formatCurrency((result as any).acumuladoFinal_0) : '-'} />
+                      <KV label="Valor estimado próximo concurso" value={result.valorEstimadoProximoConcurso != null ? formatCurrency(result.valorEstimadoProximoConcurso as any) : '-'} />
+                      <KV label="Concurso próximo" value={result.proximoConcurso} />
                       <KV label="Data próximo" value={result.dataProximoConcurso ? formatDate(result.dataProximoConcurso as any) : '-'} />
                     </div>
                   </Section>
@@ -228,7 +218,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                   <Section title="Faixas de Premiação" icon={<DollarSign className="h-5 w-5 text-green-600" />}>
                     {premiacoes.length === 0 && <p className="text-sm text-gray-500">Sem dados de premiação.</p>}
                     <div className="space-y-2">
-                      {premiacoes.map((p, idx) => (
+                      {premiacoes.map((p: any, idx: number) => (
                         <Card key={idx}>
                           <CardContent className="py-3 px-4 space-y-2">
                             <div className="flex justify-between items-center">
@@ -291,3 +281,13 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                           </CardHeader>
                           <CardContent>
                             <List items={rateioCidades.map((r: any) => `${r.cidade ?? ''}${r.uf ? `/${r.uf}` : ''} - ${r.quantidade ?? r.ganhadores ?? ''} (${r.faixa ?? r.descricao ?? ''})`)} />
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  </Section>
+                </div>
+              )}
+
+              {activeTab === 'estatisticas' && (
+                <div className="
