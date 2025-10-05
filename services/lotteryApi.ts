@@ -66,14 +66,11 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
       throw new LotteryApiError('Invalid response format from API');
     }
 
-    const slug = getLotterySlugFromName(data.nome || lottery);
-    
+    // Just return the API response as-is - it already matches LotteryResult interface
+    // Only set the loteria field to use the slug format
     const result: LotteryResult = {
-      lottery: slug,
-      contest: data.concurso?.toString() || '0',
-      date: data.data || new Date().toISOString().split('T')[0],
-      numbers: data.dezenas || [],
-      prize: data.proximo_valor_estimado || 0
+      ...data,
+      loteria: getLotterySlugFromName(data.nome || lottery)
     };
 
     return [result];
@@ -111,14 +108,11 @@ export async function getResultByContest(lottery: string, contest: string): Prom
       return null;
     }
 
-    const slug = getLotterySlugFromName(data.nome || lottery);
-    
+    // Just return the API response as-is - it already matches LotteryResult interface
+    // Only set the loteria field to use the slug format
     const result: LotteryResult = {
-      lottery: slug,
-      contest: data.concurso?.toString() || contest,
-      date: data.data || new Date().toISOString().split('T')[0],
-      numbers: data.dezenas || [],
-      prize: data.proximo_valor_estimado || 0
+      ...data,
+      loteria: getLotterySlugFromName(data.nome || lottery)
     };
 
     return result;
