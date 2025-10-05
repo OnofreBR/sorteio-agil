@@ -1,4 +1,14 @@
+// Main interface for lottery results from API
 export interface LotteryResult {
+  lottery: string;      // slug da loteria (ex: 'megasena', 'quina')
+  contest: string;      // número do concurso
+  date: string;         // data do sorteio
+  numbers: number[];    // números sorteados
+  prize: number;        // valor estimado próximo concurso
+}
+
+// Legacy interface for backward compatibility with API responses
+export interface LotteryResultLegacy {
   loteria: string;
   concurso: number;
   data: string;
