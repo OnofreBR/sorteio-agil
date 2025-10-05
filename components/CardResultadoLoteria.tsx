@@ -11,8 +11,8 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
   const lotteryInfo = LOTTERY_MAP[resultado.loteria];
   const lotteryName = lotteryInfo?.name || resultado.loteria;
   
-  // Get main prize info
-  const mainPrize = resultado.premiacoes[0];
+  // Get main prize info with null safety
+  const mainPrize = resultado.premiacoes?.[0];
   const valorPremio = mainPrize?.valorPremio || 0;
   const ganhadores = mainPrize?.ganhadores || 0;
 
@@ -35,7 +35,7 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
             NÚMEROS SORTEADOS
           </h4>
           <div className="flex flex-wrap gap-2">
-            {resultado.dezenas.map((numero, index) => (
+            {resultado.dezenas?.map((numero, index) => (
               <div
                 key={index}
                 className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white font-bold text-base flex items-center justify-center shadow-md hover:scale-110 transition-transform"
