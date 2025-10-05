@@ -111,9 +111,9 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
           </p>
         </div>
 
-        {/* Ver Detalhes Button */}
+        {/* Ver Detalhes Button - Fixed URL path to match route structure */}
         <Link
-          href={`/${resultado.loteria}/concurso/${resultado.concurso}`}
+          href={`/${resultado.loteria}/${resultado.concurso}`}
           className="block w-full text-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-base font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg"
         >
           Ver Detalhes
