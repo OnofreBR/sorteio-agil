@@ -1,21 +1,35 @@
+import React from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, DollarSign, Hash, Trophy, MapPin } from 'lucide-react';
-import { getResultByContest, formatCurrency, formatDate } from '../../services/lotteryApi';
+import {
+  ArrowLeft,
+  Calendar,
+  DollarSign,
+  Hash,
+  Trophy,
+  MapPin,
+  Building2,
+  Info,
+  PieChart,
+  Users,
+} from 'lucide-react';
+import { getResultByContest } from '../../services/lotteryApi';
 import { indexNewResult } from '../../services/indexing';
 import { LotteryResult } from '../../types/lottery';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import SEOHead from '../../components/SEOHead';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 interface ContestPageProps {
   result: LotteryResult | null;
   error?: string;
 }
 
-// Mapa de nomes amigáveis das loterias
+const safe = <T,>(v: T | null | undefined, fallback: T): T => (v ?? fallback);
+
 const LOTTERY_NAMES: Record<string, string> = {
   megasena: 'Mega-Sena',
   quina: 'Quina',
@@ -30,9 +44,39 @@ const LOTTERY_NAMES: Record<string, string> = {
   loteca: 'Loteca',
 };
 
+const Section = ({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) => (
+  <div className="space-y-3">
+    <h3 className="text-lg font-semibold flex items-center gap-2">{icon}{title}</h3>
+    <div className="space-y-2">{children}</div>
+  </div>
+);
+
+const KV = ({ label, value }: { label: string; value?: React.ReactNode }) => (
+  <div className="flex justify-between gap-4 text-sm">
+    <span className="text-gray-600">{label}</span>
+    <span className="font-medium text-gray-900 text-right break-words">{value ?? '-'}</span>
+  </div>
+);
+
+const List = ({ items }: { items?: Array<string | number> | null }) => (
+  <ul className="list-disc pl-5 space-y-1">
+    {Array.isArray(items) && items.length > 0 ? (
+      items.map((it, idx) => <li key={idx} className="text-sm text-gray-800">{String(it)}</li>)
+    ) : (
+      <li className="text-sm text-gray-500">-</li>
+    )}
+  </ul>
+);
+
+const Pill = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <Badge variant="secondary" className={`px-3 py-1 ${className}`}>{children}</Badge>
+);
+
 const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
   const router = useRouter();
-  
+
+  const [activeTab, setActiveTab] = React.useState<'geral' | 'premios' | 'locais' | 'estatisticas' | 'json'>('geral');
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -42,9 +86,8 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">{error}</p>
-            <Button onClick={() => router.back()} variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar
+            <Button variant="outline" onClick={() => router.back()}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
             </Button>
           </CardContent>
         </Card>
@@ -53,250 +96,198 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
   }
 
   if (!result) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Carregando...
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
   const lotteryName = LOTTERY_NAMES[result.loteria] || result.loteria;
-  const previousContest = result.concurso - 1;
+  const previousContest = safe(result.concurso, 0) - 1;
+
+  const dezenas = Array.isArray(result.dezenas) ? result.dezenas : [];
+  const trevos = Array.isArray((result as any).trevos) ? ((result as any).trevos as Array<string | number>) : [];
+  const premiacoes = Array.isArray((result as any).premiacoes) ? ((result as any).premiacoes as any[]) : [];
+  const cidadesPremiadas = Array.isArray((result as any).cidadesPremiadas) ? ((result as any).cidadesPremiadas as any[]) : [];
+  const rateioCidades = Array.isArray((result as any).rateioCidades) ? ((result as any).rateioCidades as any[]) : [];
+  const estatisticas = (result as any).estatisticas || {};
 
   return (
     <>
       <SEOHead
-        title={`Resultado ${lotteryName} Concurso ${result.concurso} - Números Sorteados`}
-        description={`Resultado completo do concurso ${result.concurso} da ${lotteryName} realizado em ${result.data}. Confira os números sorteados, premiação completa e ganhadores.`}
+        title={`Resultado ${lotteryName} Concurso ${result.concurso} - Detalhes completos`}
+        description={`Resultado completo do concurso ${result.concurso} da ${lotteryName} realizado em ${safe(result.data, '')}. Números, premiação por faixa, ganhadores, cidades, arrecadação, estatísticas e mais.`}
         canonical={`https://numerosmegasena.com.br/${result.loteria}/${result.concurso}`}
       />
+
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Header da Página */}
+        <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <Link href="/">
-              <Button className="flex items-center gap-2" variant="outline">
-                <ArrowLeft className="h-4 w-4" />
-                Voltar para Home
+              <Button variant="outline" className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" /> Voltar para Home
               </Button>
             </Link>
-            
-            <Badge className="text-lg px-4 py-2" variant="secondary">
-              {lotteryName}
-            </Badge>
+            <Pill className="text-lg">{lotteryName}</Pill>
           </div>
 
-          {/* Card Principal do Concurso */}
           <Card className="w-full">
             <CardHeader>
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                   <Hash className="h-8 w-8 text-blue-600" />
                   <div>
-                    <CardTitle className="text-2xl">
-                      Concurso {result.concurso}
-                    </CardTitle>
-                    <p className="text-gray-600 mt-1">
-                      {lotteryName}
-                    </p>
+                    <CardTitle className="text-2xl">Concurso {result.concurso}</CardTitle>
+                    <p className="text-gray-600 mt-1">{lotteryName}</p>
                   </div>
                 </div>
                 <div className="text-right space-y-1">
                   <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    {result.data}
+                    <Calendar className="h-4 w-4" /> {safe(result.data, '-')}
                   </div>
                   {result.local && (
                     <div className="flex items-center gap-2 text-gray-500 text-sm">
-                      <MapPin className="h-4 w-4" />
-                      {result.local}
+                      <MapPin className="h-4 w-4" /> {result.local}
                     </div>
                   )}
                 </div>
               </div>
             </CardHeader>
-
             <CardContent className="space-y-6">
-              {/* Status de Acumulação */}
               {result.acumulou && (
                 <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4">
-                  <p className="text-yellow-800 font-semibold text-center">
-                    🎲 ACUMULOU!
-                  </p>
+                  <p className="text-yellow-800 font-semibold text-center">🎲 ACUMULOU!</p>
                 </div>
               )}
 
-              {/* Números Sorteados */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-yellow-600" />
-                  Números Sorteados
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {result.dezenas.map((number) => (
-                    <Badge
-                      key={number}
-                      variant="default"
-                      className="text-lg px-4 py-2 bg-blue-600 hover:bg-blue-700"
-                    >
-                      {String(number).padStart(2, '0')}
-                    </Badge>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { id: 'geral', label: 'Geral' },
+                  { id: 'premios', label: 'Premiação' },
+                  { id: 'locais', label: 'Locais/Ganhadores' },
+                  { id: 'estatisticas', label: 'Estatísticas' },
+                  { id: 'json', label: 'JSON bruto' },
+                ].map(t => (
+                  <Button key={t.id} variant={activeTab === (t.id as any) ? 'default' : 'secondary'} onClick={() => setActiveTab(t.id as any)}>
+                    {t.label}
+                  </Button>
+                ))}
               </div>
 
-              {/* Trevos (para +Milionária) */}
-              {result.trevos && result.trevos.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Trevos da Sorte</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {result.trevos.map((trevo) => (
-                      <Badge
-                        key={trevo}
-                        variant="outline"
-                        className="text-lg px-4 py-2 border-green-500 text-green-700"
-                      >
-                        🍀 {String(trevo).padStart(2, '0')}
-                      </Badge>
-                    ))}
-                  </div>
+              {activeTab === 'geral' && (
+                <div className="space-y-6">
+                  <Section title="Números Sorteados" icon={<Trophy className="h-5 w-5 text-yellow-600" />}>
+                    <div className="flex flex-wrap gap-2">
+                      {dezenas.map((n: any) => (
+                        <Badge key={String(n)} className="text-lg px-4 py-2 bg-blue-600 hover:bg-blue-700">{String(n).padStart(2, '0')}</Badge>
+                      ))}
+                    </div>
+                  </Section>
+
+                  {trevos.length > 0 && (
+                    <Section title="Trevos da Sorte">
+                      <div className="flex flex-wrap gap-2">
+                        {trevos.map((t) => (
+                          <Badge key={String(t)} variant="outline" className="text-lg px-4 py-2 border-green-500 text-green-700">🍀 {String(t).padStart(2, '0')}</Badge>
+                        ))}
+                      </div>
+                    </Section>
+                  )}
+
+                  {(result as any).mesSorte && (
+                    <Section title="Mês da Sorte">
+                      <Pill>📅 {(result as any).mesSorte}</Pill>
+                    </Section>
+                  )}
+
+                  {result.loteria === 'timemania' && result.observacao && (
+                    <Section title="Time do Coração">
+                      <Pill>⚽ {result.observacao}</Pill>
+                    </Section>
+                  )}
+
+                  <Section title="Informações Financeiras" icon={<DollarSign className="h-5 w-5 text-green-600" />}>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <KV label="Arrecadação total" value={result.arrecadacao ? formatCurrency(result.arrecadacao as any) : '-'} />
+                      <KV label="Acumulado principal" value={(result as any).acumulado != null ? formatCurrency((result as any).acumulado) : '-'} />
+                      <KV label="Acumulado especial" value={(result as any).acumuladoEspecial != null ? formatCurrency((result as any).acumuladoEspecial) : '-'} />
+                      <KV label="Acumulado final zero" value={(result as any).acumuladoFinalZero != null ? formatCurrency((result as any).acumuladoFinalZero) : '-'} />
+                      <KV label="Valor estimado próximo concurso" value={result.valorEstimadoProximoConcurso != null ? formatCurrency(result.valorEstimadoProximoConcurso) : '-'} />
+                      <KV label="Concurso próximo" value={result.proximoConcurso ?? '-'} />
+                      <KV label="Data próximo" value={result.dataProximoConcurso ? formatDate(result.dataProximoConcurso as any) : '-'} />
+                    </div>
+                  </Section>
+
+                  {result.observacao && result.loteria !== 'timemania' && (
+                    <Section title="Observação" icon={<Info className="h-5 w-5 text-blue-600" />}>
+                      <p className="text-sm text-gray-800">{result.observacao}</p>
+                    </Section>
+                  )}
                 </div>
               )}
 
-              {/* Mês da Sorte (para Dia de Sorte) */}
-              {result.mesSorte && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Mês da Sorte</h3>
-                  <Badge className="text-lg px-4 py-2" variant="outline">
-                    📅 {result.mesSorte}
-                  </Badge>
-                </div>
-              )}
-
-              {/* Time do Coração (para Timemania) */}
-              {result.observacao && result.loteria === 'timemania' && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Time do Coração</h3>
-                  <Badge className="text-lg px-4 py-2" variant="outline">
-                    ⚽ {result.observacao}
-                  </Badge>
-                </div>
-              )}
-
-              {/* Premiação */}
-              {result.premiacoes && result.premiacoes.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    Premiação
-                  </h3>
-                  <div className="space-y-2">
-                    {result.premiacoes.map((premio, index) => (
-                      <Card key={index} className={index === 0 ? 'border-green-200' : ''}>
-                        <CardContent className="py-3 px-4">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <p className="font-semibold">{premio.descricao}</p>
-                              <p className="text-sm text-gray-600">
-                                {premio.ganhadores} {premio.ganhadores === 1 ? 'ganhador' : 'ganhadores'}
+              {activeTab === 'premios' && (
+                <div className="space-y-4">
+                  <Section title="Faixas de Premiação" icon={<DollarSign className="h-5 w-5 text-green-600" />}>
+                    {premiacoes.length === 0 && <p className="text-sm text-gray-500">Sem dados de premiação.</p>}
+                    <div className="space-y-2">
+                      {premiacoes.map((p, idx) => (
+                        <Card key={idx}>
+                          <CardContent className="py-3 px-4 space-y-2">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <p className="font-semibold">{p.descricao ?? p.faixa ?? `Faixa ${idx + 1}`}</p>
+                                <p className="text-sm text-gray-600">
+                                  {(typeof p.ganhadores === 'number' ? p.ganhadores : (p.quantidadeGanhadores ?? 0))} {(((p.ganhadores ?? p.quantidadeGanhadores) === 1) ? 'ganhador' : 'ganhadores')}
+                                </p>
+                              </div>
+                              <p className="text-lg font-bold text-green-700">
+                                {p.valorPremio != null ? formatCurrency(p.valorPremio) : (p.valor != null ? formatCurrency(p.valor) : (p.premio != null ? formatCurrency(p.premio) : '-'))}
                               </p>
                             </div>
-                            <p className="text-lg font-bold text-green-700">
-                              {formatCurrency(premio.valorPremio)}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                            <div className="grid md:grid-cols-3 gap-2 text-sm text-gray-700">
+                              <KV label="Acertos" value={p.acertos ?? p.acertosDescricao ?? '-'} />
+                              <KV label="Mín/Máx acertos" value={p.minimoAcertos ? `${p.minimoAcertos} - ${p.maximoAcertos ?? '-'}` : (p.maximoAcertos ?? '-')} />
+                              <KV label="Rateio" value={p.rateio ? formatCurrency(p.rateio) : '-'} />
+                            </div>
+                            {Array.isArray(p.localGanhadores) && p.localGanhadores.length > 0 && (
+                              <div className="pt-2">
+                                <p className="text-sm font-medium">Cidades/UF premiadas nesta faixa</p>
+                                <List items={p.localGanhadores.map((l: any) => `${l.cidade ?? ''}${l.uf ? `/${l.uf}` : ''}${l.nome ? ` - ${l.nome}` : ''}`)} />
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </Section>
                 </div>
               )}
 
-              {/* Informações do Próximo Concurso */}
-              {result.proximoConcurso && result.valorEstimadoProximoConcurso && (
-                <Card className="bg-blue-50 border-blue-200">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">Próximo Concurso</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Concurso:</span>
-                      <span className="font-semibold">{result.proximoConcurso}</span>
-                    </div>
-                    {result.dataProximoConcurso && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Data:</span>
-                        <span className="font-semibold">{result.dataProximoConcurso}</span>
-                      </div>
+              {activeTab === 'locais' && (
+                <div className="space-y-6">
+                  <Section title="Locais do Sorteio" icon={<Building2 className="h-5 w-5 text-purple-600" />}>
+                    <KV label="Local" value={result.local} />
+                    <KV label="Cidade/UF" value={(result as any).cidadeUF ?? (result as any).cidade ?? '-'} />
+                  </Section>
+
+                  <Section title="Distribuição por Cidades/UF">
+                    {cidadesPremiadas.length === 0 && rateioCidades.length === 0 && (
+                      <p className="text-sm text-gray-500">Sem dados de cidades premiadas.</p>
                     )}
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Prêmio Estimado:</span>
-                      <span className="font-bold text-blue-700">
-                        {formatCurrency(result.valorEstimadoProximoConcurso)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </CardContent>
-          </Card>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {cidadesPremiadas.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2"><Users className="h-4 w-4" /> Cidades premiadas</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <List items={cidadesPremiadas.map((c: any) => `${c.cidade ?? ''}${c.uf ? `/${c.uf}` : ''} - ${c.quantidade ?? c.ganhadores ?? ''}`)} />
+                          </CardContent>
+                        </Card>
+                      )}
 
-          {/* Botão Concurso Anterior */}
-          {previousContest > 0 && (
-            <div className="flex justify-center">
-              <Link href={`/${result.loteria}/${previousContest}`}>
-                <Button size="lg" className="gap-2">
-                  <ArrowLeft className="h-5 w-5" />
-                  Ver Concurso Anterior ({previousContest})
-                </Button>
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { lottery, contest } = context.params as { lottery: string; contest: string };
-
-  try {
-    // Extrair número do concurso da URL amigável (ex: "concurso-2750" -> 2750)
-    const contestNumber = contest.includes('-') 
-      ? parseInt(contest.split('-')[1]) 
-      : parseInt(contest);
-
-    if (isNaN(contestNumber)) {
-      return { 
-        props: { 
-          error: `Número de concurso inválido: ${contest}` 
-        } 
-      };
-    }
-
-    // Buscar dados do concurso na API (convertendo number para string)
-    const result = await getResultByContest(lottery, contestNumber.toString());
-
-    // Indexar a página (IndexNow + Google Indexing)
-    // Esta chamada é assíncrona mas não bloqueamos a resposta
-    indexNewResult(lottery, contestNumber).catch(err => {
-      console.error('Erro ao indexar:', err);
-    });
-
-    return {
-      props: {
-        result,
-      },
-    };
-  } catch (error: any) {
-    console.error('Server-side error:', error);
-    return {
-      props: { 
-        error: error.message || 'Erro ao buscar dados do concurso.' 
-      },
-    };
-  }
-};
-
-export default ContestPage;
+                      {rateioCidades.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="text-base">Rateio por cidade/UF</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <List items={rateioCidades.map((r: any) => `${r.cidade ?? ''}${r.uf ? `/${r.uf}` : ''} - ${r.quantidade ?? r.ganhadores ?? ''} (${r.faixa ?? r.descricao ?? ''})`)} />
