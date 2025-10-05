@@ -70,7 +70,6 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
         description={`Resultado completo do concurso ${result.concurso} da ${lotteryName} realizado em ${result.data}. Confira os números sorteados, premiação completa e ganhadores.`}
         canonical={`https://numerosmegasena.com.br/${result.loteria}/${result.concurso}`}
       />
-
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header da Página */}
@@ -168,7 +167,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
               {result.mesSorte && (
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Mês da Sorte</h3>
-                  <Badge variant="outline" className="text-lg px-4 py-2">
+                  <Badge className="text-lg px-4 py-2" variant="outline">
                     📅 {result.mesSorte}
                   </Badge>
                 </div>
@@ -178,7 +177,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
               {result.observacao && result.loteria === 'timemania' && (
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Time do Coração</h3>
-                  <Badge variant="outline" className="text-lg px-4 py-2">
+                  <Badge className="text-lg px-4 py-2" variant="outline">
                     ⚽ {result.observacao}
                   </Badge>
                 </div>
@@ -193,7 +192,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
                   </h3>
                   <div className="space-y-2">
                     {result.premiacoes.map((premio, index) => (
-                      <Card key={index} className={index === 0 ? 'bg-green-50 border-green-200' : ''}>
+                      <Card key={index} className={index === 0 ? 'border-green-200' : ''}>
                         <CardContent className="py-3 px-4">
                           <div className="flex justify-between items-center">
                             <div>
@@ -276,8 +275,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
     }
 
-    // Buscar dados do concurso na API
-    const result = await getResultByContest(lottery, contestNumber);
+    // Buscar dados do concurso na API (convertendo number para string)
+    const result = await getResultByContest(lottery, contestNumber.toString());
 
     // Indexar a página (IndexNow + Google Indexing)
     // Esta chamada é assíncrona mas não bloqueamos a resposta
