@@ -86,6 +86,49 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
   }
 }
 
+export async function getResultByContest(lottery: string, contest: string): Promise<LotteryResult | null> {
+  if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
+    throw new LotteryApiError('API configuration is missing. Please set NEXT_PUBLIC_RESULTS_API_URL and NEXT_PUBLIC_RESULTS_API_TOKEN environment variables.');
+  }
+
+  try {
+    const url = `${RESULTS_API_URL}/resultado?loteria=${lottery}&token=${RESULTS_API_TOKEN}&concurso=${contest}`;
+    const response = await fetch(url, {
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      throw new LotteryApiError(
+        `Failed to fetch lottery results: ${response.statusText}`,
+        response.status
+      );
+    }
+
+    const data = await response.json();
+    
+    if (!data || typeof data !== 'object') {
+      return null;
+    }
+
+    const slug = getLotterySlugFromName(data.nome || lottery);
+    
+    const result: LotteryResult = {
+      lottery: slug,
+      contest: data.concurso?.toString() || contest,
+      date: data.data || new Date().toISOString().split('T')[0],
+      numbers: data.dezenas || [],
+      prize: data.proximo_valor_estimado || 0
+    };
+
+    return result;
+  } catch (error) {
+    if (error instanceof LotteryApiError) {
+      throw error;
+    }
+    return null;
+  }
+}
+
 export async function getAllLotteryResults(): Promise<LotteryResult[]> {
   if (USE_MOCK_DATA) {
     return getAllMockResults();
@@ -103,4 +146,17 @@ export async function getAllLotteryResults(): Promise<LotteryResult[]> {
   return results
     .filter((result): result is PromiseFulfilledResult<LotteryResult[]> => result.status === 'fulfilled')
     .flatMap(result => result.value);
+}
+
+// Utility functions
+export function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value);
+}
+
+export function formatDate(date: string): string {
+  const [year, month, day] = date.split('-');
+  return `${day}/${month}/${year}`;
 }
