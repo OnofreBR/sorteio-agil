@@ -66,8 +66,8 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
       throw new LotteryApiError('Invalid response format from API');
     }
 
-    // Just return the API response as-is - it already matches LotteryResult interface
-    // Only set the loteria field to use the slug format
+    // Return the complete API response - it already includes all fields
+    // dezenas, premiacoes (all prize tiers), acumulado, próximo concurso, etc.
     const result: LotteryResult = {
       ...data,
       loteria: getLotterySlugFromName(data.nome || lottery)
@@ -108,8 +108,7 @@ export async function getResultByContest(lottery: string, contest: string): Prom
       return null;
     }
 
-    // Just return the API response as-is - it already matches LotteryResult interface
-    // Only set the loteria field to use the slug format
+    // Return the complete API response with all fields
     const result: LotteryResult = {
       ...data,
       loteria: getLotterySlugFromName(data.nome || lottery)
@@ -133,7 +132,21 @@ export async function getAllLotteryResults(): Promise<LotteryResult[]> {
     throw new LotteryApiError('API configuration is missing. Please set NEXT_PUBLIC_RESULTS_API_URL and NEXT_PUBLIC_RESULTS_API_TOKEN environment variables.');
   }
 
-  const lotteries = ['megasena', 'quina', 'lotofacil', 'lotomania', 'duplasena'];
+  // Include ALL Brazilian national lotteries
+  const lotteries = [
+    'megasena',
+    'quina',
+    'lotofacil',
+    'lotomania',
+    'duplasena',
+    'federal',
+    'timemania',
+    'diadesorte',
+    'supersete',
+    'maismilionaria',
+    'loteca'
+  ];
+
   const results = await Promise.allSettled(
     lotteries.map(lottery => getLotteryResults(lottery, 1))
   );
