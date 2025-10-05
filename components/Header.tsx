@@ -6,7 +6,7 @@ const Header = () => {
     <header className="bg-white shadow-md">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
+        <Link className="flex items-center space-x-2 hover:opacity-90 transition-opacity" href="/">
           <Image
             src="/logo.png"
             alt="Números Mega Sena Logo"
@@ -15,7 +15,7 @@ const Header = () => {
             priority
           />
         </Link>
-
+        
         {/* Navigation Links */}
         <div className="hidden md:flex items-center space-x-1">
           <Link
