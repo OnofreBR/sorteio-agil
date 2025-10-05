@@ -1,4 +1,4 @@
-import { LotteryResult } from '@/types/lottery';
+import { LotteryResult, Prize } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
 // Use environment variables for API configuration
@@ -37,6 +37,53 @@ function getLotterySlugFromName(nome: string): string {
   return nameMap[nome.toUpperCase()] || nome.toLowerCase().replace(/[^a-z]/g, '');
 }
 
+// Map API response to LotteryResult type with proper field mapping
+function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResult {
+  // Map prize tiers (premiacoes/faixas) properly
+  const premiacoes: Prize[] = [];
+  
+  if (data.premiacoes && Array.isArray(data.premiacoes)) {
+    data.premiacoes.forEach((premio: any) => {
+      premiacoes.push({
+        descricao: premio.descricao || premio.nome || premio.faixa || '',
+        faixa: premio.faixa || premio.nivel || 0,
+        ganhadores: premio.ganhadores || premio.numero_ganhadores || 0,
+        valorPremio: premio.valorPremio || premio.valor_premio || premio.premio || 0,
+      });
+    });
+  } else if (data.faixas && Array.isArray(data.faixas)) {
+    data.faixas.forEach((faixa: any) => {
+      premiacoes.push({
+        descricao: faixa.descricao || faixa.nome || faixa.faixa || '',
+        faixa: faixa.faixa || faixa.nivel || 0,
+        ganhadores: faixa.ganhadores || faixa.numero_ganhadores || 0,
+        valorPremio: faixa.valorPremio || faixa.valor_premio || faixa.premio || 0,
+      });
+    });
+  }
+
+  // Build complete LotteryResult with all possible field mappings from API
+  const result: LotteryResult = {
+    loteria: getLotterySlugFromName(data.nome || data.loteria || lottery),
+    concurso: data.concurso || data.numero_concurso || data.numero || 0,
+    data: data.data || data.data_sorteio || data.dataSorteio || '',
+    local: data.local || data.local_sorteio || data.localSorteio || '',
+    dezenasOrdemSorteio: data.dezenasOrdemSorteio || data.dezenas_ordem_sorteio || data.ordemSorteio || data.dezenas || [],
+    dezenas: data.dezenas || data.numeros || data.numerosSorteados || [],
+    trevos: data.trevos || data.trevos_sorteados || data.trevosSorteados || undefined,
+    mesSorte: data.mesSorte || data.mes_sorte || data.mesDaSorte || undefined,
+    premiacoes: premiacoes,
+    estadosPremiados: data.estadosPremiados || data.estados_premiados || data.estadosSorteados || undefined,
+    observacao: data.observacao || data.obs || data.time || data.time_coracao || data.timeCoracao || undefined,
+    acumulou: data.acumulou || data.acumulado || false,
+    proximoConcurso: data.proximoConcurso || data.proximo_concurso || data.numeroConcursoProximo || 0,
+    dataProximoConcurso: data.dataProximoConcurso || data.data_proximo_concurso || data.dataProximoSorteio || '',
+    valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso || data.valor_estimado_proximo_concurso || data.valorProximoConcurso || 0,
+  };
+
+  return result;
+}
+
 export async function getLotteryResults(lottery: string, limit: number = 1): Promise<LotteryResult[]> {
   if (USE_MOCK_DATA) {
     const result = getMockLotteryResult(lottery);
@@ -66,13 +113,8 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
       throw new LotteryApiError('Invalid response format from API');
     }
 
-    // Return the complete API response - it already includes all fields
-    // dezenas, premiacoes (all prize tiers), acumulado, próximo concurso, etc.
-    const result: LotteryResult = {
-      ...data,
-      loteria: getLotterySlugFromName(data.nome || lottery)
-    };
-
+    // Map API response to proper LotteryResult type
+    const result = mapApiResponseToLotteryResult(data, lottery);
     return [result];
   } catch (error) {
     if (error instanceof LotteryApiError) {
@@ -108,12 +150,8 @@ export async function getResultByContest(lottery: string, contest: string): Prom
       return null;
     }
 
-    // Return the complete API response with all fields
-    const result: LotteryResult = {
-      ...data,
-      loteria: getLotterySlugFromName(data.nome || lottery)
-    };
-
+    // Map API response to proper LotteryResult type
+    const result = mapApiResponseToLotteryResult(data, lottery);
     return result;
   } catch (error) {
     if (error instanceof LotteryApiError) {
