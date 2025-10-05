@@ -39,7 +39,8 @@ function getLotterySlugFromName(nome: string): string {
 
 export async function getLotteryResults(lottery: string, limit: number = 1): Promise<LotteryResult[]> {
   if (USE_MOCK_DATA) {
-    return getMockLotteryResult(lottery, limit);
+    const result = getMockLotteryResult(lottery);
+    return result ? [result] : [];
   }
 
   if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
