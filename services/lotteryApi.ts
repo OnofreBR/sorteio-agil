@@ -1,4 +1,4 @@
-import { LotteryResult, Prize } from '@/types/lottery';
+import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
 // Use environment variables for API configuration
@@ -62,6 +62,28 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
     });
   }
 
+  // Map cidadesPremiadas if available
+  const cidadesPremiadas: CidadePremiada[] | undefined = 
+    data.cidadesPremiadas && Array.isArray(data.cidadesPremiadas)
+      ? data.cidadesPremiadas.map((cidade: any) => ({
+          cidade: cidade.cidade || cidade.nome || '',
+          uf: cidade.uf || cidade.estado || '',
+          ganhadores: cidade.ganhadores || cidade.numero_ganhadores || 0,
+          posicao: cidade.posicao || cidade.faixa || undefined,
+        }))
+      : undefined;
+
+  // Map rateioCidades if available
+  const rateioCidades: RateioCidade[] | undefined = 
+    data.rateioCidades && Array.isArray(data.rateioCidades)
+      ? data.rateioCidades.map((rateio: any) => ({
+          cidade: rateio.cidade || rateio.nome || '',
+          uf: rateio.uf || rateio.estado || '',
+          valor: rateio.valor || rateio.valorPremio || 0,
+          ganhadores: rateio.ganhadores || rateio.numero_ganhadores || undefined,
+        }))
+      : undefined;
+
   // Build complete LotteryResult with all possible field mappings from API
   const result: LotteryResult = {
     loteria: getLotterySlugFromName(data.nome || data.loteria || lottery),
@@ -79,6 +101,18 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
     proximoConcurso: data.proximoConcurso || data.proximo_concurso || data.numeroConcursoProximo || 0,
     dataProximoConcurso: data.dataProximoConcurso || data.data_proximo_concurso || data.dataProximoSorteio || '',
     valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso || data.valor_estimado_proximo_concurso || data.valorProximoConcurso || 0,
+    // Additional fields from API
+    valorAcumulado: data.valorAcumulado || data.valor_acumulado || undefined,
+    acumuladoConcursoEspecial: data.acumuladoConcursoEspecial || data.acumulado_concurso_especial || undefined,
+    valorAcumuladoConcursoEspecial: data.valorAcumuladoConcursoEspecial || data.valor_acumulado_concurso_especial || undefined,
+    valorAcumuladoConcurso_0_5: data.valorAcumuladoConcurso_0_5 || data.valor_acumulado_concurso_0_5 || undefined,
+    valorArrecadado: data.valorArrecadado || data.valor_arrecadado || data.arrecadacao || undefined,
+    cidadesPremiadas: cidadesPremiadas,
+    rateioCidades: rateioCidades,
+    nome: data.nome || undefined,
+    numeroConcursoProximo: data.numeroConcursoProximo || data.numero_concurso_proximo || undefined,
+    numeroConcursoAnterior: data.numeroConcursoAnterior || data.numero_concurso_anterior || undefined,
+    valorEstimado: data.valorEstimado || data.valor_estimado || undefined,
   };
 
   return result;
