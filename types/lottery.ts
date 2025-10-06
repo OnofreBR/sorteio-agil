@@ -15,6 +15,18 @@ export interface LotteryResult {
   proximoConcurso: number;
   dataProximoConcurso: string;
   valorEstimadoProximoConcurso: number;
+  // Additional fields from API for complete contest details
+  valorAcumulado?: number;
+  acumuladoConcursoEspecial?: number;
+  valorAcumuladoConcursoEspecial?: number;
+  valorAcumuladoConcurso_0_5?: number;
+  valorArrecadado?: number;
+  cidadesPremiadas?: CidadePremiada[];
+  rateioCidades?: RateioCidade[];
+  nome?: string;
+  numeroConcursoProximo?: number;
+  numeroConcursoAnterior?: number;
+  valorEstimado?: number;
 }
 
 export interface Prize {
@@ -22,6 +34,20 @@ export interface Prize {
   faixa: number;
   ganhadores: number;
   valorPremio: number;
+}
+
+export interface CidadePremiada {
+  cidade: string;
+  uf: string;
+  ganhadores: number;
+  posicao?: number;
+}
+
+export interface RateioCidade {
+  cidade: string;
+  uf: string;
+  valor: number;
+  ganhadores?: number;
 }
 
 export interface LotteryInfo {
