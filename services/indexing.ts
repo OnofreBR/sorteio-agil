@@ -1,16 +1,20 @@
-// Configuration
-const SITE_URL = 'https://numerosmegasena.com.br';
-const INDEXNOW_KEY = '9d9bd943c4614e13ac83acf67dd4e940';
-const GOOGLE_INDEXING_KEY = 'fe03a75d34d990c8c7807ec32b4d453f4e9b87c8';
-const GOOGLE_INDEXING_ID = '107787472085621987686';
+// Configuration - Use server-side environment variables
+const SITE_URL = process.env.SITE_URL || 'https://numerosmegasena.com.br';
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
+const GOOGLE_INDEXING_KEY = process.env.GOOGLE_INDEXING_KEY;
+const GOOGLE_INDEXING_ID = process.env.GOOGLE_INDEXING_ID;
 
 /**
  * Submit URLs to IndexNow
  */
 export async function submitToIndexNow(urls: string[]): Promise<boolean> {
+  if (!INDEXNOW_KEY) {
+    console.error('❌ IndexNow key not configured');
+    return false;
+  }
+
   try {
     console.log(`🔄 Submitting ${urls.length} URLs to IndexNow...`);
-
     const response = await fetch('https://api.indexnow.org/indexnow', {
       method: 'POST',
       headers: {
