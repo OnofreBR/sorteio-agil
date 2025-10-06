@@ -8,7 +8,7 @@ const Header = () => {
         {/* Logo */}
         <Link className="flex items-center space-x-2 hover:opacity-90 transition-opacity" href="/">
           <Image
-            src="/logo.png"
+            src="/NUMEROS MEGA SENA LOGO.jpg"
             alt="Números Mega Sena Logo"
             width={180}
             height={50}
