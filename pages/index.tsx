@@ -26,7 +26,7 @@ export default function Home({ resultados }: HomeProps) {
         ogImage="/logo.png"
         keywords="mega sena, quina, lotofácil, lotomania, dupla sena, timemania, dia de sorte, super sete, mais milionária, resultados, loterias"
       />
-
+      
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-20">
@@ -35,7 +35,8 @@ export default function Home({ resultados }: HomeProps) {
               Resultados Oficiais
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-              Resultados das<br className="md:hidden" />
+              Resultados das
+              <br className="md:hidden" />
               <span className="md:inline"> </span>Loterias Brasileiras
             </h1>
             <p className="text-lg md:text-xl text-blue-50 max-w-3xl mx-auto leading-relaxed">
@@ -55,7 +56,6 @@ export default function Home({ resultados }: HomeProps) {
                 Confira os resultados mais recentes de todas as loterias
               </p>
             </div>
-
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
@@ -154,4 +154,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     };
   }
-};
+};}
