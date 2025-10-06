@@ -17,22 +17,40 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
   const valorPremio = mainPrize?.valorPremio || 0;
   const ganhadores = mainPrize?.ganhadores || 0;
 
-  // Helper function to lighten a color
-  const lightenColor = (hex: string, percent: number) => {
+  // Helper function to validate hex color
+  const isValidHex = (hex: string): boolean => {
+    return /^#[0-9A-Fa-f]{6}$/.test(hex);
+  };
+
+  // Safe helper function to lighten a color (pct 0-100)
+  const safeLighten = (hex: string, pct: number): string => {
+    if (!isValidHex(hex)) return hex; // fallback to base color
+    const clampedPct = Math.max(0, Math.min(100, pct)); // clamp 0-100
     const num = parseInt(hex.replace('#', ''), 16);
-    const r = Math.min(255, Math.floor(((num >> 16) & 0xff) + ((255 - ((num >> 16) & 0xff)) * percent / 100)));
-    const g = Math.min(255, Math.floor(((num >> 8) & 0xff) + ((255 - ((num >> 8) & 0xff)) * percent / 100)));
-    const b = Math.min(255, Math.floor((num & 0xff) + ((255 - (num & 0xff)) * percent / 100)));
+    const r = Math.min(255, Math.floor(((num >> 16) & 0xff) + ((255 - ((num >> 16) & 0xff)) * clampedPct / 100)));
+    const g = Math.min(255, Math.floor(((num >> 8) & 0xff) + ((255 - ((num >> 8) & 0xff)) * clampedPct / 100)));
+    const b = Math.min(255, Math.floor((num & 0xff) + ((255 - (num & 0xff)) * clampedPct / 100)));
     return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
   };
 
-  const lightColor = lightenColor(hexColor, 90);
-  const mediumColor = lightenColor(hexColor, 80);
+  // Safe helper function to darken a color (pct 0-100)
+  const safeDarken = (hex: string, pct: number): string => {
+    if (!isValidHex(hex)) return hex; // fallback to base color
+    const clampedPct = Math.max(0, Math.min(100, pct)); // clamp 0-100
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.max(0, Math.floor(((num >> 16) & 0xff) * (1 - clampedPct / 100)));
+    const g = Math.max(0, Math.floor(((num >> 8) & 0xff) * (1 - clampedPct / 100)));
+    const b = Math.max(0, Math.floor((num & 0xff) * (1 - clampedPct / 100)));
+    return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+  };
+
+  const lightColor = safeLighten(hexColor, 90);
+  const mediumColor = safeLighten(hexColor, 80);
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       {/* Header with lottery-specific color */}
-      <div 
+      <div
         className="border-b px-6 py-4"
         style={{ 
           background: `linear-gradient(to right, ${lightColor}, ${mediumColor})`,
@@ -59,7 +77,7 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
                 key={index}
                 className="w-12 h-12 rounded-full text-white font-bold text-base flex items-center justify-center shadow-md hover:scale-110 transition-transform"
                 style={{ 
-                  background: `linear-gradient(to bottom right, ${hexColor}, ${lightenColor(hexColor, -20)})` 
+                  background: `linear-gradient(to bottom right, ${hexColor}, ${safeDarken(hexColor, 15)})` 
                 }}
               >
                 {String(numero).padStart(2, '0')}
@@ -89,11 +107,11 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
 
         {/* Mês da Sorte - Dia de Sorte */}
         {resultado.mesSorte && (
-          <div 
+          <div
             className="rounded-xl p-4 border"
             style={{
-              background: `linear-gradient(to right, ${lightenColor(hexColor, 95)}, ${lightenColor(hexColor, 90)})`,
-              borderColor: lightenColor(hexColor, 70)
+              background: `linear-gradient(to right, ${safeLighten(hexColor, 95)}, ${safeLighten(hexColor, 90)})`,
+              borderColor: safeLighten(hexColor, 70)
             }}
           >
             <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
@@ -105,11 +123,11 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
 
         {/* Time do Coração - Timemania */}
         {resultado.loteria === 'timemania' && resultado.observacao && (
-          <div 
+          <div
             className="rounded-xl p-4 border"
             style={{
-              background: `linear-gradient(to right, ${lightenColor(hexColor, 95)}, ${lightenColor(hexColor, 90)})`,
-              borderColor: lightenColor(hexColor, 70)
+              background: `linear-gradient(to right, ${safeLighten(hexColor, 95)}, ${safeLighten(hexColor, 90)})`,
+              borderColor: safeLighten(hexColor, 70)
             }}
           >
             <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
@@ -150,7 +168,7 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
           href={`/${resultado.loteria}/${resultado.concurso}`}
           className="block w-full text-center px-6 py-3 text-white text-base font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
           style={{ 
-            background: `linear-gradient(to right, ${hexColor}, ${lightenColor(hexColor, -10)})` 
+            background: `linear-gradient(to right, ${hexColor}, ${safeDarken(hexColor, 15)})` 
           }}
         >
           Ver Detalhes
