@@ -1,9 +1,9 @@
 import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
-// Use environment variables for API configuration
-const RESULTS_API_URL = process.env.NEXT_PUBLIC_RESULTS_API_URL || process.env.RESULTS_API_URL;
-const RESULTS_API_TOKEN = process.env.NEXT_PUBLIC_RESULTS_API_TOKEN || process.env.RESULTS_API_TOKEN;
+// Use server-side environment variables only (no NEXT_PUBLIC_)
+const RESULTS_API_URL = process.env.RESULTS_API_URL;
+const RESULTS_API_TOKEN = process.env.RESULTS_API_TOKEN;
 const USE_MOCK_DATA = false; // Using real API data
 
 export class LotteryApiError extends Error {
@@ -125,7 +125,7 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
   }
 
   if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
-    throw new LotteryApiError('API configuration is missing. Please set NEXT_PUBLIC_RESULTS_API_URL and NEXT_PUBLIC_RESULTS_API_TOKEN environment variables.');
+    throw new LotteryApiError('API configuration is missing. Please check server configuration.');
   }
 
   try {
@@ -162,7 +162,7 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
 
 export async function getResultByContest(lottery: string, contest: string): Promise<any | null> {
   if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
-    throw new LotteryApiError('API configuration is missing. Please set NEXT_PUBLIC_RESULTS_API_URL and NEXT_PUBLIC_RESULTS_API_TOKEN environment variables.');
+    throw new LotteryApiError('API configuration is missing. Please check server configuration.');
   }
 
   try {
@@ -200,7 +200,7 @@ export async function getAllLotteryResults(): Promise<LotteryResult[]> {
   }
 
   if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
-    throw new LotteryApiError('API configuration is missing. Please set NEXT_PUBLIC_RESULTS_API_URL and NEXT_PUBLIC_RESULTS_API_TOKEN environment variables.');
+    throw new LotteryApiError('API configuration is missing. Please check server configuration.');
   }
 
   // Include ALL Brazilian national lotteries
