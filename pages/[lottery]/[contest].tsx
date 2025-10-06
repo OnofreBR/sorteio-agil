@@ -195,7 +195,7 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
 
                   <Section title="Informações Financeiras" icon={<DollarSign className="h-5 w-5 text-green-600" />}>
                     <div className="grid md:grid-cols-2 gap-3">
-                      <KV label="Arrecadação total" value={result.arrecadacao != null ? formatCurrency(result.arrecadacao as any) : '-'} />
+                      <KV label="Arrecadação total" value={(result as any).arrecadacao != null ? formatCurrency((result as any).arrecadacao) : '-'} />
                       <KV label="Acumulado principal" value={(result as any).acumuladoPrincipal != null ? formatCurrency((result as any).acumuladoPrincipal) : '-'} />
                       <KV label="Acumulado especial" value={(result as any).acumuladoEspecial != null ? formatCurrency((result as any).acumuladoEspecial) : '-'} />
                       <KV label="Acumulado final zero" value={(result as any).acumuladoFinal_0 != null ? formatCurrency((result as any).acumuladoFinal_0) : '-'} />
@@ -290,4 +290,51 @@ const ContestPage: NextPage<ContestPageProps> = ({ result, error }) => {
               )}
 
               {activeTab === 'estatisticas' && (
-                <div className="
+                <div className="space-y-4">
+                  <Section title="Estatísticas" icon={<PieChart className="h-5 w-5 text-indigo-600" />}>
+                    {Object.keys(estatisticas).length === 0 && <p className="text-sm text-gray-500">Sem estatísticas disponíveis.</p>}
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {Object.entries(estatisticas).map(([k, v]) => (
+                        <KV key={k} label={k} value={String(v)} />
+                      ))}
+                    </div>
+                  </Section>
+                </div>
+              )}
+
+              {activeTab === 'json' && (
+                <div className="space-y-4">
+                  <Section title="JSON completo" icon={<Info className="h-5 w-5 text-gray-600" />}>
+                    <pre className="bg-gray-100 p-4 rounded-lg text-xs overflow-auto max-h-96">
+                      {JSON.stringify(result, null, 2)}
+                    </pre>
+                  </Section>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { lottery, contest } = context.params as { lottery: string; contest: string };
+
+  try {
+    const result = await getResultByContest(lottery, contest);
+    if (!result) {
+      return { props: { result: null, error: 'Resultado não encontrado.' } };
+    }
+
+    await indexNewResult(lottery, parseInt(contest, 10));
+
+    return { props: { result } };
+  } catch (err: any) {
+    console.error('Error fetching contest:', err);
+    return { props: { result: null, error: err?.message || 'Erro desconhecido' } };
+  }
+};
+
+export default ContestPage;
