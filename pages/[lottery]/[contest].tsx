@@ -2,13 +2,23 @@ import React from 'react'
 import { GetServerSideProps } from 'next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { getResultByContest } from '@/services/lottery'
-import { indexNewResult } from '@/services/search'
-import { formatDate } from '@/lib/utils'
+import { getResultByContest } from '@/services/lotteryApi'
+import { indexNewResult } from '@/services/indexing'
+import { formatDate } from '@/utils/formatters'
 
 interface ContestPageProps {
   result: any
   error?: string
+}
+
+// safeDate: returns original string if new Date(str) is invalid or if str matches dd/MM/yyyy
+function safeDate(str: string | undefined | null): string {
+  if (!str) return ''
+  // Check if already in dd/MM/yyyy format
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return str
+  const d = new Date(str)
+  if (isNaN(d.getTime())) return str
+  return str
 }
 
 const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
@@ -22,7 +32,7 @@ const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
 
   const lotteryName = result.loteria || ''
   const contestNumber = result.concurso || ''
-  const drawDate = formatDate(result.data) || result.data || ''
+  const drawDate = formatDate(safeDate(result.data)) || safeDate(result.data) || ''
   const drawnNumbers = Array.isArray(result.dezenas) ? result.dezenas : []
   const prizes = Array.isArray(result.premiacoes) ? result.premiacoes : []
   const cidadesPremiadas = Array.isArray(result.cidadesPremiadas) ? result.cidadesPremiadas : []
@@ -65,11 +75,11 @@ const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
           <CardContent>
             <div className="space-y-2">
               {prizes.map((prize, i) => (
-                <div key={i} className="flex justify-between border-b pb-2">
+                <div className="flex justify-between border-b pb-2" key={i}>
                   <span className="font-medium">{prize.faixa || prize.descricao || ''}</span>
-                  <span>{prize.ganhadores || 0} ganhador(es)</span>
+                  <span>{Number.isFinite(prize.ganhadores) ? prize.ganhadores : 0} ganhador(es)</span>
                   <span className="text-green-600">
-                    {prize.valorPremio ? `R$ ${Number(prize.valorPremio).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'R$ 0,00'}
+                    {Number.isFinite(prize.valorPremio) ? `R$ ${Number(prize.valorPremio).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'R$ 0,00'}
                   </span>
                 </div>
               ))}
