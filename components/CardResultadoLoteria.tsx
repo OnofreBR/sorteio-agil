@@ -160,7 +160,7 @@ const CardResultadoLoteria = ({ resultado }: CardResultadoLoteriaProps) => {
             Concurso <span className="font-bold">{resultado.proximoConcurso}</span> •{' '}
             {resultado.dataProximoConcurso}
           </p>
-          <p 
+          <p
             className="text-2xl font-bold"
             style={{ color: hexColor }}
           >
