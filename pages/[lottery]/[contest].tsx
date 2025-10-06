@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { getResultByContest } from '@/services/lotteryApi'
 import { indexNewResult } from '@/services/indexing'
 import { formatDate } from '@/utils/formatters'
-import { LOTTERY_MAP } from '@/lib/lotteryConfig'
+import { LOTTERY_MAP } from '@/types/lottery'
 
 interface ContestPageProps {
   result: any
@@ -63,7 +63,7 @@ const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
   // Get lottery color
   const lotteryKey = lotteryName.toLowerCase().replace(/\s+/g, '')
   const lotteryConfig = LOTTERY_MAP[lotteryKey]
-  const hexColor = lotteryConfig?.color || '#6366f1'
+  const hexColor = lotteryConfig?.hexColor || '#6366f1'
   const lightColor = safeLighten(hexColor, 0.15)
   const darkColor = safeDarken(hexColor, 0.1)
   
