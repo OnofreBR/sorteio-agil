@@ -4,7 +4,7 @@ import { getMockLotteryResult, getAllMockResults } from './mockData';
 // Remove keys with undefined values recursively to satisfy Next.js JSON serialization
 export function sanitizeForNext<T>(value: T): T {
   if (Array.isArray(value)) {
-    // @ts-expect-error
+    // @ts-expect-error - Recursive type inference not supported
     return value.map((v) => sanitizeForNext(v)) as unknown as T;
   }
 
