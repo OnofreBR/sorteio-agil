@@ -69,10 +69,8 @@ export function generateFutureContests(
       loteria: lotteryInfo.name,
       concurso: contestNumber,
       data: estimatedDate,
-      local: 'São Paulo, SP',
       dezenasOrdemSorteio: [],
       dezenas: [],
-      trevos: [],
       premiacoes: prizeTiers.map((tier) => ({
         descricao: tier.name,
         faixa: 1,
