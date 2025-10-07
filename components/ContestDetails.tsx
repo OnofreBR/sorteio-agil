@@ -30,7 +30,7 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
   const contestDate = (result as any).contestDate ?? result.data;
   const prizeTiers = ((result as any).prizeTiers ?? result.premiacao) || [];
   const numbers = ((result as any).numbers ?? result.dezenas) || [];
-  const states = ((result as any).winnerLocales ?? result.estadosPremiados) || [];
+  const states = ((result as any).winnerLocales ?? result.local_ganhadores) || [];
   const accumulated = (result as any).accumulated ?? (result as any).acumulou ?? false;
 
   return (
@@ -150,15 +150,15 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
               );
             })}
           </div>
-        </cardcontent>
-      </card>
+        </CardContent>
+      </Card>
 
       {states && states.length > 0 && (
-        <card>
-          <cardheader>
-            <cardtitle className="text-foreground">Estados Premiados</cardtitle>
-          </cardheader>
-          <cardcontent>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-foreground">Estados Premiados</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="flex flex-wrap gap-2">
               {states.map((estado: any, index: number) => {
                 const label =
@@ -168,22 +168,22 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
                     ? `${estado.cidade ? `${estado.cidade} - ` : ''}${estado.uf}`
                     : estado.cidade ?? '—';
                 return (
-                  <badge key="{index}" variant="outline">
+                  <Badge key={index} variant="outline">
                     {label}
-                  </badge>
+                  </Badge>
                 );
               })}
             </div>
-          </cardcontent>
-        </card>
+          </CardContent>
+        </Card>
       )}
 
       {result.observacao && (
-        <card>
-          <cardcontent className="pt-6">
+        <Card>
+          <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">{result.observacao}</p>
-          </cardcontent>
-        </card>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
