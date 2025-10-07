@@ -1,14 +1,9 @@
-import { GetStaticProps } from 'next'
 import { useState } from 'react'
 import SEOHead from '@/components/SEOHead'
 import LotteryCard from '@/components/LotteryCard'
-import { getLatestForAll, LOTTERY_SLUGS } from '@/src/lib/api/results'
 import { buildUrl } from '@/src/lib/config/site'
-import { LotteryResult } from '@/src/types/lottery'
-
-interface HomeProps {
-  resultados: LotteryResult[]
-}
+import { LOTTERY_SLUGS } from './indexPage.utils'
+import type { HomeProps } from './indexPage.utils'
 
 export default function Home({ resultados }: HomeProps) {
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -112,36 +107,7 @@ export default function Home({ resultados }: HomeProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-  try {
-    const resultados = await getLatestForAll()
-
-    const ordered = LOTTERY_SLUGS.map((slug) => resultados.find((item) => item.lotterySlug === slug)).filter(
-      (item): item is LotteryResult => Boolean(item)
-    )
-
-    return {
-      props: {
-        resultados: ordered,
-      },
-      revalidate: 600,
-    }
-  } catch (error) {
-    console.error('Error fetching lottery results:', error)
-    return {
-      props: {
-        resultados: [],
-      },
-      revalidate: 300,
-    }
-  }
-}
-
-interface CardSkeletonProps {
-  lotterySlug: string
-}
-
-const CardSkeleton = ({ lotterySlug }: CardSkeletonProps) => (
+const CardSkeleton = ({ lotterySlug }: { lotterySlug: string }) => (
   <article className="flex h-full flex-col rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
     <header className="mb-4">
       <div className="h-4 w-24 animate-pulse rounded bg-muted" />
@@ -168,3 +134,5 @@ const CardSkeleton = ({ lotterySlug }: CardSkeletonProps) => (
     </footer>
   </article>
 )
+
+export { getStaticProps } from './indexPage.utils'
