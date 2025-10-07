@@ -1,13 +1,16 @@
 import React from 'react';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
 
 export default function Termos() {
   return (
     <>
-      <Head>
-        <title>Termos de Uso - Números das Loterias</title>
-        <meta name="description" content="Termos de Uso do portal Números MegaSena" />
-      </Head>
+      <SEOHead
+        title="Termos de Uso - Números Mega Sena"
+        description="Termos de Uso do portal Números Mega Sena"
+        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/termos`}
+        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/termos`}
+        type="article"
+      />
 
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-center">Termos de Uso</h1>

@@ -1,7 +1,8 @@
 import { LOTTERY_MAP } from '@/types/lottery';
 import { getAllFutureContests } from './futureContests';
 
-const SITE_URL = typeof window !== 'undefined' ? window.location.origin : '';
+// Prefer server-side environment configuration; never rely on window here
+const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '');
 
 export interface SitemapUrl {
   loc: string;
@@ -40,18 +41,11 @@ export function generateSitemapUrls(): SitemapUrl[] {
 
   // Individual lottery pages (opcional - páginas de índice)
   Object.keys(LOTTERY_MAP).forEach((lotterySlug) => {
-    urls.push({
-      loc: `${SITE_URL}/${lotterySlug}`,
-      lastmod: today,
-      changefreq: 'daily',
-      priority: 0.9,
-    });
-
-    // Últimos 100 concursos de cada loteria (formato novo: /megasena/concurso-2919)
+    // Últimos 100 concursos de cada loteria (rota canônica: /:lottery/:contest)
     for (let i = 0; i < 100; i++) {
       const contestNumber = 2750 - i;
       urls.push({
-        loc: `${SITE_URL}/${lotterySlug}/concurso-${contestNumber}`,
+        loc: `${SITE_URL}/${lotterySlug}/${contestNumber}`,
         lastmod: today,
         changefreq: 'weekly',
         priority: 0.8,
@@ -63,7 +57,7 @@ export function generateSitemapUrls(): SitemapUrl[] {
   const futureContests = getAllFutureContests();
   futureContests.forEach(({ lottery, contest }) => {
     urls.push({
-      loc: `${SITE_URL}/${lottery}/concurso-${contest}`,
+      loc: `${SITE_URL}/${lottery}/${contest}`,
       lastmod: today,
       changefreq: 'daily', // Muda quando resultado sai
       priority: 0.7,
@@ -139,7 +133,7 @@ export function generateDynamicSitemap(latestResults: any[] = []): string {
     latestResults.forEach(result => {
       const lottery = result.loteria.toLowerCase().replace(/\s+/g, '').replace(/-/g, '');
       xml += '  <url>\n';
-      xml += `    <loc>${SITE_URL}/${lottery}/concurso-${result.concurso}</loc>\n`;
+      xml += `    <loc>${SITE_URL}/${lottery}/${result.concurso}</loc>\n`;
       xml += `    <lastmod>${today}</lastmod>\n`;
       xml += '    <changefreq>weekly</changefreq>\n';
       xml += '    <priority>0.8</priority>\n';
@@ -151,7 +145,7 @@ export function generateDynamicSitemap(latestResults: any[] = []): string {
   const futureContests = getAllFutureContests();
   futureContests.forEach(({ lottery, contest }) => {
     xml += '  <url>\n';
-    xml += `    <loc>${SITE_URL}/${lottery}/concurso-${contest}</loc>\n`;
+    xml += `    <loc>${SITE_URL}/${lottery}/${contest}</loc>\n`;
     xml += `    <lastmod>${today}</lastmod>\n`;
     xml += '    <changefreq>daily</changefreq>\n';
     xml += '    <priority>0.7</priority>\n';

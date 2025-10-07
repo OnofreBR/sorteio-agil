@@ -1,13 +1,15 @@
 import React from 'react';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
 
 export default function Sobre() {
   return (
     <>
-      <Head>
-        <title>Sobre - Números das Loterias</title>
-        <meta name="description" content="Conheça o Números das Loterias - Portal de confiança para resultados oficiais das loterias brasileiras" />
-      </Head>
+      <SEOHead
+        title="Sobre - Números Mega Sena"
+        description="Conheça o Números Mega Sena - Portal de confiança para resultados oficiais das loterias brasileiras."
+        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/sobre`}
+        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/sobre`}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-center">Bem-vindo ao Números das Loterias</h1>

@@ -26,7 +26,7 @@ export default function ContestNavigation({
         <CardContent className="pt-6">
           <div className="flex items-center justify-between gap-4">
             {currentContest > 1 ? (
-              <Link href={`/${lottery}/concurso/${currentContest - 1}`} className="flex-1">
+              <Link href={`/${lottery}/${currentContest - 1}`} className="flex-1">
                 <Button variant="outline" className="w-full gap-2">
                   <ChevronLeft className="w-4 h-4" />
                   Concurso Anterior
@@ -39,7 +39,7 @@ export default function ContestNavigation({
               </Button>
             )}
             
-            <Link href={`/${lottery}/concurso/${currentContest + 1}`} className="flex-1">
+            <Link href={`/${lottery}/${currentContest + 1}`} className="flex-1">
               <Button variant="outline" className="w-full gap-2">
                 Concurso Seguinte
                 <ChevronRight className="w-4 h-4" />
@@ -73,10 +73,10 @@ export default function ContestNavigation({
         </Card>
       )}
 
-      {/* Link para Página da Loteria */}
-      <Link href={`/${lottery}`}>
+      {/* Link para Início (rota canônica existente) */}
+      <Link href={`/`}>
         <Button variant="outline" className="w-full">
-          Ver Todos os Resultados da {lottery}
+          Ver Mais Resultados
         </Button>
       </Link>
     </div>

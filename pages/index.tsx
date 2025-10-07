@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next'
+import { GetStaticProps } from 'next'
 import SEOHead from '@/components/SEOHead'
 import CardResultadoLoteria from '@/components/CardResultadoLoteria'
 import { getAllLotteryResults } from '@/services/lotteryApi'
@@ -13,7 +13,7 @@ export default function Home({ resultados }: HomeProps) {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const handleRefresh = async () => {
     setIsRefreshing(true)
-    window.location.reload()
+    if (typeof window !== 'undefined') window.location.reload()
   }
 
   return (
@@ -21,9 +21,21 @@ export default function Home({ resultados }: HomeProps) {
       <SEOHead
         title="Resultados das Loterias Brasileiras - Números Mega Sena"
         description="Acompanhe os resultados mais recentes da Mega-Sena, Quina, Lotofácil e todas as principais loterias do Brasil em tempo real."
-        canonical="https://numerosmegasena.com.br/"
+        canonical={(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '/')}
+        url={(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '/')}
         ogImage="/logo.png"
         keywords="mega sena, quina, lotofácil, lotomania, dupla sena, timemania, dia de sorte, super sete, mais milionária, resultados, loterias"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'Números Mega Sena',
+          url: (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '/'),
+          description: 'Resultados das principais loterias brasileiras, atualizados em tempo real.',
+          publisher: {
+            '@type': 'Organization',
+            name: 'Números Mega Sena',
+          },
+        }}
       />
 
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -86,34 +98,18 @@ export default function Home({ resultados }: HomeProps) {
         </section>
       </main>
 
-      {/* JSON-LD para SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            name: 'Números Mega Sena',
-            url: 'https://numerosmegasena.com.br/',
-            description: 'Resultados das principais loterias brasileiras, atualizados em tempo real.',
-            publisher: {
-              '@type': 'Organization',
-              name: 'Números Mega Sena',
-            },
-          }),
-        }}
-      />
     </>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   try {
     const resultados = await getAllLotteryResults()
     return {
       props: {
         resultados: Array.isArray(resultados) ? resultados : [],
       },
+      revalidate: 600,
     }
   } catch (error) {
     console.error('Error fetching lottery results:', error)
@@ -121,6 +117,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       props: {
         resultados: [],
       },
+      revalidate: 300,
     }
   }
 }

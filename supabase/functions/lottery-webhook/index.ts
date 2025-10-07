@@ -116,7 +116,7 @@ serve(async (req) => {
       
       // Generate URLs to index
       const urlsToIndex = newResults.map(
-        r => `${siteUrl}/${r.lottery}/concurso-${r.contest}`
+        r => `${siteUrl}/${r.lottery}/${r.contest}`
       );
       
       // Trigger indexing

@@ -1,13 +1,17 @@
 import React from 'react';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
 
 export default function Privacidade() {
   return (
     <>
-      <Head>
-        <title>Política de Privacidade - Números das Loterias</title>
-        <meta name="description" content="Política de Privacidade do Números MegaSena" />
-      </Head>
+      <SEOHead
+        title="Política de Privacidade - Números Mega Sena"
+        description="Política de Privacidade do Números Mega Sena"
+        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/privacidade`}
+        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/privacidade`}
+        type="article"
+        noIndex={false}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-center">Política de Privacidade</h1>

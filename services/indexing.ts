@@ -1,5 +1,5 @@
 // Configuration - Use server-side environment variables
-const SITE_URL = process.env.SITE_URL || 'https://numerosmegasena.com.br';
+const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '');
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
 const GOOGLE_INDEXING_KEY = process.env.GOOGLE_INDEXING_KEY;
 const GOOGLE_INDEXING_ID = process.env.GOOGLE_INDEXING_ID;
@@ -21,7 +21,9 @@ export async function submitToIndexNow(urls: string[]): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        host: 'numerosmegasena.com.br',
+        host: (() => {
+          try { return new URL(SITE_URL).host } catch { return SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '') }
+        })(),
         key: INDEXNOW_KEY,
         keyLocation: `${SITE_URL}/${INDEXNOW_KEY}.txt`,
         urlList: urls,
@@ -108,9 +110,7 @@ export async function indexNewResult(lottery: string, contest: number): Promise<
  * Index multiple contests at once (useful for future contests)
  */
 export async function indexMultipleContests(contests: Array<{ lottery: string; contest: number }>): Promise<void> {
-  const urls = contests.map(({ lottery, contest }) => 
-    `${SITE_URL}/${lottery}/${contest}`
-  );
+  const urls = contests.map(({ lottery, contest }) => `${SITE_URL}/${lottery}/${contest}`);
   
   console.log(`🔄 Indexing ${urls.length} URLs...`);
   

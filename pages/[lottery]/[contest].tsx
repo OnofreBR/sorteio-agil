@@ -1,6 +1,6 @@
 import React from 'react'
 import { GetServerSideProps } from 'next'
-import Head from 'next/head'
+import SEOHead from '@/components/SEOHead'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getResultByContest } from '@/services/lotteryApi'
@@ -11,6 +11,7 @@ import { LOTTERY_MAP } from '@/types/lottery'
 interface ContestPageProps {
   result: any
   error?: string
+  lotteryKey?: string
 }
 
 function safeDate(str: string | undefined | null): string {
@@ -148,51 +149,47 @@ const DynamicFieldRenderer: React.FC<{
   )
 }
 
-const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
+const ContestPage: React.FC<ContestPageProps> = ({ result, error, lotteryKey: lotteryKeyProp }) => {
   if (error || !result) {
     return (
       <div className="container mx-auto p-4">
-        <Head>
-          <title>Erro - Sorteio Ágil</title>
-        </Head>
+        <SEOHead title="Erro - Números Mega Sena" description="Resultado não encontrado" />
         <p className="text-red-600">{error || 'Resultado não encontrado.'}</p>
       </div>
     )
   }
 
   // Extract key fields for header and special rendering
-  const lotteryName: string = result?.loteria || ''
+  const lotteryKey = (lotteryKeyProp || '').toLowerCase().replace(/\s+/g, '')
+  const lotteryConfig = LOTTERY_MAP?.[lotteryKey]
+  const lotteryName: string = result?.loteria || result?.nome || lotteryConfig?.name || ''
   const contestNumber: string | number = result?.concurso ?? ''
   const drawDate: string = safeDate(result?.data) || ''
   const drawnNumbers: any[] = Array.isArray(result?.dezenas) ? result.dezenas : []
   const local: string = result?.local || ''
   const proximoConcurso: number = toInt(result?.proximoConcurso)
 
-  const lotteryKey = (lotteryName || '').toLowerCase().replace(/\s+/g, '')
-  const lotteryConfig = LOTTERY_MAP?.[lotteryKey]
   const hexColor = lotteryConfig?.hexColor || '#6366f1'
   const lightColor = safeLighten(hexColor, 0.15)
   const darkColor = safeDarken(hexColor, 0.1)
 
-  const pageTitle = `${lotteryName} - Concurso ${contestNumber} - Sorteio Ágil`
-  const pageUrl = `https://sorteioagil.com.br/${lotteryKey}/${contestNumber}`
+  const pageTitle = `${lotteryName} - Concurso ${contestNumber} - Números Mega Sena`
+  const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')
+  const pageUrl = `${SITE_URL}/${lotteryKey}/${contestNumber}`
 
   // Keys to exclude from dynamic rendering (already rendered specially)
   const excludedKeys = ['loteria', 'concurso', 'data', 'local', 'proximoConcurso']
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <link rel="canonical" href={pageUrl} />
-        <meta
-          name="description"
-          content={`Resultado da ${lotteryName} - Concurso ${contestNumber}. Todos os dados da API.`}
-        />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="article" />
-      </Head>
+      <SEOHead
+        title={`${lotteryName} - Concurso ${contestNumber} | Números Mega Sena`}
+        description={`Resultado da ${lotteryName} - Concurso ${contestNumber}. Números, prêmios, ganhadores e próximos concursos.`}
+        canonical={pageUrl}
+        url={pageUrl}
+        type="article"
+        ogImage="/logo.png"
+      />
 
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
@@ -252,8 +249,8 @@ const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
               <a href="/">
                 <Button style={{ borderColor: hexColor, color: hexColor }} variant="outline">Início</Button>
               </a>
-              <a href={`/${lotteryKey}`}>
-                <Button style={{ background: lightColor, color: hexColor }} variant="secondary">Voltar para {lotteryName}</Button>
+              <a href={`/`}>
+                <Button style={{ background: lightColor, color: hexColor }} variant="secondary">Voltar para Início</Button>
               </a>
               {proximoConcurso > 0 ? (
                 <a href={`/${lotteryKey}/${proximoConcurso}`}>
@@ -275,12 +272,13 @@ const ContestPage: React.FC<ContestPageProps> = ({ result, error }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { lottery, contest } = context.params as { lottery: string; contest: string }
   try {
-    const result = await getResultByContest(lottery, contest)
+    const sanitizedContest = String(contest).replace(/[^0-9]/g, '')
+    const result = await getResultByContest(lottery, sanitizedContest)
     if (!result) {
       return { props: { result: null, error: 'Resultado não encontrado.' } }
     }
-    await indexNewResult(lottery, parseInt(contest, 10))
-    return { props: { result } }
+    await indexNewResult(lottery, parseInt(sanitizedContest, 10))
+    return { props: { result, lotteryKey: String(lottery).toLowerCase() } }
   } catch (err: any) {
     console.error('Error fetching contest:', err)
     return { props: { result: null, error: err?.message || 'Erro desconhecido' } }

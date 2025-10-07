@@ -102,15 +102,7 @@ async function generateSitemap(siteUrl: string): Promise<string> {
     });
   });
 
-  // Lottery index pages
-  Object.keys(LOTTERY_MAP).forEach((lottery) => {
-    urls.push({
-      loc: `${siteUrl}/${lottery}`,
-      lastmod: today,
-      changefreq: 'daily',
-      priority: 0.8,
-    });
-  });
+  // No dedicated lottery index pages (avoid 404s)
 
   // Latest contest results
   const results = await fetchLatestResults();
@@ -121,7 +113,7 @@ async function generateSitemap(siteUrl: string): Promise<string> {
     if (lottery && result.concurso) {
       // Current contest
       urls.push({
-        loc: `${siteUrl}/${lottery}/concurso-${result.concurso}`,
+        loc: `${siteUrl}/${lottery}/${result.concurso}`,
         lastmod: today,
         changefreq: 'daily',
         priority: 0.9,
@@ -132,7 +124,7 @@ async function generateSitemap(siteUrl: string): Promise<string> {
         const contestNum = result.concurso - i;
         if (contestNum > 0) {
           urls.push({
-            loc: `${siteUrl}/${lottery}/concurso-${contestNum}`,
+            loc: `${siteUrl}/${lottery}/${contestNum}`,
             lastmod: today,
             changefreq: 'monthly',
             priority: 0.6,
@@ -143,7 +135,7 @@ async function generateSitemap(siteUrl: string): Promise<string> {
       // Next 5 future contests
       for (let i = 1; i <= 5; i++) {
         urls.push({
-          loc: `${siteUrl}/${lottery}/concurso-${result.concurso + i}`,
+          loc: `${siteUrl}/${lottery}/${result.concurso + i}`,
           lastmod: today,
           changefreq: 'weekly',
           priority: 0.7,
