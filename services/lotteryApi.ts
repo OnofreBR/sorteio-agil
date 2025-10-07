@@ -1,6 +1,24 @@
 import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
+// Remove keys with undefined values recursively to satisfy Next.js JSON serialization
+function sanitizeUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    // @ts-ignore
+    return value.map((v) => sanitizeUndefined(v)) as unknown as T;
+  }
+  if (value && typeof value === 'object') {
+    const out: Record<string, any> = {};
+    for (const [k, v] of Object.entries(value as Record<string, any>)) {
+      if (v === undefined) continue;
+      out[k] = sanitizeUndefined(v);
+    }
+    return out as unknown as T;
+  }
+  // primitives (including null) returned as-is
+  return value;
+}
+
 // Use server-side environment variables only (no NEXT_PUBLIC_)
 const RESULTS_API_URL = process.env.RESULTS_API_URL;
 const RESULTS_API_TOKEN = process.env.RESULTS_API_TOKEN;
@@ -92,6 +110,7 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
     local: data.local || data.local_sorteio || data.localSorteio || '',
     dezenasOrdemSorteio: data.dezenasOrdemSorteio || data.dezenas_ordem_sorteio || data.ordemSorteio || data.dezenas || [],
     dezenas: data.dezenas || data.numeros || data.numerosSorteados || [],
+    // Avoid undefined in optional fields; they will be removed by sanitizer if undefined
     trevos: data.trevos || data.trevos_sorteados || data.trevosSorteados || undefined,
     mesSorte: data.mesSorte || data.mes_sorte || data.mesDaSorte || undefined,
     premiacoes: premiacoes,
@@ -115,7 +134,8 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
     valorEstimado: data.valorEstimado || data.valor_estimado || undefined,
   };
 
-  return result;
+  // Remove undefined keys deeply to satisfy Next.js serialization
+  return sanitizeUndefined(result);
 }
 
 export async function getLotteryResults(lottery: string, limit: number = 1): Promise<LotteryResult[]> {
@@ -149,7 +169,7 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
 
     // Map API response to proper LotteryResult type
     const result = mapApiResponseToLotteryResult(data, lottery);
-    return [result];
+    return [sanitizeUndefined(result)];
   } catch (error) {
     if (error instanceof LotteryApiError) {
       throw error;
@@ -222,9 +242,11 @@ export async function getAllLotteryResults(): Promise<LotteryResult[]> {
     lotteries.map(lottery => getLotteryResults(lottery, 1))
   );
 
-  return results
+  const merged = results
     .filter((result): result is PromiseFulfilledResult<LotteryResult[]> => result.status === 'fulfilled')
     .flatMap(result => result.value);
+
+  return sanitizeUndefined(merged);
 }
 
 // Utility functions
