@@ -4,7 +4,6 @@ import NumbersPills from '@/components/NumbersPills'
 import PrizeTable from '@/components/PrizeTable'
 import { buildUrl } from '@/src/lib/config/site'
 import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber, toISODate } from '@/utils/formatters'
-
 import type { LotteryPageProps } from './loteriaPage.utils'
 
 const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
@@ -35,132 +34,129 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
   return (
     <>
       <SEOHead
-        title={`${pageTitle} | Números Mega Sena`}
-        description={`Confira o resultado completo da ${lottery.lotteryName}, concurso ${lottery.contestNumber}: números sorteados, premiações e próximos concursos.`}
-        canonical={canonicalUrl}
-        url={canonicalUrl}
-        ogImage="/logo.png"
-        jsonLd={{
+        title={pageTitle}
+        description={`Confira os resultados do concurso ${lottery.contestNumber} da ${lottery.lotteryName}, realizado em ${formattedDate}. Números sorteados, ganhadores e prêmios.`}
+        canonicalUrl={canonicalUrl}
+        structuredData={{
           '@context': 'https://schema.org',
-          '@type': 'CollectionPage',
-          name: `${lottery.lotteryName} - Últimos resultados`,
-          description: `Resultados recentes e próximos concursos da ${lottery.lotteryName}.`,
-          mainEntity: history.slice(0, 3).map((contest) => ({
-            '@type': 'Event',
-            name: `${contest.lotteryName} - Concurso ${contest.contestNumber}`,
-            startDate: toISODate(contest.contestDate),
-            url: buildUrl(`/${contest.lotterySlug}/concurso-${contest.contestNumber}`),
-          })),
-          mainEntityOfPage: {
-            '@type': 'WebPage',
-            '@id': canonicalUrl,
-          },
+          '@type': 'WebPage',
+          name: pageTitle,
+          description: `Resultado do concurso ${lottery.contestNumber} da ${lottery.lotteryName}`,
+          datePublished: lottery.contestDate ? toISODate(lottery.contestDate) : undefined,
         }}
       />
 
-      <main className="container mx-auto max-w-5xl px-4 py-12 space-y-12">
-        <header className="rounded-2xl border border-border/60 bg-white p-8 shadow-sm">
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase text-muted-foreground">Concurso {formatNumber(lottery.contestNumber)}</p>
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl">{lottery.lotteryName}</h1>
-              <p className="text-sm text-muted-foreground">{formattedDate}</p>
-              {lottery.location ? (
-                <p className="mt-2 text-sm text-muted-foreground">Local do sorteio: {lottery.location}</p>
-              ) : null}
-            </div>
-            <div className="space-y-2 text-right">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Prêmio principal</p>
-              <p className="text-2xl font-bold text-emerald-600">{prizeLabel}</p>
-              <p className="text-sm text-muted-foreground">{winnersLabel}</p>
-            </div>
-          </div>
+      <main className="container mx-auto max-w-5xl px-4 py-8">
+        <article>
+          <header className="mb-8 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 text-white shadow-lg">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight">{lottery.lotteryName}</h1>
+            <p className="mt-2 text-lg opacity-95">
+              Concurso {formatNumber(lottery.contestNumber)} • {formattedDate}
+            </p>
+          </header>
 
-          <div className="mt-6 space-y-4">
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Números sorteados</p>
-              <NumbersPills numbers={lottery.numbers} ariaLabel={`Números sorteados da ${lottery.lotteryName}`} />
+          <section className="space-y-6">
+            <div className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
+              <h2 className="mb-4 text-xl font-semibold text-foreground">Números sorteados</h2>
+              <NumbersPills numbers={lottery.numbers} ariaLabel={`Números sorteados do concurso ${lottery.contestNumber}`} />
+
+              {lottery.secondDrawNumbers && lottery.secondDrawNumbers.length > 0 && (
+                <div className="mt-6">
+                  <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Segundo sorteio</p>
+                  <NumbersPills
+                    numbers={lottery.secondDrawNumbers}
+                    variant="secondary"
+                    ariaLabel={`Segundo sorteio do concurso ${lottery.contestNumber}`}
+                  />
+                </div>
+              )}
+
+              {lottery.trevos && lottery.trevos.length > 0 && (
+                <div className="mt-6">
+                  <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
+                  <NumbersPills
+                    numbers={lottery.trevos}
+                    variant="secondary"
+                    ariaLabel={`Trevos sorteados do concurso ${lottery.contestNumber}`}
+                  />
+                </div>
+              )}
+
+              {lottery.mesSorte && (
+                <div className="mt-6">
+                  <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Mês da Sorte</p>
+                  <p className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 text-xl font-bold text-white shadow-md">
+                    {lottery.mesSorte}
+                  </p>
+                </div>
+              )}
+
+              {lottery.timeCoracao && (
+                <div className="mt-6">
+                  <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Time do Coração</p>
+                  <p className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 text-xl font-bold text-white shadow-md">
+                    {lottery.timeCoracao}
+                  </p>
+                </div>
+              )}
             </div>
-            {lottery.secondDrawNumbers && lottery.secondDrawNumbers.length > 0 ? (
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Segundo sorteio</p>
-                <NumbersPills
-                  numbers={lottery.secondDrawNumbers}
-                  variant="secondary"
-                  ariaLabel={`Segundo sorteio da ${lottery.lotteryName}`}
-                />
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-border/60 bg-muted/40 p-6">
+                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Prêmio principal</p>
+                <p className="text-3xl font-bold text-foreground">{prizeLabel}</p>
               </div>
-            ) : null}
-            {lottery.trevos && lottery.trevos.length > 0 ? (
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
-                <NumbersPills
-                  numbers={lottery.trevos}
-                  variant="secondary"
-                  ariaLabel={`Trevos sorteados da ${lottery.lotteryName}`}
-                />
+              <div className="rounded-xl border border-border/60 bg-muted/40 p-6">
+                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Ganhadores</p>
+                <p className="text-3xl font-bold text-foreground">{winnersLabel}</p>
               </div>
-            ) : null}
-            {lottery.mesSorte ? (
-              <div className="mt-3">
-                <p className="text-sm text-muted-foreground">Mês da Sorte: <span className="font-semibold text-foreground">{lottery.mesSorte}</span></p>
+            </div>
+
+            {lottery.prizes && lottery.prizes.length > 0 && (
+              <div className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
+                <h2 className="mb-4 text-xl font-semibold text-foreground">Premiação completa</h2>
+                <PrizeTable prizes={lottery.prizes} />
               </div>
-            ) : null}
-          </div>
-        </header>
+            )}
 
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-foreground">Distribuição de prêmios</h2>
-          <PrizeTable tiers={lottery.prizeTiers} caption={`Premiação do concurso ${lottery.contestNumber}`} />
-        </section>
+            <div className="rounded-xl border border-border/60 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 p-6">
+              <h2 className="mb-4 text-xl font-semibold text-foreground">Próximo concurso</h2>
+              <p className="text-lg text-muted-foreground">
+                Concurso {nextContestNumber} • {nextContestDate}
+              </p>
+              <p className="mt-2 text-3xl font-bold text-emerald-600">{nextContestPrize}</p>
+            </div>
 
-        <section className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-foreground">Próximo concurso</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground">Concurso</p>
-              <p className="text-lg font-semibold text-foreground">{nextContestNumber}</p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground">Data prevista</p>
-              <p className="text-lg font-semibold text-foreground">{nextContestDate}</p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground">Estimativa de prêmio</p>
-              <p className="text-lg font-semibold text-emerald-600">{nextContestPrize}</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">Concursos recentes</h2>
-          {history.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Sem histórico disponível.</p>
-          ) : (
-            <ul className="space-y-3">
-              {history.map((item) => (
-                <li key={`${item.lotterySlug}-${item.contestNumber}`} className="rounded-xl border border-border/60 bg-white p-4 shadow-sm">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        Concurso {formatNumber(item.contestNumber)} · {formatDate(item.contestDate)}
-                      </p>
-                      <NumbersPills numbers={item.numbers} size="sm" ariaLabel={`Números sorteados do concurso ${item.contestNumber}`} />
-                    </div>
-                    <Link
-                      href={`/${item.lotterySlug}/concurso-${item.contestNumber}`}
-                      className="inline-flex items-center justify-center rounded-lg border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                    >
-                      Ver concurso
-                    </Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+            {history && history.length > 0 && (
+              <div className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
+                <h2 className="mb-4 text-xl font-semibold text-foreground">Últimos concursos da {lottery.lotteryName}</h2>
+                <ul className="space-y-3">
+                  {history.map((item) => (
+                    <li className="rounded-xl border border-border/60 bg-white p-4 shadow-sm" key={`${item.lotterySlug}-${item.contestNumber}`}>
+                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            Concurso {formatNumber(item.contestNumber)} · {formatDate(item.contestDate)}
+                          </p>
+                          <NumbersPills numbers={item.numbers} size="sm" ariaLabel={`Números sorteados do concurso ${item.contestNumber}`} />
+                        </div>
+                        <Link 
+                          href={`/${item.lotterySlug}/concurso-${item.contestNumber}`}
+                          className="inline-flex items-center justify-center rounded-lg border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                        >
+                          Ver concurso
+                        </Link>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        </article>
       </main>
     </>
   )
+}
+
 export default LotteryPage
-export { getServerSideProps } from './loteriaPage.utils'
