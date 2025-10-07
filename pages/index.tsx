@@ -101,7 +101,7 @@ export default function Home({ resultados }: HomeProps) {
                   />
                 ))
               : LOTTERY_SLUGS.map((slug) => (
-                  <CardSkeleton key={slug} />
+                  <CardSkeleton key={slug} lotterySlug={slug} />
                 ))}
           </div>
           {!hasResults ? (
