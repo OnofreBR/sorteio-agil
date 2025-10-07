@@ -3,8 +3,13 @@ import SEOHead from '@/components/SEOHead'
 import NumbersPills from '@/components/NumbersPills'
 import PrizeTable from '@/components/PrizeTable'
 import { buildUrl } from '@/src/lib/config/site'
-import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber, toISODate } from '@/utils/formatters'
-
+import {
+  formatCurrencyBRL,
+  formatDate,
+  formatDateLong,
+  formatNumber,
+  toISODate,
+} from '@/utils/formatters'
 import type { ContestPageProps } from './concursoPage.utils'
 
 const ContestPage = ({ result, previousContest, latestContest }: ContestPageProps) => {
@@ -58,65 +63,105 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
             name: 'Números Mega Sena',
             url: buildUrl('/'),
           },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Números Mega Sena',
+            logo: {
+              '@type': 'ImageObject',
+              url: buildUrl('/logo.png'),
+            },
+          },
         }}
       />
+      <main className="container mx-auto max-w-5xl space-y-8 px-4 py-8">
+        <article className="space-y-6">
+          <header className="space-y-4">
+            <nav className="flex gap-2 text-sm text-muted-foreground">
+              <Link href="/loterias" className="hover:text-foreground">
+                Loterias
+              </Link>
+              <span>/</span>
+              <Link
+                href={`/loterias/${result.lotterySlug}`}
+                className="hover:text-foreground"
+              >
+                {result.lotteryName}
+              </Link>
+              <span>/</span>
+              <span className="text-foreground">Concurso {result.contestNumber}</span>
+            </nav>
 
-      <main className="container mx-auto max-w-5xl px-4 py-12 space-y-12">
-        <header className="rounded-2xl border border-border/60 bg-white p-8 shadow-sm">
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase text-muted-foreground">Concurso {formatNumber(result.contestNumber)}</p>
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl">{result.lotteryName}</h1>
-              <p className="text-sm text-muted-foreground">{formattedDate}</p>
-              {result.location ? <p className="mt-2 text-sm text-muted-foreground">Local: {result.location}</p> : null}
-            </div>
-            <div className="space-y-2 text-right">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Prêmio principal</p>
-              <p className="text-2xl font-bold text-emerald-600">{prizeLabel}</p>
-              <p className="text-sm text-muted-foreground">{winnersLabel}</p>
-            </div>
-          </div>
+            <h1 className="text-4xl font-bold text-foreground">
+              {result.lotteryName}
+            </h1>
 
-          <div className="mt-6 space-y-4">
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Números sorteados</p>
-              <NumbersPills numbers={result.numbers} ariaLabel={`Números sorteados da ${result.lotteryName}`} />
+            <div className="flex flex-col gap-2 text-muted-foreground">
+              <p className="text-lg">
+                Concurso <span className="font-semibold text-foreground">{result.contestNumber}</span>
+              </p>
+              <time dateTime={toISODate(result.contestDate)}>{formattedDate}</time>
             </div>
-            {result.secondDrawNumbers && result.secondDrawNumbers.length > 0 ? (
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Segundo sorteio</p>
+          </header>
+
+          <section
+            className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm"
+            aria-labelledby="numeros-sorteados"
+          >
+            <h2 id="numeros-sorteados" className="text-2xl font-semibold text-foreground">
+              Números sorteados
+            </h2>
+
+            <div className="mt-6 space-y-6">
+              <NumbersPills
+                numbers={result.numbers}
+                ariaLabel={`Números sorteados da ${result.lotteryName}`}
+              />
+              {result.specialNumbers ? (
                 <NumbersPills
-                  numbers={result.secondDrawNumbers}
-                  variant="secondary"
-                  ariaLabel={`Segundo sorteio da ${result.lotteryName}`}
-                />
-              </div>
-            ) : null}
-            {result.trevos && result.trevos.length > 0 ? (
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
-                <NumbersPills
-                  numbers={result.trevos}
-                  variant="secondary"
+                  numbers={result.specialNumbers}
                   ariaLabel={`Trevos sorteados da ${result.lotteryName}`}
                 />
-              </div>
-            ) : null}
-            {result.mesSorte ? (
-              <div>
-                <p className="text-sm text-muted-foreground">Mês da Sorte: <span className="font-semibold text-foreground">{result.mesSorte}</span></p>
-              </div>
-            ) : null}
-          </div>
-        </header>
+              ) : null}
+            </div>
 
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-foreground">Distribuição de prêmios</h2>
-          <PrizeTable tiers={result.prizeTiers} caption={`Premiação do concurso ${result.contestNumber}`} />
-        </section>
+            {result.mesSorte ? (
+              <div className="mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Mês da Sorte: <span className="font-semibold text-foreground">{result.mesSorte}</span>
+                </p>
+              </div>
+            ) : null}
+          </section>
+
+          <section
+            className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm"
+            aria-labelledby="premiacao-principal"
+          >
+            <h2 id="premiacao-principal" className="text-2xl font-semibold text-foreground">
+              Premiação principal
+            </h2>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-xs font-semibold uppercase text-muted-foreground">Prêmio</p>
+                <p className="text-2xl font-bold text-emerald-600">{prizeLabel}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase text-muted-foreground">Ganhadores</p>
+                <p className="text-2xl font-bold text-foreground">{winnersLabel}</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold text-foreground">Distribuição de prêmios</h2>
+            <PrizeTable tiers={result.prizeTiers} caption={`Premiação do concurso ${result.contestNumber}`} />
+          </section>
+        </article>
 
         <section className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-foreground">Próximo concurso</h2>
+
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <div>
               <p className="text-xs font-semibold uppercase text-muted-foreground">Concurso</p>
@@ -158,5 +203,6 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
       </main>
     </>
   )
+}
+
 export default ContestPage
-export { getServerSideProps } from './concursoPage.utils'
