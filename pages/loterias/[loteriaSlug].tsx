@@ -1,17 +1,11 @@
-import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import SEOHead from '@/components/SEOHead'
 import NumbersPills from '@/components/NumbersPills'
 import PrizeTable from '@/components/PrizeTable'
-import { getContest, getLatestByLottery, LOTTERY_SLUGS } from '@/src/lib/api/results'
 import { buildUrl } from '@/src/lib/config/site'
-import { LotteryResult, LotterySlug } from '@/src/types/lottery'
 import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber, toISODate } from '@/utils/formatters'
 
-interface LotteryPageProps {
-  lottery: LotteryResult | null
-  history: LotteryResult[]
-}
+import type { LotteryPageProps } from './loteriaPage.utils'
 
 const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
   if (!lottery) {
@@ -168,47 +162,5 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
       </main>
     </>
   )
-}
-
-export const getServerSideProps: GetServerSideProps<LotteryPageProps> = async ({ params }) => {
-  const slugParam = params?.loteriaSlug;
-  const slug = typeof slugParam === 'string' ? (slugParam.toLowerCase() as LotterySlug) : null;
-
-  if (!slug || !LOTTERY_SLUGS.includes(slug)) {
-    return { notFound: true };
-  }
-
-  try {
-    const lottery = await getLatestByLottery(slug);
-
-    const history: LotteryResult[] = [];
-    for (let step = 1; step <= 3; step += 1) {
-      const contest = lottery.contestNumber - step;
-      if (contest <= 0) break;
-      try {
-        const data = await getContest(slug, contest);
-        history.push(data);
-      } catch (error) {
-        console.error(`[${slug}] Erro ao buscar histórico do concurso ${contest}:`, error);
-        break;
-      }
-    }
-
-    return {
-      props: {
-        lottery,
-        history,
-      },
-    };
-  } catch (error) {
-    console.error(`[${slug}] Erro ao carregar a loteria:`, error);
-    return {
-      props: {
-        lottery: null,
-        history: [],
-      },
-    };
-  }
-}
-
 export default LotteryPage
+export { getServerSideProps } from './loteriaPage.utils'
