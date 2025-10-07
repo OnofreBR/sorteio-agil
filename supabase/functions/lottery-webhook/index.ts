@@ -28,7 +28,7 @@ interface CheckResult {
   isNew: boolean;
 }
 
-let lastCheckedContests: Record<string, number> = {};
+const lastCheckedContests: Record<string, number> = {};
 
 async function fetchLatestContest(lottery: string): Promise<number | null> {
   try {
