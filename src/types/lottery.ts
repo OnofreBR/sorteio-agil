@@ -18,7 +18,6 @@
  * - "valor_acumulado_especial" → nextContest.specialAccumulated
  * - "nome_acumulado_especial" → nextContest.specialName
  */
-
 export interface PrizeTier {
   name: string;
   hits: number | null;
@@ -37,52 +36,38 @@ export interface WinnerLocale {
 export interface NextContest {
   contestNumber: number | null;
   date: string | null;
+  dateMillis: number | null;
   estimatedPrize: number | null;
+  accumulatedFinalZero: number | null;
+  finalZeroContestNumber: number | null;
+  specialAccumulated: number | null;
+  specialName: string | null;
 }
 
-export type NextContestInfo = NextContest;
-
-/**
- * Retornado pelo serviço /api/results/[lottery] e /api/results/[lottery]/[contest]
- */
 export interface LotteryResult {
-  lottery: LotterySlug;
+  id: string;
+  lotteryName: string;
+  lotterySlug: LotterySlug;
   contestNumber: number;
-  date: string | null;
-
-  // Dezenas principais (todos)
-  numbers: string[];
-
-  // Dezenas do segundo sorteio (Dupla Sena)
-  duplaNumbers: string[];
-
-  // Time do Coração (Timemania)
-  timeCoracao: string | null;
-
-  // Mês da Sorte (Dia de Sorte)
-  mesSorte: string | null;
-
-  // Trevos (Mais Milionária)
-  trevos: string[];
-
-  // Clovers (Mais Milionária) - deprecated, use trevos instead
-  clovers?: string[];
-
-  // Acumulação
+  contestDate: string | null;
+  contestDateMillis: number | null;
+  location: string | null;
   accumulated: boolean;
-  accumulatedPrize: number | null;
-
-  // Prêmios por faixa
-  prizes: PrizeTier[];
-
-  // Valor especial acumulado (ex: Mega da Virada)
-  specialPrize: number | null;
-
-  // Locais com ganhadores
-  locales: WinnerLocale[];
-
-  // Próximo concurso
+  accumulatedValue: number | null;
+  numbers: string[];
+  numbersSecondDraw: string[] | null;
+  prizeTiers: PrizeTier[];
+  prizeSecondDraw: PrizeTier[] | null;
+  winnerLocales: WinnerLocale[] | null;
+  totalCollected: number | null;
+  team: string | null;
+  month: string | null;
+  numbersClover: string[] | null;
+  prizes: Record<string, number | null> | null;
+  numbersMatch: string[] | null;
+  matchDetails: string[] | null;
   nextContest: NextContest;
+  observacao?: string | null;
 }
 
 export type LotterySlug =
