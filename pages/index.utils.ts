@@ -14,7 +14,6 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     ).filter(
       (item): item is LotteryResult => Boolean(item)
     )
-
     return {
       props: {
         resultados: ordered,
@@ -49,7 +48,7 @@ export const CardSkeleton = () => (
     <div className="mb-4 h-6 w-32 animate-pulse rounded-lg bg-muted" />
     <div className="mb-4 flex flex-wrap gap-2">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="h-12 w-12 animate-pulse rounded-full bg-muted" />
+        <div className="h-12 w-12 animate-pulse rounded-full bg-muted" key={i} />
       ))}
     </div>
     <div className="space-y-2">
