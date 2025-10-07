@@ -18,7 +18,6 @@
  * - "valor_acumulado_especial" → nextContest.specialAccumulated
  * - "nome_acumulado_especial" → nextContest.specialName
  */
-
 export interface PrizeTier {
   name: string;
   hits: number | null;
@@ -34,81 +33,71 @@ export interface WinnerLocale {
   isElectronic: boolean;
 }
 
-export interface NextContestInfo {
-  number?: number | null;
-  date?: string | null; // ISO string
-  dateMillis?: number | null;
-  estimatedPrize?: number | null;
-  accumulatedFinalZero?: number | null;
-  finalZeroContestNumber?: number | null;
-  specialAccumulated?: number | null;
-  specialName?: string | null;
-}
-
-export interface LotteryResult {
-  lotterySlug: string;
-  lotteryName: string;
-  contestNumber: number;
-  contestDate: string; // ISO
-  contestDateMillis: number | null;
-  location: string | null;
-  accumulated: boolean;
-  accumulatedValue: number | null;
-  numbers: string[];
-  secondDrawNumbers?: string[]; // Dupla Sena segundo sorteio
-  trevos?: string[]; // +Milionária (trevos da sorte) - normalizado como strings
-  mesSorte?: string | null; // Dia de Sorte (nome do mês)
-  totalCollected: number | null;
-  prizeTiers: PrizeTier[];
-  mainPrize: number | null;
-  mainWinners: number | null;
-  nextContest: NextContestInfo;
-  winnerLocales: WinnerLocale[];
-  rateioEmProcessamento: boolean;
-
-  /**
-   * Campos legados mantidos como opcionais para compatibilidade com módulos antigos.
-   * Novas implementações devem utilizar apenas as chaves padronizadas acima.
-   */
-  loteria?: string;
-  concurso?: number;
-  data?: string;
-  dezenasOrdemSorteio?: number[];
-  dezenas?: number[];
-  trevos?: number[];
-  premiacoes?: any;
-  estadosPremiados?: string[];
-  observacao?: string;
-  proximoConcurso?: number;
-  dataProximoConcurso?: string;
-  valorEstimadoProximoConcurso?: number;
-}
-
-export interface LotterySummary extends LotteryResult {
-  // alias para clareza sem campos extras
+export interface NextContest {
+  contestNumber: number | null;
+  date: string | null;
+  dateMillis: number | null;
+  estimatedPrize: number | null;
+  accumulatedFinalZero: number | null;
+  finalZeroContestNumber: number | null;
+  specialAccumulated: number | null;
+  specialName: string | null;
 }
 
 export type LotterySlug =
+  | 'lotofacil'
   | 'megasena'
   | 'quina'
-  | 'lotofacil'
   | 'lotomania'
   | 'duplasena'
+  | 'federal'
   | 'timemania'
   | 'diadesorte'
   | 'supersete'
   | 'maismilionaria'
-  | 'federal'
   | 'loteca';
 
-export interface ContestNavigationInfo {
-  previousContest?: number | null;
-  nextContest?: number | null;
+/**
+ * Interface que unifica resultado de concurso passado + futuro estimado.
+ * Engloba todos os campos retornados pela API real + campos planejados.
+ */
+export interface LotteryResult {
+  lotteryName: string;
+  lotterySlug: LotterySlug;
+  contestNumber: number;
+  contestDate: string | null;
+  contestDateMillis: number | null;
+  location: string | null;
+  local?: string;
+  accumulated: boolean | null;
+  accumulatedValue: number | null;
+  numbers: string[];
+  numbersSecondDraw?: string[];
+  prizeTiers: PrizeTier[];
+  winnerLocales?: WinnerLocale[];
+  totalCollected: number | null;
+  nextContest?: NextContest;
+  specialPrize?: number;
+  favoriteTeam?: string;
+  luckyMonth?: string;
+  clovers?: string[];
+
+  // Campos legados (podem ser removidos após migração)
+  data?: string;
+  local_realizacao?: string;
+  valor_acumulado?: number;
+  acumulou?: boolean;
+  dezenas?: string[];
+  dezenas_2?: string[];
+  premiacao?: PrizeTier[];
+  premiacao_2?: PrizeTier[];
+  local_ganhadores?: WinnerLocale[];
+  valor_estimado_proximo_concurso?: number;
 }
 
-export interface LotteryInfo {
+export interface LotteryConfig {
   name: string;
-  slug: string;
+  slug: LotterySlug;
   color: string;
   hexColor: string;
   description: string;
@@ -118,14 +107,25 @@ export interface LotteryInfo {
   numbersDrawn: number;
 }
 
-export const LOTTERY_MAP: Record<string, LotteryInfo> = {
+export const lotteryConfigs: Record<LotterySlug, LotteryConfig> = {
+  lotofacil: {
+    name: 'Lotofácil',
+    slug: 'lotofacil',
+    color: 'lottery-lotofacil',
+    hexColor: '#93268F',
+    description: 'Sorteios às segundas, quartas e sextas.',
+    drawDays: ['Segunda-feira', 'Quarta-feira', 'Sexta-feira'],
+    minNumber: 1,
+    maxNumber: 25,
+    numbersDrawn: 15,
+  },
   megasena: {
     name: 'Mega-Sena',
     slug: 'megasena',
     color: 'lottery-megasena',
-    hexColor: '#209869',
-    description: 'Sorteios às quartas e sábados.',
-    drawDays: ['Quarta-feira', 'Sábado'],
+    hexColor: '#00843D',
+    description: 'Sorteios às terças, quintas e sábados.',
+    drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
     minNumber: 1,
     maxNumber: 60,
     numbersDrawn: 6,
@@ -134,31 +134,20 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
     name: 'Quina',
     slug: 'quina',
     color: 'lottery-quina',
-    hexColor: '#260085',
-    description: 'Sorteios de segunda a sábado.',
-    drawDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+    hexColor: '#0050A2',
+    description: 'Sorteios diários.',
+    drawDays: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
     minNumber: 1,
     maxNumber: 80,
     numbersDrawn: 5,
-  },
-  lotofacil: {
-    name: 'Lotofácil',
-    slug: 'lotofacil',
-    color: 'lottery-lotofacil',
-    hexColor: '#930089',
-    description: 'Sorteios de segunda a sábado.',
-    drawDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-    minNumber: 1,
-    maxNumber: 25,
-    numbersDrawn: 15,
   },
   lotomania: {
     name: 'Lotomania',
     slug: 'lotomania',
     color: 'lottery-lotomania',
-    hexColor: '#F78100',
-    description: 'Sorteios às terças, quintas e sábados.',
-    drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
+    hexColor: '#F68321',
+    description: 'Sorteios às terças e sextas.',
+    drawDays: ['Terça-feira', 'Sexta-feira'],
     minNumber: 0,
     maxNumber: 99,
     numbersDrawn: 20,
@@ -166,20 +155,20 @@ export const LOTTERY_MAP: Record<string, LotteryInfo> = {
   duplasena: {
     name: 'Dupla Sena',
     slug: 'duplasena',
-    color: 'lottery-dupla',
-    hexColor: '#B70027',
-    description: 'Dois sorteios às terças, quintas e sábados.',
+    color: 'lottery-duplasena',
+    hexColor: '#A00F28',
+    description: 'Dois sorteios por concurso, às terças, quintas e sábados.',
     drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
     minNumber: 1,
     maxNumber: 50,
     numbersDrawn: 6,
   },
   federal: {
-    name: 'Loteria Federal',
+    name: 'Federal',
     slug: 'federal',
     color: 'lottery-federal',
     hexColor: '#2B388F',
-    description: 'Tradicional loteria de bilhetes, sorteios aos sábados.',
+    description: 'Sorteios aos sábados.',
     drawDays: ['Sábado'],
     minNumber: 0,
     maxNumber: 99999,
