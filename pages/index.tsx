@@ -1,7 +1,7 @@
 import { GetStaticProps } from 'next'
 import SEOHead from '@/components/SEOHead'
 import CardResultadoLoteria from '@/components/CardResultadoLoteria'
-import { getAllLotteryResults } from '@/services/lotteryApi'
+import { getAllLotteryResults, sanitizeForNext } from '@/services/lotteryApi'
 import { LotteryResult } from '@/types/lottery'
 import { useState } from 'react'
 
@@ -107,7 +107,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const resultados = await getAllLotteryResults()
     return {
       props: {
-        resultados: Array.isArray(resultados) ? resultados : [],
+        resultados: sanitizeForNext(Array.isArray(resultados) ? resultados : []),
       },
       revalidate: 600,
     }

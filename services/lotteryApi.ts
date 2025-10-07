@@ -2,16 +2,16 @@ import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/types/lott
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
 // Remove keys with undefined values recursively to satisfy Next.js JSON serialization
-function sanitizeUndefined<T>(value: T): T {
+export function sanitizeForNext<T>(value: T): T {
   if (Array.isArray(value)) {
     // @ts-ignore
-    return value.map((v) => sanitizeUndefined(v)) as unknown as T;
+    return value.map((v) => sanitizeForNext(v)) as unknown as T;
   }
   if (value && typeof value === 'object') {
     const out: Record<string, any> = {};
     for (const [k, v] of Object.entries(value as Record<string, any>)) {
       if (v === undefined) continue;
-      out[k] = sanitizeUndefined(v);
+      out[k] = sanitizeForNext(v);
     }
     return out as unknown as T;
   }
@@ -81,7 +81,7 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
   }
 
   // Map cidadesPremiadas if available
-  const cidadesPremiadas: CidadePremiada[] | undefined = 
+  const cidadesPremiadas: CidadePremiada[] =
     data.cidadesPremiadas && Array.isArray(data.cidadesPremiadas)
       ? data.cidadesPremiadas.map((cidade: any) => ({
           cidade: cidade.cidade || cidade.nome || '',
@@ -89,10 +89,10 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
           ganhadores: cidade.ganhadores || cidade.numero_ganhadores || 0,
           posicao: cidade.posicao || cidade.faixa || undefined,
         }))
-      : undefined;
+      : [];
 
   // Map rateioCidades if available
-  const rateioCidades: RateioCidade[] | undefined = 
+  const rateioCidades: RateioCidade[] =
     data.rateioCidades && Array.isArray(data.rateioCidades)
       ? data.rateioCidades.map((rateio: any) => ({
           cidade: rateio.cidade || rateio.nome || '',
@@ -100,7 +100,7 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
           valor: rateio.valor || rateio.valorPremio || 0,
           ganhadores: rateio.ganhadores || rateio.numero_ganhadores || undefined,
         }))
-      : undefined;
+      : [];
 
   // Build complete LotteryResult with all possible field mappings from API
   const result: LotteryResult = {
@@ -110,11 +110,15 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
     local: data.local || data.local_sorteio || data.localSorteio || '',
     dezenasOrdemSorteio: data.dezenasOrdemSorteio || data.dezenas_ordem_sorteio || data.ordemSorteio || data.dezenas || [],
     dezenas: data.dezenas || data.numeros || data.numerosSorteados || [],
-    // Avoid undefined in optional fields; they will be removed by sanitizer if undefined
-    trevos: data.trevos || data.trevos_sorteados || data.trevosSorteados || undefined,
+    // Avoid undefined in optional array fields: use []
+    trevos: Array.isArray(data.trevos || data.trevos_sorteados || data.trevosSorteados)
+      ? (data.trevos || data.trevos_sorteados || data.trevosSorteados)
+      : [],
     mesSorte: data.mesSorte || data.mes_sorte || data.mesDaSorte || undefined,
     premiacoes: premiacoes,
-    estadosPremiados: data.estadosPremiados || data.estados_premiados || data.estadosSorteados || undefined,
+    estadosPremiados: Array.isArray(data.estadosPremiados || data.estados_premiados || data.estadosSorteados)
+      ? (data.estadosPremiados || data.estados_premiados || data.estadosSorteados)
+      : [],
     observacao: data.observacao || data.obs || data.time || data.time_coracao || data.timeCoracao || undefined,
     acumulou: data.acumulou || data.acumulado || false,
     proximoConcurso: data.proximoConcurso || data.proximo_concurso || data.numeroConcursoProximo || 0,
@@ -135,7 +139,7 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
   };
 
   // Remove undefined keys deeply to satisfy Next.js serialization
-  return sanitizeUndefined(result);
+  return sanitizeForNext(result);
 }
 
 export async function getLotteryResults(lottery: string, limit: number = 1): Promise<LotteryResult[]> {
@@ -169,7 +173,7 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
 
     // Map API response to proper LotteryResult type
     const result = mapApiResponseToLotteryResult(data, lottery);
-    return [sanitizeUndefined(result)];
+    return [sanitizeForNext(result)];
   } catch (error) {
     if (error instanceof LotteryApiError) {
       throw error;
@@ -246,7 +250,7 @@ export async function getAllLotteryResults(): Promise<LotteryResult[]> {
     .filter((result): result is PromiseFulfilledResult<LotteryResult[]> => result.status === 'fulfilled')
     .flatMap(result => result.value);
 
-  return sanitizeUndefined(merged);
+  return sanitizeForNext(merged);
 }
 
 // Utility functions

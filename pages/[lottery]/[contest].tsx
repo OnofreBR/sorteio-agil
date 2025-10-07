@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import SEOHead from '@/components/SEOHead'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { getResultByContest } from '@/services/lotteryApi'
+import { getResultByContest, sanitizeForNext } from '@/services/lotteryApi'
 import { indexNewResult } from '@/services/indexing'
 import { formatDate } from '@/utils/formatters'
 import { LOTTERY_MAP } from '@/types/lottery'
@@ -278,7 +278,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return { props: { result: null, error: 'Resultado não encontrado.' } }
     }
     await indexNewResult(lottery, parseInt(sanitizedContest, 10))
-    return { props: { result, lotteryKey: String(lottery).toLowerCase() } }
+    return { props: { result: sanitizeForNext(result), lotteryKey: String(lottery).toLowerCase() } }
   } catch (err: any) {
     console.error('Error fetching contest:', err)
     return { props: { result: null, error: err?.message || 'Erro desconhecido' } }
