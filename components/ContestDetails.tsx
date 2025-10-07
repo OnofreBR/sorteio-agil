@@ -31,6 +31,7 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
   const prizeTiers = ((result as any).prizeTiers ?? result.premiacoes) || [];
   const numbers = ((result as any).numbers ?? result.dezenas) || [];
   const states = ((result as any).winnerLocales ?? result.estadosPremiados) || [];
+  const accumulated = (result as any).accumulated ?? (result as any).acumulou ?? false;
 
   return (
     <div className="space-y-6">
@@ -109,8 +110,8 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
             <Users className="w-5 h-5 text-primary" />
             <div>
               <p className="text-sm">Status</p>
-              <Badge variant={result.acumulou ? 'destructive' : 'default'}>
-                {result.acumulou ? 'Acumulou' : 'Com Ganhadores'}
+              <Badge variant={accumulated ? 'destructive' : 'default'}>
+                {accumulated ? 'Acumulou' : 'Com Ganhadores'}
               </Badge>
             </div>
           </div>
