@@ -1,8 +1,9 @@
-import { LOTTERY_MAP } from '@/types/lottery';
+import { LOTTERY_MAP } from '@/src/types/lottery';
 import { getAllFutureContests } from './futureContests';
+import { getSiteUrl } from '@/src/lib/config/site';
 
 // Prefer server-side environment configuration; never rely on window here
-const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '');
+const SITE_URL = getSiteUrl();
 
 export interface SitemapUrl {
   loc: string;

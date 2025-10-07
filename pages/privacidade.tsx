@@ -1,5 +1,6 @@
 import React from 'react';
 import SEOHead from '@/components/SEOHead';
+import { buildUrl } from '@/src/lib/config/site';
 
 export default function Privacidade() {
   return (
@@ -7,8 +8,8 @@ export default function Privacidade() {
       <SEOHead
         title="Política de Privacidade - Números Mega Sena"
         description="Política de Privacidade do Números Mega Sena"
-        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/privacidade`}
-        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/privacidade`}
+        canonical={buildUrl('/privacidade')}
+        url={buildUrl('/privacidade')}
         type="article"
         noIndex={false}
       />

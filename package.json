@@ -3,12 +3,18 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "build:dev": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --max-warnings=0",
+    "lint:next": "next lint",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",

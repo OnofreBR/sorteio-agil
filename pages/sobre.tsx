@@ -1,5 +1,6 @@
 import React from 'react';
 import SEOHead from '@/components/SEOHead';
+import { buildUrl } from '@/src/lib/config/site';
 
 export default function Sobre() {
   return (
@@ -7,8 +8,8 @@ export default function Sobre() {
       <SEOHead
         title="Sobre - Números Mega Sena"
         description="Conheça o Números Mega Sena - Portal de confiança para resultados oficiais das loterias brasileiras."
-        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/sobre`}
-        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/sobre`}
+        canonical={buildUrl('/sobre')}
+        url={buildUrl('/sobre')}
       />
 
       <div className="container mx-auto px-4 py-8">

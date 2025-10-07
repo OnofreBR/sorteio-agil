@@ -4,8 +4,9 @@ import SEOHead from '@/components/SEOHead'
 import NumbersPills from '@/components/NumbersPills'
 import PrizeTable from '@/components/PrizeTable'
 import { getContest, getLatestByLottery, LOTTERY_SLUGS } from '@/src/lib/api/results'
+import { buildUrl } from '@/src/lib/config/site'
 import { LotteryResult, LotterySlug } from '@/src/types/lottery'
-import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber } from '@/utils/formatters'
+import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber, toISODate } from '@/utils/formatters'
 
 interface LotteryPageProps {
   lottery: LotteryResult | null
@@ -22,6 +23,7 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
     )
   }
 
+  const canonicalUrl = buildUrl(`/loterias/${lottery.lotterySlug}`)
   const pageTitle = `${lottery.lotteryName} - Concurso ${lottery.contestNumber}`
   const formattedDate = formatDateLong(lottery.contestDate)
   const prizeLabel = formatCurrencyBRL(lottery.mainPrize)
@@ -41,9 +43,25 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
       <SEOHead
         title={`${pageTitle} | Números Mega Sena`}
         description={`Confira o resultado completo da ${lottery.lotteryName}, concurso ${lottery.contestNumber}: números sorteados, premiações e próximos concursos.`}
-        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/loterias/${lottery.lotterySlug}`}
-        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/loterias/${lottery.lotterySlug}`}
+        canonical={canonicalUrl}
+        url={canonicalUrl}
         ogImage="/logo.png"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: `${lottery.lotteryName} - Últimos resultados`,
+          description: `Resultados recentes e próximos concursos da ${lottery.lotteryName}.`,
+          mainEntity: history.slice(0, 3).map((contest) => ({
+            '@type': 'Event',
+            name: `${contest.lotteryName} - Concurso ${contest.contestNumber}`,
+            startDate: toISODate(contest.contestDate),
+            url: buildUrl(`/${contest.lotterySlug}/concurso-${contest.contestNumber}`),
+          })),
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': canonicalUrl,
+          },
+        }}
       />
 
       <main className="container mx-auto max-w-5xl px-4 py-12 space-y-12">

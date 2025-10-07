@@ -4,8 +4,9 @@ import SEOHead from '@/components/SEOHead'
 import NumbersPills from '@/components/NumbersPills'
 import PrizeTable from '@/components/PrizeTable'
 import { getContest, getLatestByLottery, LOTTERY_SLUGS } from '@/src/lib/api/results'
+import { buildUrl } from '@/src/lib/config/site'
 import { LotteryResult, LotterySlug } from '@/src/types/lottery'
-import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber } from '@/utils/formatters'
+import { formatCurrencyBRL, formatDate, formatDateLong, formatNumber, toISODate } from '@/utils/formatters'
 
 interface ContestPageProps {
   result: LotteryResult | null
@@ -23,6 +24,7 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
     )
   }
 
+  const canonicalUrl = buildUrl(`/${result.lotterySlug}/concurso-${result.contestNumber}`)
   const formattedDate = formatDateLong(result.contestDate)
   const prizeLabel = formatCurrencyBRL(result.mainPrize)
   const winnersLabel =
@@ -43,10 +45,27 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
       <SEOHead
         title={`${result.lotteryName} - Concurso ${result.contestNumber} | Números Mega Sena`}
         description={`Detalhes completos do concurso ${result.contestNumber} da ${result.lotteryName}: números, prêmios, ganhadores e próximos sorteios.`}
-        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/${result.lotterySlug}/concurso-${result.contestNumber}`}
-        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/${result.lotterySlug}/concurso-${result.contestNumber}`}
+        canonical={canonicalUrl}
+        url={canonicalUrl}
         ogImage="/logo.png"
         type="article"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'NewsArticle',
+          headline: `${result.lotteryName} - Concurso ${result.contestNumber}`,
+          description: `Números sorteados: ${result.numbers.join(', ')}. ${result.mainWinners === 0 ? 'Acumulou.' : `${result.mainWinners || 0} ganhadores.`}`,
+          datePublished: toISODate(result.contestDate),
+          dateModified: toISODate(result.contestDate),
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': canonicalUrl,
+          },
+          author: {
+            '@type': 'Organization',
+            name: 'Números Mega Sena',
+            url: buildUrl('/'),
+          },
+        }}
       />
 
       <main className="container mx-auto max-w-5xl px-4 py-12 space-y-12">

@@ -1,5 +1,6 @@
 import React from 'react';
 import SEOHead from '@/components/SEOHead';
+import { buildUrl } from '@/src/lib/config/site';
 
 export default function Termos() {
   return (
@@ -7,8 +8,8 @@ export default function Termos() {
       <SEOHead
         title="Termos de Uso - Números Mega Sena"
         description="Termos de Uso do portal Números Mega Sena"
-        canonical={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/termos`}
-        url={`${(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '')}/termos`}
+        canonical={buildUrl('/termos')}
+        url={buildUrl('/termos')}
         type="article"
       />
 

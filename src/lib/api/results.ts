@@ -6,6 +6,13 @@ const API_TOKEN = process.env.RESULTS_API_TOKEN;
 
 const API_HOSTS = [PRIMARY_URL, SECONDARY_URL].filter((value): value is string => Boolean(value));
 
+const REQUEST_TIMEOUT_MS = Number(process.env.RESULTS_API_TIMEOUT ?? 5000);
+const CACHE_TTL_MS = Number(process.env.RESULTS_API_CACHE_TTL ?? 60_000);
+const MAX_ATTEMPTS = 2;
+const BACKOFF_MS = [200, 750, 1500];
+
+const responseCache = new Map<string, { expiresAt: number; payload: ApiPayload }>();
+
 const LOTTERIES: LotterySlug[] = [
   'megasena',
   'quina',
@@ -27,7 +34,13 @@ const toNumber = (value: any): number | null => {
   return Number.isFinite(num) ? num : null;
 };
 
-const toBoolean = (value: any): boolean => Boolean(value);
+const toBoolean = (value: any): boolean => {
+  if (typeof value === 'boolean') return value;
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'number') return value !== 0;
+  const normalized = String(value).toLowerCase();
+  return normalized !== 'false' && normalized !== '0' && normalized !== 'no';
+};
 
 const toStringArray = (value: any): string[] => {
   if (!Array.isArray(value)) return [];
@@ -137,7 +150,6 @@ export const normalizeApi = (payload: ApiPayload, lottery: LotterySlug): Lottery
       ? payload.dezenasOrdemSorteio
       : undefined,
     dezenas: primary.map((value) => Number(value)),
-    trevos: trevos.map((v) => Number(v)),
     premiacoes: payload?.premiacao,
     estadosPremiados: Array.isArray(payload?.estadosPremiados) ? payload.estadosPremiados : undefined,
     observacao: payload?.observacao ?? undefined,
@@ -149,16 +161,24 @@ export const normalizeApi = (payload: ApiPayload, lottery: LotterySlug): Lottery
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const getCacheKey = (lottery: LotterySlug, contestNumber?: number | string | null) =>
+  `${lottery}:${contestNumber ?? 'latest'}`;
+
 const requestLottery = async (
   lottery: LotterySlug,
   contestNumber?: number | string | null,
-  attempt = 0,
 ): Promise<ApiPayload> => {
   if (API_HOSTS.length === 0) {
     throw new Error('RESULTS_API_URL não configurado. Configure as variáveis de ambiente do servidor.');
   }
   if (!API_TOKEN) {
     throw new Error('RESULTS_API_TOKEN não configurado. Configure as variáveis de ambiente do servidor.');
+  }
+
+  const cacheKey = getCacheKey(lottery, contestNumber);
+  const cached = responseCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.payload;
   }
 
   const params = new URLSearchParams({ loteria: lottery, token: API_TOKEN! });
@@ -173,31 +193,43 @@ const requestLottery = async (
     const base = API_HOSTS[hostIndex];
     const url = `${base.replace(/\/$/, '')}/resultado?${params.toString()}`;
 
-    try {
-      const response = await fetch(url, { next: { revalidate: 60 } });
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS + attempt * 250);
 
-      if (!response.ok) {
-        throw new Error(`(${response.status}) ${response.statusText}`);
-      }
+      try {
+        const response = await fetch(url, {
+          next: { revalidate: 60 },
+          signal: controller.signal,
+        });
 
-      const json = await response.json();
-      if (!json || typeof json !== 'object') {
-        throw new Error('Formato inválido retornado pela API');
-      }
-      return json as ApiPayload;
-    } catch (error: any) {
-      lastError = error instanceof Error ? error : new Error(String(error));
+        if (!response.ok) {
+          throw new Error(`(${response.status}) ${response.statusText}`);
+        }
 
-      const shouldRetryHost = hostIndex < lastHostIndex;
-      if (shouldRetryHost) {
-        continue;
-      }
+        const json = await response.json();
+        if (!json || typeof json !== 'object') {
+          throw new Error('Formato inválido retornado pela API');
+        }
 
-      const shouldRetryAttempt = attempt < 1; // tenta apenas mais uma vez
-      if (shouldRetryAttempt) {
-        await wait(150);
-        return requestLottery(lottery, contestNumber, attempt + 1);
+        responseCache.set(cacheKey, { payload: json as ApiPayload, expiresAt: Date.now() + CACHE_TTL_MS });
+        return json as ApiPayload;
+      } catch (error: any) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        console.warn(
+          `[api] Falha ao buscar ${lottery}${contestNumber ? ` concurso ${contestNumber}` : ''} em ${base} (tentativa ${attempt + 1}):`,
+          lastError.message,
+        );
+        const backoff = BACKOFF_MS[Math.min(attempt, BACKOFF_MS.length - 1)];
+        await wait(backoff);
+      } finally {
+        clearTimeout(timeout);
       }
+    }
+
+    const shouldRetryHost = hostIndex < lastHostIndex;
+    if (shouldRetryHost) {
+      continue;
     }
   }
 

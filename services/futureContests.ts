@@ -1,5 +1,5 @@
-import { LOTTERY_MAP } from '@/types/lottery';
-import type { LotteryResult } from '@/types/lottery';
+import { LOTTERY_MAP } from '@/src/types/lottery';
+import type { LotteryResult } from '@/src/types/lottery';
 
 const FUTURE_CONTESTS_COUNT = 20;
 
@@ -22,7 +22,50 @@ export function generateFutureContests(
     const contestNumber = latestContest + i;
     const estimatedDate = estimateNextDrawDate(latestDate, i, lotteryInfo.drawDays);
     
-    futureContests.push({
+    const isoDate = convertToISODate(estimatedDate);
+    const nextDateBr = estimateNextDrawDate(estimatedDate, 1, lotteryInfo.drawDays);
+    const nextDateIso = convertToISODate(nextDateBr);
+    const projectedPrize = estimatedPrize * (1 + i * 0.1);
+
+    const prizeTiers = [
+      {
+        name: `${lotteryInfo.numbersDrawn} acertos`,
+        hits: lotteryInfo.numbersDrawn,
+        winners: 0,
+        amount: projectedPrize,
+      },
+    ];
+
+    const futureResult: LotteryResult = {
+      lotterySlug: lotteryInfo.slug,
+      lotteryName: lotteryInfo.name,
+      contestNumber,
+      contestDate: isoDate,
+      contestDateMillis: new Date(isoDate).getTime(),
+      location: 'São Paulo, SP',
+      accumulated: true,
+      accumulatedValue: projectedPrize,
+      numbers: [],
+      secondDrawNumbers: [],
+      trevos: [],
+      mesSorte: null,
+      totalCollected: null,
+      prizeTiers,
+      mainPrize: projectedPrize,
+      mainWinners: 0,
+      nextContest: {
+        number: contestNumber + 1,
+        date: nextDateIso,
+        dateMillis: new Date(nextDateIso).getTime(),
+        estimatedPrize: estimatedPrize * (1 + (i + 1) * 0.1),
+        accumulatedFinalZero: null,
+        finalZeroContestNumber: null,
+        specialAccumulated: null,
+        specialName: null,
+      },
+      winnerLocales: [],
+      rateioEmProcessamento: false,
+      // Compatibilidade legada
       loteria: lotteryInfo.name,
       concurso: contestNumber,
       data: estimatedDate,
@@ -30,21 +73,21 @@ export function generateFutureContests(
       dezenasOrdemSorteio: [],
       dezenas: [],
       trevos: [],
-      premiacoes: [
-        {
-          descricao: `${lotteryInfo.numbersDrawn} acertos`,
-          faixa: 1,
-          ganhadores: 0,
-          valorPremio: estimatedPrize * (1 + i * 0.1), // Estimativa crescente
-        },
-      ],
+      premiacoes: prizeTiers.map((tier) => ({
+        descricao: tier.name,
+        faixa: 1,
+        ganhadores: tier.winners ?? 0,
+        valorPremio: tier.amount ?? 0,
+      })),
       estadosPremiados: [],
       observacao: `Sorteio previsto para ${formatEstimatedDate(estimatedDate)}. Resultado será atualizado automaticamente após o sorteio.`,
       acumulou: true,
       proximoConcurso: contestNumber + 1,
-      dataProximoConcurso: estimateNextDrawDate(estimatedDate, 1, lotteryInfo.drawDays),
+      dataProximoConcurso: nextDateBr,
       valorEstimadoProximoConcurso: estimatedPrize * (1 + (i + 1) * 0.1),
-    });
+    };
+
+    futureContests.push(futureResult);
   }
 
   return futureContests;
@@ -105,6 +148,12 @@ function formatEstimatedDate(dateStr: string): string {
   ];
   
   return `${parseInt(day)} de ${months[parseInt(month) - 1]} de ${year}`;
+}
+
+function convertToISODate(dateStr: string): string {
+  const [day, month, year] = dateStr.split('/').map(Number);
+  const iso = new Date(year, (month || 1) - 1, day || 1);
+  return Number.isNaN(iso.getTime()) ? new Date().toISOString() : iso.toISOString();
 }
 
 /**

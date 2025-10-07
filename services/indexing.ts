@@ -1,5 +1,7 @@
 // Configuration - Use server-side environment variables
-const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '');
+import { getSiteUrl } from '@/src/lib/config/site';
+
+const SITE_URL = getSiteUrl();
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
 const GOOGLE_INDEXING_KEY = process.env.GOOGLE_INDEXING_KEY;
 const GOOGLE_INDEXING_ID = process.env.GOOGLE_INDEXING_ID;

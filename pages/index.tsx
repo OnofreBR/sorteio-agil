@@ -3,6 +3,7 @@ import { useState } from 'react'
 import SEOHead from '@/components/SEOHead'
 import LotteryCard from '@/components/LotteryCard'
 import { getLatestForAll, LOTTERY_SLUGS } from '@/src/lib/api/results'
+import { buildUrl } from '@/src/lib/config/site'
 import { LotteryResult } from '@/src/types/lottery'
 
 interface HomeProps {
@@ -23,15 +24,15 @@ export default function Home({ resultados }: HomeProps) {
       <SEOHead
         title="Resultados das Loterias Brasileiras - Números Mega Sena"
         description="Acompanhe os resultados mais recentes da Mega-Sena, Quina, Lotofácil e todas as principais loterias do Brasil em tempo real."
-        canonical={(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '/')}
-        url={(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '/')}
+        canonical={buildUrl('/')}
+        url={buildUrl('/')}
         ogImage="/logo.png"
         keywords="mega sena, quina, lotofácil, lotomania, dupla sena, timemania, dia de sorte, super sete, mais milionária, resultados, loterias"
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: 'Números Mega Sena',
-          url: (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://sorteioagil.com.br').replace(/\/$/, '/'),
+          url: buildUrl('/'),
           description: 'Resultados das principais loterias brasileiras, atualizados em tempo real.',
           publisher: {
             '@type': 'Organization',

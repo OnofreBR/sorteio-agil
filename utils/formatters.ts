@@ -41,3 +41,10 @@ export const formatDateLong = (value: string | undefined | null): string => {
   if (Number.isNaN(date.getTime())) return value;
   return dateTimeFormatter.format(date);
 };
+
+export const toISODate = (value: string | undefined | null): string => {
+  if (!value) return new Date().toISOString();
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return new Date().toISOString();
+  return date.toISOString();
+};
