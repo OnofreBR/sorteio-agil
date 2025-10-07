@@ -27,7 +27,7 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
   };
 
   const location = (result as any).location ?? (result as any).local ?? null;
-  const contestDate = (result as any).contestDate ?? result.data;
+  const contestDate = (result as any).contestDate ?? (result as any).data_sorteio;
   const prizeTiers = ((result as any).prizeTiers ?? result.premiacao) || [];
   const numbers = ((result as any).numbers ?? result.dezenas) || [];
   const states = ((result as any).winnerLocales ?? result.local_ganhadores) || [];
@@ -58,12 +58,12 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
           
           {result.trevos && result.trevos.length > 0 && (
             <div className="mt-6">
-              <p className="text-sm text-muted-foreground mb-2 text-center">Trevos da Sorte</p>
+              <p className="text-sm font-semibold text-muted-foreground mb-2">Trevos</p>
               <div className="flex gap-3 justify-center">
-                {result.trevos.map((trevo, index) => (
+                {result.trevos.map((trevo: any, index: number) => (
                   <div
                     key={index}
-                    className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-foreground font-bold text-lg"
+                    className="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-lg shadow-lg"
                   >
                     {trevo}
                   </div>
@@ -71,60 +71,55 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
               </div>
             </div>
           )}
-
-          {Boolean((result as any).mesSorte) && (
-            <div className="mt-6 text-center">
-              <Badge variant="secondary" className="text-base px-4 py-2">
-                Mês da Sorte: {(result as any).mesSorte}
-              </Badge>
-            </div>
-          )}
         </CardContent>
       </Card>
 
-      {/* Informações do Sorteio */}
+      {/* Informações do Concurso */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-foreground">Informações do Sorteio</CardTitle>
+          <CardTitle className="text-foreground">Informações do Concurso</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <Calendar className="w-5 h-5 text-primary" />
+          {contestDate && (
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <Calendar className="w-5 h-5 text-muted-foreground" />
               <div>
-                <p className="text-sm">Data do Sorteio</p>
-              <p className="font-semibold text-foreground">{formatDate(contestDate)}</p>
-              </div>
-            </div>
-
-          {location && (
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <MapPin className="w-5 h-5 text-primary" />
-              <div>
-                <p className="text-sm">Local</p>
-                <p className="font-semibold text-foreground">{location}</p>
+                <p className="text-sm font-medium text-muted-foreground">Data do Sorteio</p>
+                <p className="text-base font-semibold text-foreground">{formatDate(contestDate)}</p>
               </div>
             </div>
           )}
-
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <Users className="w-5 h-5 text-primary" />
-            <div>
-              <p className="text-sm">Status</p>
-              <Badge variant={accumulated ? 'destructive' : 'default'}>
-                {accumulated ? 'Acumulou' : 'Com Ganhadores'}
-              </Badge>
+          {location && (
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <MapPin className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Local do Sorteio</p>
+                <p className="text-base font-semibold text-foreground">{location}</p>
+              </div>
             </div>
-          </div>
+          )}
+          {accumulated && (
+            <div className="flex items-center gap-3 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+              <TrendingUp className="w-5 h-5 text-yellow-600" />
+              <div>
+                <p className="text-base font-semibold text-yellow-700">Acumulou!</p>
+                <p className="text-sm text-muted-foreground">Nenhum ganhador do prêmio principal</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Distribuição de Prêmios */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-foreground">Distribuição de Prêmios</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
+      {/* Premiação */}
+      {prizeTiers && prizeTiers.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Users className="w-5 h-5" />
+              Premiação
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
             {prizeTiers.map((prize: any, index: number) => {
               const winners = prize.ganhadores ?? prize.winners;
               const amount = prize.valorPremio ?? prize.amount;
@@ -149,9 +144,9 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
                 </div>
               );
             })}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {states && states.length > 0 && (
         <Card>
