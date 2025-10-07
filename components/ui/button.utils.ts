@@ -14,10 +14,10 @@ export const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-hero text-white shadow-lg hover:shadow-xl transition-all",
+        hero: "bg-gradient-hero text-primary-foreground hover:bg-gradient-hero/90 shadow-lottery transition-smooth",
         lottery:
-          "bg-gradient-lottery text-white shadow-md hover:shadow-lg transition-all",
-        gold: "bg-gradient-gold text-white shadow-md hover:shadow-lg transition-all",
+          "bg-gradient-lottery text-primary-foreground hover:bg-gradient-lottery/90 shadow-lottery transition-smooth",
+        gold: "bg-gradient-gold text-secondary-foreground hover:bg-gradient-gold/90 shadow-glow transition-smooth",
       },
       size: {
         default: "h-10 px-4 py-2",
