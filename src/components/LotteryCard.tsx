@@ -9,7 +9,6 @@ interface LotteryCardProps {
 
 const LotteryCard = ({ result }: LotteryCardProps) => {
   const missingFields: string[] = [];
-
   if (!result.lotteryName) missingFields.push('nome');
   if (!result.contestNumber) missingFields.push('numero_concurso');
   if (!result.contestDate) missingFields.push('data_concurso');
@@ -37,37 +36,37 @@ const LotteryCard = ({ result }: LotteryCardProps) => {
       : '—';
 
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-border/60 bg-white p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
-      <header className="mb-4 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold uppercase text-muted-foreground">{formattedDate}</p>
-          <h3 className="text-2xl font-bold text-foreground">{result.lotteryName}</h3>
-          <p className="text-sm text-muted-foreground">Concurso {formatNumber(result.contestNumber)}</p>
+    <article className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-md transition-shadow duration-200 hover:shadow-lg">
+      <header className="flex items-center justify-between bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-4 text-white">
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold leading-tight tracking-tight">{result.lotteryName}</h2>
+          <p className="mt-1 text-sm opacity-90">
+            Concurso {formatNumber(result.contestNumber)} • {formattedDate}
+          </p>
         </div>
-        <Link href={`/loterias/${result.lotterySlug}`} className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
-          Ver loteria
-        </Link>
       </header>
 
       <section className="space-y-4">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Números sorteados</p>
           <NumbersPills numbers={result.numbers} ariaLabel={`Números sorteados da ${result.lotteryName}`} />
+
           {result.secondDrawNumbers && result.secondDrawNumbers.length > 0 ? (
             <div className="mt-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Segundo sorteio</p>
-              <NumbersPills
+              <NumbersPills 
                 numbers={result.secondDrawNumbers}
                 variant="secondary"
                 ariaLabel={`Segundo sorteio da ${result.lotteryName}`}
               />
             </div>
           ) : null}
-          {result.trevos && result.trevos.length > 0 ? (
+
+          {(result.trevos ?? []).length > 0 ? (
             <div className="mt-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
-              <NumbersPills
-                numbers={result.trevos}
+              <NumbersPills 
+                numbers={result.trevos ?? []}
                 variant="secondary"
                 ariaLabel={`Trevos sorteados da ${result.lotteryName}`}
               />
@@ -97,7 +96,7 @@ const LotteryCard = ({ result }: LotteryCardProps) => {
       </section>
 
       <footer className="mt-auto pt-6">
-        <Link
+        <Link 
           href={`/${result.lotterySlug}/concurso-${result.contestNumber}`}
           className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-md transition-transform duration-150 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
