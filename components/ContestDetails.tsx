@@ -28,9 +28,9 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
 
   const location = (result as any).location ?? (result as any).local ?? null;
   const contestDate = (result as any).contestDate ?? (result as any).data_sorteio;
-  const prizeTiers = ((result as any).prizeTiers ?? result.premiacao) || [];
-  const numbers = ((result as any).numbers ?? result.dezenas) || [];
-  const states = ((result as any).winnerLocales ?? result.local_ganhadores) || [];
+  const prizeTiers = ((result as any).prizeTiers ?? (result as any).premiacao) || [];
+  const numbers = ((result as any).numbers ?? (result as any).dezenas) || [];
+  const states = ((result as any).winnerLocales ?? (result as any).local_ganhadores) || [];
   const accumulated = (result as any).accumulated ?? (result as any).acumulou ?? false;
 
   return (
