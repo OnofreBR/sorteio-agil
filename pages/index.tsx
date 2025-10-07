@@ -130,4 +130,5 @@ export default function Home({ resultados }: HomeProps) {
   )
 }
 
-export { getStaticProps } from './index.utils'
+import { getStaticProps as _getStaticProps } from './index.utils'
+export const getStaticProps = _getStaticProps
