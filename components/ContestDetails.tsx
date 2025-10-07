@@ -28,7 +28,7 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
 
   const location = (result as any).location ?? (result as any).local ?? null;
   const contestDate = (result as any).contestDate ?? result.data;
-  const prizeTiers = ((result as any).prizeTiers ?? result.premiacoes) || [];
+  const prizeTiers = ((result as any).prizeTiers ?? result.premiacao) || [];
   const numbers = ((result as any).numbers ?? result.dezenas) || [];
   const states = ((result as any).winnerLocales ?? result.estadosPremiados) || [];
   const accumulated = (result as any).accumulated ?? (result as any).acumulou ?? false;
@@ -128,7 +128,6 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
             {prizeTiers.map((prize: any, index: number) => {
               const winners = prize.ganhadores ?? prize.winners;
               const amount = prize.valorPremio ?? prize.amount;
-
               return (
                 <div
                   key={index}
@@ -151,15 +150,15 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </cardcontent>
+      </card>
 
       {states && states.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-foreground">Estados Premiados</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <card>
+          <cardheader>
+            <cardtitle className="text-foreground">Estados Premiados</cardtitle>
+          </cardheader>
+          <cardcontent>
             <div className="flex flex-wrap gap-2">
               {states.map((estado: any, index: number) => {
                 const label =
@@ -168,24 +167,23 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
                     : estado.uf
                     ? `${estado.cidade ? `${estado.cidade} - ` : ''}${estado.uf}`
                     : estado.cidade ?? '—';
-
                 return (
-                  <Badge key={index} variant="outline">
+                  <badge key="{index}" variant="outline">
                     {label}
-                  </Badge>
+                  </badge>
                 );
               })}
             </div>
-          </CardContent>
-        </Card>
+          </cardcontent>
+        </card>
       )}
 
       {result.observacao && (
-        <Card>
-          <CardContent className="pt-6">
+        <card>
+          <cardcontent className="pt-6">
             <p className="text-sm text-muted-foreground">{result.observacao}</p>
-          </CardContent>
-        </Card>
+          </cardcontent>
+        </card>
       )}
     </div>
   );
