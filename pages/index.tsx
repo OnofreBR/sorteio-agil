@@ -105,9 +105,17 @@ export default function Home({ resultados }: HomeProps) {
 export const getStaticProps: GetStaticProps = async () => {
   try {
     const resultados = await getAllLotteryResults()
+    // Garantir arrays opcionais sempre definidos (Next.js não aceita undefined)
+    const normalized = (resultados || []).map((r) => ({
+      ...r,
+      trevos: Array.isArray(r.trevos) ? r.trevos : [],
+      estadosPremiados: Array.isArray(r.estadosPremiados) ? r.estadosPremiados : [],
+      cidadesPremiadas: Array.isArray((r as any).cidadesPremiadas) ? (r as any).cidadesPremiadas : [],
+      rateioCidades: Array.isArray((r as any).rateioCidades) ? (r as any).rateioCidades : [],
+    }))
     return {
       props: {
-        resultados: sanitizeForNext(Array.isArray(resultados) ? resultados : []),
+        resultados: sanitizeForNext(normalized),
       },
       revalidate: 600,
     }

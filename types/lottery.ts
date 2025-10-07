@@ -6,10 +6,10 @@ export interface LotteryResult {
   local: string;
   dezenasOrdemSorteio: number[];
   dezenas: number[];
-  trevos?: number[];
+  trevos?: number[]; // optional but treated as [] during serialization
   mesSorte?: string;
   premiacoes: Prize[];
-  estadosPremiados?: string[];
+  estadosPremiados?: string[]; // optional but treated as [] during serialization
   observacao?: string;
   acumulou: boolean;
   proximoConcurso: number;
