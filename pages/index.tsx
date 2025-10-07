@@ -6,8 +6,8 @@ import {
   LOTTERY_SLUGS,
   CardSkeleton,
   handlePageRefresh,
-} from './indexPage.utils'
-import type { HomeProps } from './indexPage.utils'
+} from './index.utils'
+import type { HomeProps } from './index.utils'
 
 export default function Home({ resultados }: HomeProps) {
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -130,4 +130,4 @@ export default function Home({ resultados }: HomeProps) {
   )
 }
 
-export { getStaticProps } from './indexPage.utils'
+export { getStaticProps } from './index.utils'
