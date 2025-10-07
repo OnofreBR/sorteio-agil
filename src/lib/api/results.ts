@@ -96,6 +96,19 @@ export const normalizeApi = (payload: ApiPayload, lottery: LotterySlug): Lottery
     specialName: payload?.nome_acumulado_especial ?? null,
   };
 
+  // Trevos (Mais Milionária): pode vir como números ou strings
+  const rawTrevos = Array.isArray(payload.trevos)
+    ? payload.trevos
+    : Array.isArray(payload.trevos_sorteados)
+    ? payload.trevos_sorteados
+    : Array.isArray(payload.trevosSorteados)
+    ? payload.trevosSorteados
+    : [];
+  const trevos: string[] = Array.isArray(rawTrevos) ? rawTrevos.map((t: any) => String(t).padStart(2, '0')) : [];
+
+  // Mês da Sorte (Dia de Sorte)
+  const mesSorte: string | null = (payload.mes_sorte || payload.mesSorte || payload.mesDaSorte || null) ?? null;
+
   return {
     lotterySlug: lottery,
     lotteryName: payload?.nome ?? lottery,
@@ -107,6 +120,8 @@ export const normalizeApi = (payload: ApiPayload, lottery: LotterySlug): Lottery
     accumulatedValue: toNumber(payload?.valor_acumulado),
     numbers: primary,
     secondDrawNumbers: secondary,
+    trevos,
+    mesSorte,
     totalCollected: toNumber(payload?.arrecadacao_total),
     prizeTiers,
     mainPrize: mainPrizeInfo.amount,
@@ -122,7 +137,7 @@ export const normalizeApi = (payload: ApiPayload, lottery: LotterySlug): Lottery
       ? payload.dezenasOrdemSorteio
       : undefined,
     dezenas: primary.map((value) => Number(value)),
-    trevos: Array.isArray(payload?.trevos) ? payload.trevos : undefined,
+    trevos: trevos.map((v) => Number(v)),
     premiacoes: payload?.premiacao,
     estadosPremiados: Array.isArray(payload?.estadosPremiados) ? payload.estadosPremiados : undefined,
     observacao: payload?.observacao ?? undefined,

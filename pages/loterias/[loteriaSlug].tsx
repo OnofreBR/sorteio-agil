@@ -79,6 +79,21 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
                 />
               </div>
             ) : null}
+            {lottery.trevos && lottery.trevos.length > 0 ? (
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
+                <NumbersPills
+                  numbers={lottery.trevos}
+                  variant="secondary"
+                  ariaLabel={`Trevos sorteados da ${lottery.lotteryName}`}
+                />
+              </div>
+            ) : null}
+            {lottery.mesSorte ? (
+              <div className="mt-3">
+                <p className="text-sm text-muted-foreground">Mês da Sorte: <span className="font-semibold text-foreground">{lottery.mesSorte}</span></p>
+              </div>
+            ) : null}
           </div>
         </header>
 
@@ -179,4 +194,3 @@ export const getServerSideProps: GetServerSideProps<LotteryPageProps> = async ({
 }
 
 export default LotteryPage
-

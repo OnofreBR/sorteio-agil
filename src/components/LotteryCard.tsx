@@ -63,6 +63,16 @@ const LotteryCard = ({ result }: LotteryCardProps) => {
               />
             </div>
           ) : null}
+          {result.trevos && result.trevos.length > 0 ? (
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
+              <NumbersPills
+                numbers={result.trevos}
+                variant="secondary"
+                ariaLabel={`Trevos sorteados da ${result.lotteryName}`}
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -99,4 +109,3 @@ const LotteryCard = ({ result }: LotteryCardProps) => {
 };
 
 export default LotteryCard;
-

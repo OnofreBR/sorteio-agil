@@ -80,6 +80,21 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
                 />
               </div>
             ) : null}
+            {result.trevos && result.trevos.length > 0 ? (
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trevos</p>
+                <NumbersPills
+                  numbers={result.trevos}
+                  variant="secondary"
+                  ariaLabel={`Trevos sorteados da ${result.lotteryName}`}
+                />
+              </div>
+            ) : null}
+            {result.mesSorte ? (
+              <div>
+                <p className="text-sm text-muted-foreground">Mês da Sorte: <span className="font-semibold text-foreground">{result.mesSorte}</span></p>
+              </div>
+            ) : null}
           </div>
         </header>
 

@@ -65,10 +65,10 @@ export default function ContestDetails({ result, lotteryColor }: ContestDetailsP
             </div>
           )}
 
-          {result.mesSorte && (
+          {Boolean((result as any).mesSorte) && (
             <div className="mt-6 text-center">
               <Badge variant="secondary" className="text-base px-4 py-2">
-                Mês da Sorte: {result.mesSorte}
+                Mês da Sorte: {(result as any).mesSorte}
               </Badge>
             </div>
           )}

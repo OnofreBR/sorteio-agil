@@ -56,6 +56,8 @@ export interface LotteryResult {
   accumulatedValue: number | null;
   numbers: string[];
   secondDrawNumbers?: string[]; // Dupla Sena segundo sorteio
+  trevos?: string[]; // +Milionária (trevos da sorte) - normalizado como strings
+  mesSorte?: string | null; // Dia de Sorte (nome do mês)
   totalCollected: number | null;
   prizeTiers: PrizeTier[];
   mainPrize: number | null;
