@@ -105,3 +105,139 @@ export interface ContestNavigationInfo {
   previousContest?: number | null;
   nextContest?: number | null;
 }
+
+export interface LotteryInfo {
+  name: string;
+  slug: string;
+  color: string;
+  hexColor: string;
+  description: string;
+  drawDays: string[];
+  minNumber: number;
+  maxNumber: number;
+  numbersDrawn: number;
+}
+
+export const LOTTERY_MAP: Record<string, LotteryInfo> = {
+  megasena: {
+    name: 'Mega-Sena',
+    slug: 'megasena',
+    color: 'lottery-megasena',
+    hexColor: '#209869',
+    description: 'Sorteios às quartas e sábados.',
+    drawDays: ['Quarta-feira', 'Sábado'],
+    minNumber: 1,
+    maxNumber: 60,
+    numbersDrawn: 6,
+  },
+  quina: {
+    name: 'Quina',
+    slug: 'quina',
+    color: 'lottery-quina',
+    hexColor: '#260085',
+    description: 'Sorteios de segunda a sábado.',
+    drawDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+    minNumber: 1,
+    maxNumber: 80,
+    numbersDrawn: 5,
+  },
+  lotofacil: {
+    name: 'Lotofácil',
+    slug: 'lotofacil',
+    color: 'lottery-lotofacil',
+    hexColor: '#930089',
+    description: 'Sorteios de segunda a sábado.',
+    drawDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+    minNumber: 1,
+    maxNumber: 25,
+    numbersDrawn: 15,
+  },
+  lotomania: {
+    name: 'Lotomania',
+    slug: 'lotomania',
+    color: 'lottery-lotomania',
+    hexColor: '#F78100',
+    description: 'Sorteios às terças, quintas e sábados.',
+    drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
+    minNumber: 0,
+    maxNumber: 99,
+    numbersDrawn: 20,
+  },
+  duplasena: {
+    name: 'Dupla Sena',
+    slug: 'duplasena',
+    color: 'lottery-dupla',
+    hexColor: '#B70027',
+    description: 'Dois sorteios às terças, quintas e sábados.',
+    drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
+    minNumber: 1,
+    maxNumber: 50,
+    numbersDrawn: 6,
+  },
+  federal: {
+    name: 'Loteria Federal',
+    slug: 'federal',
+    color: 'lottery-federal',
+    hexColor: '#2B388F',
+    description: 'Tradicional loteria de bilhetes, sorteios aos sábados.',
+    drawDays: ['Sábado'],
+    minNumber: 0,
+    maxNumber: 99999,
+    numbersDrawn: 5,
+  },
+  timemania: {
+    name: 'Timemania',
+    slug: 'timemania',
+    color: 'lottery-timemania',
+    hexColor: '#006600',
+    description: 'Sorteios às terças, quintas e sábados.',
+    drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
+    minNumber: 1,
+    maxNumber: 80,
+    numbersDrawn: 7,
+  },
+  diadesorte: {
+    name: 'Dia de Sorte',
+    slug: 'diadesorte',
+    color: 'lottery-diadesorte',
+    hexColor: '#DF9B10',
+    description: 'Inclui o Mês da Sorte, sorteios às terças, quintas e sábados.',
+    drawDays: ['Terça-feira', 'Quinta-feira', 'Sábado'],
+    minNumber: 1,
+    maxNumber: 31,
+    numbersDrawn: 7,
+  },
+  supersete: {
+    name: 'Super Sete',
+    slug: 'supersete',
+    color: 'lottery-supersete',
+    hexColor: '#E56C17',
+    description: 'Sorteios às segundas, quartas e sextas.',
+    drawDays: ['Segunda-feira', 'Quarta-feira', 'Sexta-feira'],
+    minNumber: 0,
+    maxNumber: 9,
+    numbersDrawn: 7,
+  },
+  maismilionaria: {
+    name: '+Milionária',
+    slug: 'maismilionaria',
+    color: 'lottery-maismilionaria',
+    hexColor: '#00703C',
+    description: 'Inclui trevos da sorte; sorteios aos sábados.',
+    drawDays: ['Sábado'],
+    minNumber: 1,
+    maxNumber: 50,
+    numbersDrawn: 6,
+  },
+  loteca: {
+    name: 'Loteca',
+    slug: 'loteca',
+    color: 'lottery-federal',
+    hexColor: '#2B388F',
+    description: 'Apostas esportivas com 14 jogos.',
+    drawDays: ['Sábado'],
+    minNumber: 1,
+    maxNumber: 14,
+    numbersDrawn: 14,
+  },
+};
