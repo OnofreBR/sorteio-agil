@@ -68,6 +68,7 @@ export interface LotteryResult {
   matchDetails: string[] | null;
   nextContest: NextContest;
   observacao?: string | null;
+  trevos?: string[] | null;
 }
 
 export type LotterySlug =
