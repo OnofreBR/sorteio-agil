@@ -1,17 +1,43 @@
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value);
-}
+const currencyFormatter = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+});
+
+const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+});
+
+const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+
+export const formatCurrency = (value: number): string => currencyFormatter.format(value);
+
+export const formatCurrencyBRL = (value: number | null | undefined): string => {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return '—';
+  return currencyFormatter.format(Number(value));
+};
+
+export const formatNumber = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) return '—';
+  return new Intl.NumberFormat('pt-BR').format(value);
+};
 
 export function formatDate(value: string | undefined | null): string {
   if (!value) return '';
-  // If already in DD/MM/YYYY format, return as is
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return value;
-  // Try to parse as ISO-like date
   const date = new Date(value);
-  if (isNaN(date.getTime())) return value; // Invalid date, return original
-  // Format to DD/MM/YYYY
-  return new Intl.DateTimeFormat('pt-BR').format(date);
+  if (Number.isNaN(date.getTime())) return value;
+  return dateFormatter.format(date);
 }
+
+export const formatDateLong = (value: string | undefined | null): string => {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return dateTimeFormatter.format(date);
+};

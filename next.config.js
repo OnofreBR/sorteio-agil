@@ -8,10 +8,15 @@ const nextConfig = {
   swcMinify: true,
   async rewrites() {
     return [
-      // Legacy patterns → new canonical route
-      { source: '/:lottery/concurso/:contest', destination: '/:lottery/:contest' },
-      { source: '/:lottery/concurso-:contest', destination: '/:lottery/:contest' },
-      { source: '/:lottery/resultado/:contest', destination: '/:lottery/:contest' },
+      // Pagina da loteria antiga -> nova rota /loterias/:slug
+      {
+        source: '/:lotterySlug((?!loterias|sobre|termos|privacidade|api|_next|favicon\.ico).*)',
+        destination: '/loterias/:lotterySlug',
+      },
+      // Rotas antigas de concurso -> nova rota /:slug/concurso-:numero
+      { source: '/:lotterySlug/concurso/:contest', destination: '/:lotterySlug/concurso-:contest' },
+      { source: '/:lotterySlug/resultado/:contest', destination: '/:lotterySlug/concurso-:contest' },
+      { source: '/:lotterySlug/:contest(\\d+)', destination: '/:lotterySlug/concurso-:contest' },
     ];
   },
 };

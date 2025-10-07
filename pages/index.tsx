@@ -1,9 +1,9 @@
 import { GetStaticProps } from 'next'
-import SEOHead from '@/components/SEOHead'
-import CardResultadoLoteria from '@/components/CardResultadoLoteria'
-import { getAllLotteryResults, sanitizeForNext } from '@/services/lotteryApi'
-import { LotteryResult } from '@/types/lottery'
 import { useState } from 'react'
+import SEOHead from '@/components/SEOHead'
+import LotteryCard from '@/components/LotteryCard'
+import { getLatestForAll, LOTTERY_SLUGS } from '@/src/lib/api/results'
+import { LotteryResult } from '@/src/types/lottery'
 
 interface HomeProps {
   resultados: LotteryResult[]
@@ -15,6 +15,8 @@ export default function Home({ resultados }: HomeProps) {
     setIsRefreshing(true)
     if (typeof window !== 'undefined') window.location.reload()
   }
+
+  const hasResults = resultados && resultados.length > 0
 
   return (
     <>
@@ -79,11 +81,18 @@ export default function Home({ resultados }: HomeProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {resultados.map((resultado) => (
-              <CardResultadoLoteria key={resultado.loteria + '-' + resultado.concurso} resultado={resultado} />
-            ))}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {hasResults
+              ? resultados.map((resultado) => (
+                  <LotteryCard key={`${resultado.lotterySlug}-${resultado.contestNumber}`} result={resultado} />
+                ))
+              : LOTTERY_SLUGS.map((slug) => <CardSkeleton key={slug} lotterySlug={slug} />)}
           </div>
+          {!hasResults ? (
+            <p className="mt-8 text-center text-sm text-muted-foreground">
+              Sem dados no momento. Tente novamente em instantes.
+            </p>
+          ) : null}
         </section>
 
         {/* About Section */}
@@ -104,18 +113,15 @@ export default function Home({ resultados }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const resultados = await getAllLotteryResults()
-    // Garantir arrays opcionais sempre definidos (Next.js não aceita undefined)
-    const normalized = (resultados || []).map((r) => ({
-      ...r,
-      trevos: Array.isArray(r.trevos) ? r.trevos : [],
-      estadosPremiados: Array.isArray(r.estadosPremiados) ? r.estadosPremiados : [],
-      cidadesPremiadas: Array.isArray((r as any).cidadesPremiadas) ? (r as any).cidadesPremiadas : [],
-      rateioCidades: Array.isArray((r as any).rateioCidades) ? (r as any).rateioCidades : [],
-    }))
+    const resultados = await getLatestForAll()
+
+    const ordered = LOTTERY_SLUGS.map((slug) => resultados.find((item) => item.lotterySlug === slug)).filter(
+      (item): item is LotteryResult => Boolean(item)
+    )
+
     return {
       props: {
-        resultados: sanitizeForNext(normalized),
+        resultados: ordered,
       },
       revalidate: 600,
     }
@@ -129,3 +135,35 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   }
 }
+
+interface CardSkeletonProps {
+  lotterySlug: string
+}
+
+const CardSkeleton = ({ lotterySlug }: CardSkeletonProps) => (
+  <article className="flex h-full flex-col rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+    <header className="mb-4">
+      <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+      <div className="mt-2 h-6 w-48 animate-pulse rounded bg-muted" />
+      <div className="mt-1 h-4 w-32 animate-pulse rounded bg-muted" />
+    </header>
+    <section className="space-y-4">
+      <div className="space-y-2">
+        <div className="h-4 w-28 animate-pulse rounded bg-muted" />
+        <ul className="flex flex-wrap gap-2">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <li key={index} className="h-12 w-12 animate-pulse rounded-full bg-muted" />
+          ))}
+        </ul>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="h-16 animate-pulse rounded-xl bg-muted" />
+        <div className="h-16 animate-pulse rounded-xl bg-muted" />
+      </div>
+      <div className="h-20 animate-pulse rounded-xl bg-muted" />
+    </section>
+    <footer className="mt-auto pt-6">
+      <div className="h-12 animate-pulse rounded-lg bg-muted" />
+    </footer>
+  </article>
+)
