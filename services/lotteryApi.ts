@@ -4,9 +4,10 @@ import { getMockLotteryResult, getAllMockResults } from './mockData';
 // Remove keys with undefined values recursively to satisfy Next.js JSON serialization
 export function sanitizeForNext<T>(value: T): T {
   if (Array.isArray(value)) {
-    // @ts-ignore
+    // @ts-expect-error
     return value.map((v) => sanitizeForNext(v)) as unknown as T;
   }
+
   if (value && typeof value === 'object') {
     const out: Record<string, any> = {};
     for (const [k, v] of Object.entries(value as Record<string, any>)) {
@@ -15,6 +16,7 @@ export function sanitizeForNext<T>(value: T): T {
     }
     return out as unknown as T;
   }
+
   // primitives (including null) returned as-is
   return value;
 }
