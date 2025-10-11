@@ -24,15 +24,16 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
 
   const canonicalUrl = buildUrl(`/${result.lotterySlug}/concurso-${result.contestNumber}`)
   const formattedDate = formatDateLong(result.contestDate)
-  const prizeLabel = formatCurrencyBRL(result.mainPrize)
+  const mainPrize = result.prizeTiers.length > 0 ? result.prizeTiers[0] : null;
+  const prizeLabel = mainPrize ? formatCurrencyBRL(mainPrize.amount) : '—';
   const winnersLabel =
-    result.mainWinners === null
+    mainPrize?.winners === null
       ? '—'
-      : result.mainWinners === 0
+      : mainPrize?.winners === 0
       ? 'Acumulou'
-      : `${formatNumber(result.mainWinners)} ${result.mainWinners === 1 ? 'ganhador' : 'ganhadores'}`
+      : `${formatNumber(mainPrize?.winners)} ${mainPrize?.winners === 1 ? 'ganhador' : 'ganhadores'}`
 
-  const nextContest = result.nextContest.number ? formatNumber(result.nextContest.number) : '—'
+  const nextContest = result.nextContest.contestNumber ? formatNumber(result.nextContest.contestNumber) : '—'
   const nextContestDate = result.nextContest.date ? formatDate(result.nextContest.date) : '—'
   const nextContestPrize = formatCurrencyBRL(result.nextContest.estimatedPrize)
 
@@ -51,7 +52,7 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
           '@context': 'https://schema.org',
           '@type': 'NewsArticle',
           headline: `${result.lotteryName} - Concurso ${result.contestNumber}`,
-          description: `Números sorteados: ${result.numbers.join(', ')}. ${result.mainWinners === 0 ? 'Acumulou.' : `${result.mainWinners || 0} ganhadores.`}`,
+          description: `Números sorteados: ${result.numbers.join(', ')}. ${mainPrize?.winners === 0 ? 'Acumulou.' : `${mainPrize?.winners || 0} ganhadores.`}`,
           datePublished: toISODate(result.contestDate),
           dateModified: toISODate(result.contestDate),
           mainEntityOfPage: {
@@ -116,18 +117,18 @@ const ContestPage = ({ result, previousContest, latestContest }: ContestPageProp
                 numbers={result.numbers}
                 ariaLabel={`Números sorteados da ${result.lotteryName}`}
               />
-              {result.specialNumbers ? (
+              {result.numbersSecondDraw ? (
                 <NumbersPills
-                  numbers={result.specialNumbers}
+                  numbers={result.numbersSecondDraw}
                   ariaLabel={`Trevos sorteados da ${result.lotteryName}`}
                 />
               ) : null}
             </div>
 
-            {result.mesSorte ? (
+            {result.month ? (
               <div className="mt-4">
                 <p className="text-sm text-muted-foreground">
-                  Mês da Sorte: <span className="font-semibold text-foreground">{result.mesSorte}</span>
+                  Mês da Sorte: <span className="font-semibold text-foreground">{result.month}</span>
                 </p>
               </div>
             ) : null}
