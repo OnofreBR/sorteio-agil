@@ -1,4 +1,4 @@
-import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/src/types/lottery';
+import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
 // Remove keys with undefined values recursively to satisfy Next.js JSON serialization
