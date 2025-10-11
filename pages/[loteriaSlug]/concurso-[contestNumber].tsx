@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import SEOHead from '@/components/SEOHead'
-import NumbersPills from '@/components/NumbersPills'
-import PrizeTable from '@/components/PrizeTable'
+import SEOHead from '@/src/components/SEOHead'
+import NumbersPills from '@/src/components/NumbersPills'
+import PrizeTable from '@/src/components/PrizeTable'
 import { buildUrl } from '@/src/lib/config/site'
 import {
   formatCurrencyBRL,
