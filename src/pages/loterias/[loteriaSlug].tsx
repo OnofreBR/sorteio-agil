@@ -7,7 +7,6 @@ import { buildUrl } from '@/lib/config/site';
 import {
   formatCurrencyBRL,
   formatDate,
-  formatDateLong,
   formatNumber,
   toISODate,
 } from '@/utils/formatters';
@@ -34,7 +33,7 @@ const LotteryPage: NextPage<LotteryPageProps> = ({ lottery }) => {
 
   const canonicalUrl = buildUrl(`/loterias/${lottery.loteria}`);
   const pageTitle = `${lottery.nome} - Concurso ${lottery.concurso}`;
-  const formattedDate = formatDateLong(lottery.data);
+  const formattedDate = formatDate(lottery.data);
   const mainPrize = lottery.premiacoes.length > 0 ? lottery.premiacoes[0] : null;
   const prizeLabel = mainPrize ? formatCurrencyBRL(mainPrize.valorPremio) : '—';
   const winnersLabel =
