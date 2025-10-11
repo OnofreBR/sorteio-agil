@@ -1,5 +1,5 @@
 import { lotteries } from '@/src/types/lottery';
-import type { LotteryResult } from '@/src/types/lottery';
+import type { LotteryResult, PrizeTier } from '@/src/types/lottery';
 
 const FUTURE_CONTESTS_COUNT = 20;
 
@@ -13,21 +13,21 @@ export function generateFutureContests(
   latestDate: string,
   estimatedPrize: number
 ): LotteryResult[] {
-  const lotteryInfo = lotteries[lottery];
+  const lotteryInfo = lotteries[lottery as keyof typeof lotteries];
   if (!lotteryInfo) return [];
 
   const futureContests: LotteryResult[] = [];
-  
+
   for (let i = 1; i <= FUTURE_CONTESTS_COUNT; i++) {
     const contestNumber = latestContest + i;
     const estimatedDate = estimateNextDrawDate(latestDate, i, lotteryInfo.drawDays);
-    
+
     const isoDate = convertToISODate(estimatedDate);
     const nextDateBr = estimateNextDrawDate(estimatedDate, 1, lotteryInfo.drawDays);
     const nextDateIso = convertToISODate(nextDateBr);
     const projectedPrize = estimatedPrize * (1 + i * 0.1);
 
-    const prizeTiers = [
+    const prizeTiers: PrizeTier[] = [
       {
         name: `${lotteryInfo.numbersDrawn} acertos`,
         hits: lotteryInfo.numbersDrawn,
@@ -37,6 +37,7 @@ export function generateFutureContests(
     ];
 
     const futureResult: LotteryResult = {
+      id: `${lotteryInfo.slug}-${contestNumber}`,
       lotterySlug: lotteryInfo.slug,
       lotteryName: lotteryInfo.name,
       contestNumber,
@@ -46,13 +47,17 @@ export function generateFutureContests(
       accumulated: true,
       accumulatedValue: projectedPrize,
       numbers: [],
-      secondDrawNumbers: [],
-      trevos: [],
-      mesSorte: null,
-      totalCollected: null,
+      numbersSecondDraw: null,
       prizeTiers,
-      mainPrize: projectedPrize,
-      mainWinners: 0,
+      prizeSecondDraw: null,
+      winnerLocales: null,
+      totalCollected: null,
+      team: null,
+      month: null,
+      numbersClover: null,
+      prizes: null,
+      numbersMatch: null,
+      matchDetails: null,
       nextContest: {
         contestNumber: contestNumber + 1,
         date: nextDateIso,
@@ -63,26 +68,8 @@ export function generateFutureContests(
         specialAccumulated: null,
         specialName: null,
       },
-      winnerLocales: [],
-      rateioEmProcessamento: false,
-      // Compatibilidade legada
-      loteria: lotteryInfo.name,
-      concurso: contestNumber,
-      data: estimatedDate,
-      dezenasOrdemSorteio: [],
-      dezenas: [],
-      premiacoes: prizeTiers.map((tier) => ({
-        descricao: tier.name,
-        faixa: 1,
-        ganhadores: tier.winners ?? 0,
-        valorPremio: tier.amount ?? 0,
-      })),
-      estadosPremiados: [],
       observacao: `Sorteio previsto para ${formatEstimatedDate(estimatedDate)}. Resultado será atualizado automaticamente após o sorteio.`,
-      acumulou: true,
-      proximoConcurso: contestNumber + 1,
-      dataProximoConcurso: nextDateBr,
-      valorEstimadoProximoConcurso: estimatedPrize * (1 + (i + 1) * 0.1),
+      trevos: null,
     };
 
     futureContests.push(futureResult);
@@ -164,7 +151,7 @@ export function generateFutureContestContent(lottery: string, contest: number): 
   howToPlay: string;
   statistics: string;
 } {
-  const lotteryInfo = lotteries[lottery];
+  const lotteryInfo = lotteries[lottery as keyof typeof lotteries];
   
   return {
     title: `${lotteryInfo.name} Concurso ${contest} - Aguarde o Resultado`,
