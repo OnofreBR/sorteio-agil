@@ -1,18 +1,24 @@
-import Link from 'next/link'
-import SEOHead from '@/components/SEOHead'
-import NumbersPills from '@/components/NumbersPills'
-import PrizeTable from '@/components/PrizeTable'
-import { buildUrl } from '@/src/lib/config/site'
+import { GetServerSideProps, NextPage } from 'next';
+import Link from 'next/link';
+import SEOHead from '@/components/SEOHead';
+import NumbersPills from '@/components/NumbersPills';
+import PrizeTable from '@/components/PrizeTable';
+import { buildUrl } from '@/lib/config/site';
 import {
   formatCurrencyBRL,
   formatDate,
   formatDateLong,
   formatNumber,
   toISODate,
-} from '@/utils/formatters'
-import type { LotteryPageProps } from './loteriaPage.utils'
+} from '@/utils/formatters';
+import { lotteryApi } from '@/services/lotteryApi';
+import { LotteryResult, LotterySlug, LOTTERY_SLUGS } from '@/types/lottery';
 
-const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
+interface LotteryPageProps {
+  lottery: LotteryResult | null;
+}
+
+const LotteryPage: NextPage<LotteryPageProps> = ({ lottery }) => {
   if (!lottery) {
     return (
       <main className="container mx-auto max-w-5xl px-4 py-16 text-center">
@@ -23,60 +29,47 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
           Tente novamente em instantes.
         </p>
       </main>
-    )
+    );
   }
 
-  const canonicalUrl = buildUrl(`/loterias/${lottery.lotterySlug}`)
-  const pageTitle = `${lottery.lotteryName} - Concurso ${lottery.contestNumber}`
-  const formattedDate = formatDateLong(lottery.contestDate)
-  const prizeLabel = formatCurrencyBRL(lottery.mainPrize)
+  const canonicalUrl = buildUrl(`/loterias/${lottery.loteria}`);
+  const pageTitle = `${lottery.nome} - Concurso ${lottery.concurso}`;
+  const formattedDate = formatDateLong(lottery.data);
+  const mainPrize = lottery.premiacoes.length > 0 ? lottery.premiacoes[0] : null;
+  const prizeLabel = mainPrize ? formatCurrencyBRL(mainPrize.valorPremio) : '—';
   const winnersLabel =
-    lottery.mainWinners === null
+    mainPrize?.ganhadores === null
       ? '—'
-      : lottery.mainWinners === 0
+      : mainPrize?.ganhadores === 0
       ? 'Acumulou'
-      : `${formatNumber(lottery.mainWinners)} ${
-          lottery.mainWinners === 1 ? 'ganhador' : 'ganhadores'
-        }`
+      : `${formatNumber(mainPrize?.ganhadores)} ${
+          mainPrize?.ganhadores === 1 ? 'ganhador' : 'ganhadores'
+        }`;
 
-  const nextContestNumber = lottery.nextContest.number
-    ? formatNumber(lottery.nextContest.number)
-    : '—'
-  const nextContestDate = lottery.nextContest.date
-    ? formatDate(lottery.nextContest.date)
-    : '—'
-  const nextContestPrize = formatCurrencyBRL(lottery.nextContest.estimatedPrize)
+  const nextContestNumber = lottery.proximoConcurso
+    ? formatNumber(lottery.proximoConcurso)
+    : '—';
+  const nextContestDate = lottery.dataProximoConcurso
+    ? formatDate(lottery.dataProximoConcurso)
+    : '—';
+  const nextContestPrize = formatCurrencyBRL(lottery.valorEstimadoProximoConcurso);
 
   return (
     <>
       <SEOHead
         title={pageTitle}
-        description={`Confira os resultados do concurso ${
-          lottery.contestNumber
-        } da ${lottery.lotteryName}, realizado em ${
-          formattedDate
-        }. Números sorteados, ganhadores e prêmios.`}
-        canonicalUrl={canonicalUrl}
-        structuredData={{
-          '@context': 'https://schema.org',
-          '@type': 'WebPage',
-          name: pageTitle,
-          description: `Resultado do concurso ${
-            lottery.contestNumber
-          } da ${lottery.lotteryName}`,
-          datePublished: lottery.contestDate
-            ? toISODate(lottery.contestDate)
-            : undefined,
-        }}
+        description={`Confira os resultados do concurso ${lottery.concurso} da ${lottery.nome}, realizado em ${formattedDate}. Números sorteados, ganhadores e prêmios.`}
+        canonical={canonicalUrl}
+        url={canonicalUrl}
       />
       <main className="container mx-auto max-w-5xl px-4 py-8">
         <article>
           <header className="mb-8 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 text-white shadow-lg">
             <h1 className="text-3xl font-bold leading-tight tracking-tight">
-              {lottery.lotteryName}
+              {lottery.nome}
             </h1>
             <p className="mt-2 text-lg opacity-95">
-              Concurso {formatNumber(lottery.contestNumber)} • {formattedDate}
+              Concurso {formatNumber(lottery.concurso)} • {formattedDate}
             </p>
           </header>
 
@@ -86,9 +79,9 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
                 Números sorteados
               </h2>
               <NumbersPills
-                numbers={lottery.numbers}
+                numbers={lottery.dezenas}
                 size="lg"
-                ariaLabel={`Números sorteados do concurso ${lottery.contestNumber}`}
+                ariaLabel={`Números sorteados do concurso ${lottery.concurso}`}
               />
             </div>
 
@@ -112,12 +105,12 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
               </div>
             </div>
 
-            {lottery.prizes && lottery.prizes.length > 0 && (
+            {lottery.premiacoes && lottery.premiacoes.length > 0 && (
               <div className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-semibold text-foreground">
                   Premiação completa
                 </h2>
-                <PrizeTable prizes={lottery.prizes} />
+                <PrizeTable tiers={lottery.premiacoes} caption={`Premiação do concurso ${lottery.concurso}`} />
               </div>
             )}
 
@@ -133,46 +126,44 @@ const LotteryPage = ({ lottery, history }: LotteryPageProps) => {
               </p>
             </div>
 
-            {history && history.length > 0 && (
-              <div className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
-                <h2 className="mb-4 text-xl font-semibold text-foreground">
-                  Últimos concursos da {lottery.lotteryName}
-                </h2>
-                <ul className="space-y-3">
-                  {history.map((item) => (
-                    <li
-                      className="rounded-xl border border-border/60 bg-white p-4 shadow-sm"
-                      key={`${item.lotterySlug}-${item.contestNumber}`}
+            <div className="mt-8 text-center">
+                <Link
+                    href={`/`}
+                    className="inline-flex items-center justify-center rounded-lg border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                     >
-                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            Concurso {formatNumber(item.contestNumber)} ·{' '}
-                            {formatDate(item.contestDate)}
-                          </p>
-                          <NumbersPills
-                            numbers={item.numbers}
-                            size="sm"
-                            ariaLabel={`Números sorteados do concurso ${item.contestNumber}`}
-                          />
-                        </div>
-                        <Link
-                          href={`/${item.lotterySlug}/concurso-${item.contestNumber}`}
-                          className="inline-flex items-center justify-center rounded-lg border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                        >
-                          Ver concurso
-                        </Link>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                    Voltar para a página inicial
+                </Link>
+            </div>
           </section>
         </article>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default LotteryPage
+export const getServerSideProps: GetServerSideProps<LotteryPageProps> = async (context) => {
+  const slugParam = context.params?.loteriaSlug;
+  const slug = typeof slugParam === 'string' ? (slugParam.toLowerCase() as LotterySlug) : null;
+
+  if (!slug || !LOTTERY_SLUGS.includes(slug)) {
+    return { notFound: true };
+  }
+
+  try {
+    const result = await lotteryApi.getLatestByLottery(slug);
+    return {
+      props: {
+        lottery: result.data,
+      },
+    };
+  } catch (error) {
+    console.error(`[${slug}] Erro ao obter o último concurso:`, error);
+    return {
+      props: {
+        lottery: null,
+      },
+    };
+  }
+};
+
+export default LotteryPage;

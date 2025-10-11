@@ -1,8 +1,8 @@
-import { PrizeTier } from '@/src/types/lottery';
+import { Premiacao } from '@/types/lottery';
 import { formatCurrencyBRL, formatNumber } from '@/utils/formatters';
 
 interface PrizeTableProps {
-  tiers: PrizeTier[];
+  tiers: Premiacao[];
   caption?: string;
 }
 
@@ -18,10 +18,10 @@ const PrizeTable = ({ tiers, caption }: PrizeTableProps) => {
         <thead className="bg-muted/50">
           <tr>
             <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
-              Acertos
+              Faixa
             </th>
             <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
-              Faixa
+              Acertos
             </th>
             <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
               Ganhadores
@@ -33,16 +33,14 @@ const PrizeTable = ({ tiers, caption }: PrizeTableProps) => {
         </thead>
         <tbody className="divide-y divide-border/40">
           {tiers.map((tier, index) => (
-            <tr key={`${tier.name}-${index}`} className="hover:bg-muted/40">
-              <td className="px-4 py-3 text-sm font-medium text-foreground">
-                {tier.hits !== null ? formatNumber(tier.hits) : '—'}
-              </td>
-              <td className="px-4 py-3 text-sm text-foreground">{tier.name || '—'}</td>
+            <tr key={`${tier.faixa}-${index}`} className="hover:bg-muted/40">
+              <td className="px-4 py-3 text-sm font-medium text-foreground">{tier.faixa || '—'}</td>
+              <td className="px-4 py-3 text-sm text-foreground">{tier.acertos || '—'}</td>
               <td className="px-4 py-3 text-sm text-foreground">
-                {tier.winners !== null ? formatNumber(tier.winners) : '—'}
+                {tier.ganhadores !== null ? formatNumber(tier.ganhadores) : '—'}
               </td>
               <td className="px-4 py-3 text-sm font-semibold text-foreground">
-                {tier.amount !== null ? formatCurrencyBRL(tier.amount) : '—'}
+                {tier.valorPremio !== null ? formatCurrencyBRL(tier.valorPremio) : '—'}
               </td>
             </tr>
           ))}
@@ -53,4 +51,3 @@ const PrizeTable = ({ tiers, caption }: PrizeTableProps) => {
 };
 
 export default PrizeTable;
-

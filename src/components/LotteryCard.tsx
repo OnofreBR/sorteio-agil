@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import NumbersPills from '@/src/components/NumbersPills';
-import { LotteryResult } from '@/src/types/lottery';
+import NumbersPills from '@/components/NumbersPills';
+import { LotteryResult } from '@/types/lottery';
 import { formatCurrencyBRL, formatDate, formatNumber } from '@/utils/formatters';
 
 interface LotteryCardProps {
