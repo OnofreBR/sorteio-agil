@@ -1,4 +1,4 @@
-import { LotteryResult, Prize, CidadePremiada, RateioCidade } from '@/types/lottery';
+import { LotteryResult, Prize, CidadePremiada, RateioCidade, LotterySlug } from '@/types/lottery';
 import { getMockLotteryResult, getAllMockResults } from './mockData';
 
 // Remove keys with undefined values recursively to satisfy Next.js JSON serialization
@@ -266,4 +266,11 @@ export function formatCurrency(value: number): string {
 export function formatDate(date: string): string {
   const [year, month, day] = date.split('-');
   return `${day}/${month}/${year}`;
+}
+
+export async function getAllContestsByLottery(lottery: LotterySlug): Promise<number[]> {
+  // This is a mock implementation. Ideally, you would fetch this from your API.
+  // For example: /api/lotteries/${lottery}/contests
+  // This function is just to make getStaticPaths work.
+  return [1, 2, 3, 4, 5];
 }

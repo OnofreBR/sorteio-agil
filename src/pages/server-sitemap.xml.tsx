@@ -1,8 +1,8 @@
 import { GetServerSideProps } from 'next';
-import { generateLotterySitemap } from '@/services/futureContests';
+import { generateSitemap } from '@/services/sitemap';
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const sitemap = await generateLotterySitemap();
+  const sitemap = await generateSitemap();
 
   res.setHeader('Content-Type', 'application/xml');
   res.write(sitemap);
