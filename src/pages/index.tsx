@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import SEOHead from '@/components/SEOHead'
 import LotteryCard from '@/components/LotteryCard'
-import { buildUrl } from '@/src/lib/config/site'
+import { buildUrl } from '@/lib/config/site'
 import {
   LOTTERY_SLUGS,
   CardSkeleton,
