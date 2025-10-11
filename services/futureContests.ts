@@ -54,7 +54,7 @@ export function generateFutureContests(
       mainPrize: projectedPrize,
       mainWinners: 0,
       nextContest: {
-        number: contestNumber + 1,
+        contestNumber: contestNumber + 1,
         date: nextDateIso,
         dateMillis: new Date(nextDateIso).getTime(),
         estimatedPrize: estimatedPrize * (1 + (i + 1) * 0.1),
