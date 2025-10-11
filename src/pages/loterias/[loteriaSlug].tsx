@@ -8,7 +8,6 @@ import {
   formatCurrencyBRL,
   formatDate,
   formatNumber,
-  toISODate,
 } from '@/utils/formatters';
 import { lotteryApi } from '@/services/lotteryApi';
 import { LotteryResult, LotterySlug, LOTTERY_SLUGS } from '@/types/lottery';
