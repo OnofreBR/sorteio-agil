@@ -8,56 +8,58 @@ interface LotteryCardProps {
 }
 
 const LotteryCard = ({ result }: LotteryCardProps) => {
+  const mainPrize = result.premiacoes?.[0];
+
   const missingFields: string[] = [];
-  if (!result.lotteryName) missingFields.push('nome');
-  if (!result.contestNumber) missingFields.push('numero_concurso');
-  if (!result.contestDate) missingFields.push('data_concurso');
-  if (!result.numbers.length) missingFields.push('dezenas');
-  if (result.mainPrize === null) missingFields.push('premiacao[0].valor_total');
+  if (!result.loteria) missingFields.push('nome');
+  if (!result.concurso) missingFields.push('numero_concurso');
+  if (!result.data) missingFields.push('data_concurso');
+  if (!result.dezenas.length) missingFields.push('dezenas');
+  if (!mainPrize) missingFields.push('premiacao[0]');
 
   if (missingFields.length) {
-    console.warn(`[${result.lotterySlug}] Campos ausentes: ${missingFields.join(', ')}`);
+    console.warn(`[${result.loteria}] Campos ausentes: ${missingFields.join(', ')}`);
   }
 
-  const formattedDate = formatDate(result.contestDate) || '—';
-  const prizeLabel = result.mainPrize !== null ? formatCurrencyBRL(result.mainPrize) : '—';
+  const formattedDate = formatDate(result.data) || '—';
+  const prizeLabel = mainPrize?.valorPremio ? formatCurrencyBRL(mainPrize.valorPremio) : '—';
   const winnersLabel =
-    result.mainWinners === null
+    mainPrize?.ganhadores === null
       ? '—'
-      : result.mainWinners === 0
+      : mainPrize?.ganhadores === 0
       ? 'Acumulou'
-      : formatNumber(result.mainWinners);
+      : formatNumber(mainPrize?.ganhadores ?? 0);
 
-  const nextContestNumber = result.nextContest.number ?? null;
-  const nextContestDate = result.nextContest.date ? formatDate(result.nextContest.date) : '—';
+  const nextContestNumber = result.proximoConcurso ?? null;
+  const nextContestDate = result.dataProximoConcurso ? formatDate(result.dataProximoConcurso) : '—';
   const nextContestPrize =
-    result.nextContest.estimatedPrize !== null && result.nextContest.estimatedPrize !== undefined
-      ? formatCurrencyBRL(result.nextContest.estimatedPrize)
+    result.valorEstimadoProximoConcurso !== null && result.valorEstimadoProximoConcurso !== undefined
+      ? formatCurrencyBRL(result.valorEstimadoProximoConcurso)
       : '—';
 
   return (
     <article className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-md transition-shadow duration-200 hover:shadow-lg">
       <header className="flex items-center justify-between bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-4 text-white">
         <div className="flex flex-col">
-          <h2 className="text-xl font-bold leading-tight tracking-tight">{result.lotteryName}</h2>
+          <h2 className="text-xl font-bold leading-tight tracking-tight">{result.nome}</h2>
           <p className="mt-1 text-sm opacity-90">
-            Concurso {formatNumber(result.contestNumber)} • {formattedDate}
+            Concurso {formatNumber(result.concurso)} • {formattedDate}
           </p>
         </div>
       </header>
 
-      <section className="space-y-4">
+      <section className="space-y-4 p-4">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Números sorteados</p>
-          <NumbersPills numbers={result.numbers} ariaLabel={`Números sorteados da ${result.lotteryName}`} />
+          <NumbersPills numbers={result.dezenas} ariaLabel={`Números sorteados da ${result.nome}`} />
 
-          {result.secondDrawNumbers && result.secondDrawNumbers.length > 0 ? (
+          {result.dezenasOrdemSorteio && result.dezenasOrdemSorteio.length > 0 ? (
             <div className="mt-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Segundo sorteio</p>
               <NumbersPills 
-                numbers={result.secondDrawNumbers}
+                numbers={result.dezenasOrdemSorteio}
                 variant="secondary"
-                ariaLabel={`Segundo sorteio da ${result.lotteryName}`}
+                ariaLabel={`Segundo sorteio da ${result.nome}`}
               />
             </div>
           ) : null}
@@ -68,7 +70,7 @@ const LotteryCard = ({ result }: LotteryCardProps) => {
               <NumbersPills 
                 numbers={result.trevos ?? []}
                 variant="secondary"
-                ariaLabel={`Trevos sorteados da ${result.lotteryName}`}
+                ariaLabel={`Trevos sorteados da ${result.nome}`}
               />
             </div>
           ) : null}
@@ -97,7 +99,7 @@ const LotteryCard = ({ result }: LotteryCardProps) => {
 
       <footer className="mt-auto pt-6">
         <Link 
-          href={`/${result.lotterySlug}/concurso-${result.contestNumber}`}
+          href={`/${result.loteria}/concurso-${result.concurso}`}
           className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-md transition-transform duration-150 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
           Ver detalhes do concurso
