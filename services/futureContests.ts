@@ -1,4 +1,4 @@
-import { LOTTERY_MAP } from '@/src/types/lottery';
+import { lotteries } from '@/src/types/lottery';
 import type { LotteryResult } from '@/src/types/lottery';
 
 const FUTURE_CONTESTS_COUNT = 20;
@@ -13,7 +13,7 @@ export function generateFutureContests(
   latestDate: string,
   estimatedPrize: number
 ): LotteryResult[] {
-  const lotteryInfo = LOTTERY_MAP[lottery];
+  const lotteryInfo = lotteries[lottery];
   if (!lotteryInfo) return [];
 
   const futureContests: LotteryResult[] = [];
@@ -164,7 +164,7 @@ export function generateFutureContestContent(lottery: string, contest: number): 
   howToPlay: string;
   statistics: string;
 } {
-  const lotteryInfo = LOTTERY_MAP[lottery];
+  const lotteryInfo = lotteries[lottery];
   
   return {
     title: `${lotteryInfo.name} Concurso ${contest} - Aguarde o Resultado`,
@@ -252,7 +252,7 @@ export function getAllFutureContests(): Array<{ lottery: string; contest: number
   
   // Para cada loteria, assumimos concursos futuros baseados em um número base
   // Em produção, isso seria baseado nos últimos concursos reais da API
-  Object.keys(LOTTERY_MAP).forEach(lottery => {
+  Object.keys(lotteries).forEach(lottery => {
     const baseContest = 3000; // Número base aproximado (seria obtido da API)
     
     for (let i = 1; i <= FUTURE_CONTESTS_COUNT; i++) {
