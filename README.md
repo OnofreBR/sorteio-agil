@@ -123,4 +123,7 @@ O comando `npm run check` executa lint + typecheck + build localmente. No CI, o 
 
 ---
 
-Mantido por **Números Mega Sena**.
+## Autor
+
+- **GitHub**: [OnofreBR](https://github.com/OnofreBR)
+- **LinkedIn**: [Seu Nome](https://www.linkedin.com/in/SEU-PERFIL)
