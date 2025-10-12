@@ -1,129 +1,73 @@
-# Números Mega Sena
+# Welcome to your Lovable project
 
-Aplicação Next.js (pages router) para acompanhar resultados oficiais das loterias brasileiras com SSR/SSG/ISR, SEO dinâmico e integrações de indexação. Preparada para deploy estável na Vercel.
+## Project info
 
-## Stack
+**URL**: https://lovable.dev/projects/9974b02c-94e8-4cbf-88c6-27a8e13cbcb9
 
-- **Next.js 14.2 (pages router)** – SSR/SSG/ISR
-- **TypeScript**
-- **Tailwind CSS + shadcn/ui**
-- **ESLint + TypeScript ESLint**
-- **GitHub Actions (lint / typecheck / build)**
+## How can I edit this code?
 
-## Pré-requisitos
+There are several ways of editing your application.
 
-- Node.js **≥ 18.17.0** (recomendado o LTS mais recente)
-- npm 9+
+**Use Lovable**
 
-## Configuração local
+Simply visit the [Lovable Project](https://lovable.dev/projects/9974b02c-94e8-4cbf-88c6-27a8e13cbcb9) and start prompting.
 
-```bash
-git clone <REPO_URL>
-cd sorteio-agil
+Changes made via Lovable will be committed automatically to this repo.
 
-# Copie as variáveis de ambiente
-cp .env.example .env.local
+**Use your preferred IDE**
 
-# Instale as dependências
-npm install
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-# Rodando em modo desenvolvimento (SSR)
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
+
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
-
-# Verificações completas (lint + typecheck + build)
-npm run check
 ```
 
-### Variáveis de Ambiente
+**Edit a file directly in GitHub**
 
-| Variável | Obrigatória | Descrição |
-| --- | --- | --- |
-| `SITE_URL` | ✅ | URL canônica usada em SEO (ex.: `https://sorteioagil.com.br`). |
-| `RESULTS_API_URL` | ✅ | Endpoint primário da API de resultados das loterias. |
-| `RESULTS_API_BACKUP_URL` | ⛔️ opcional | Endpoint de backup para failover automático. |
-| `RESULTS_API_TOKEN` | ✅ | Token seguro da API (servidor). |
-| `RESULTS_API_TIMEOUT` | ⛔️ | Tempo limite em ms (padrão 5000). |
-| `RESULTS_API_CACHE_TTL` | ⛔️ | TTL do cache em ms (padrão 60000). |
-| `INDEXNOW_KEY` | ⛔️ | Chave IndexNow para notificar buscadores (opcional). |
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-> Todas as variáveis devem ser cadastradas na Vercel em **Project Settings → Environment Variables**. Nunca exponha `RESULTS_API_TOKEN` em código cliente.
+**Use GitHub Codespaces**
 
-## Scripts npm
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-| Script | Descrição |
-| --- | --- |
-| `npm run dev` | Desenvolvimento com SSR hot reload. |
-| `npm run lint` | ESLint em todo o projeto (`eslint . --max-warnings=0`). |
-| `npm run lint:next` | Validação adicional via `next lint`. |
-| `npm run typecheck` | `tsc --noEmit` para garantir tipos corretos. |
-| `npm run build` | `next build` (gera SSR/SSG/ISR). |
-| `npm run start` | `next start` – servidor de produção. |
-| `npm run check` | Executa `lint`, `typecheck` e `build` em sequência. |
+## What technologies are used for this project?
 
-## Fluxo de Deploy (Vercel)
+This project is built with:
 
-1. Garanta que `npm run check` passa localmente.
-2. Commit + push em `main` (CI roda lint/typecheck/build no Node 18).
-3. A Vercel lê `package.json` (`build`: `next build`, `start`: `next start`).
-4. Configure as mesmas envs no painel da Vercel.
-5. Deploy automático a cada push em `main`.
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-## SSR/SSG/ISR
+## How can I deploy this project?
 
-- `/` – SSG com **ISR (revalidate: 600s)**. Dados agregados via camada `getLatestForAll` (cache em memória + fallback API).
-- `/loterias/[loteriaSlug]` – SSR (`getServerSideProps`).
-- `/[loteriaSlug]/concurso-[contestNumber]` – SSR com fallback seguro.
-- `/sobre`, `/privacidade`, `/termos` – SSR leves com metadados estáticos.
-- `/sitemap.xml`, `/robots.txt` – respostas dinâmicas server-side com cache-control.
+Simply open [Lovable](https://lovable.dev/projects/9974b02c-94e8-4cbf-88c6-27a8e13cbcb9) and click on Share -> Publish.
 
-## SEO e rotas
+## Can I connect a custom domain to my Lovable project?
 
-| Rota | Método | Metadados | JSON-LD |
-| --- | --- | --- | --- |
-| `/` | ISR (600s) | Title + Description + OG/Twitter | `WebSite` |
-| `/loterias/[slug]` | SSR | Title + canonical dinâmico + OG/Twitter | `CollectionPage` com concursos recentes |
-| `/[slug]/concurso-[id]` | SSR | Title/desc/canonical por concurso | `NewsArticle` |
-| `/sitemap.xml` | SSR | Geração dinâmica (home, institucionais, loterias, concursos) | — |
-| `/robots.txt` | SSR | Inclui sitemap + IndexNow (se disponível) | — |
+Yes, you can!
 
-Canonical e OG usam `SITE_URL`. Hreflang não é utilizado (site monolíngue PT-BR).
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-## Dados das Loterias
-
-Camada em `src/lib/api/results.ts`:
-
-- Failover entre `RESULTS_API_URL` e `RESULTS_API_BACKUP_URL`.
-- Timeout configurável (`RESULTS_API_TIMEOUT`).
-- Retry exponencial + cache in-memory (`RESULTS_API_CACHE_TTL`).
-- Normalização completa (dezenas, duplas, trevos, mês da sorte, premiações, próximos concursos).
-- Logs controlados para falhas por loteria.
-
-## Sitemap & Robots
-
-- `pages/sitemap.xml.ts` gera XML dinâmico com cache `s-maxage=3600`.
-- `pages/robots.txt.ts` usa `SITE_URL` e incorpora IndexNow (quando disponível).
-- `services/futureContests.ts` mantém dados para conteúdo futuro (evita soft-404).
-
-## Qualidade e CI
-
-- **ESLint + TypeScript** integrados ao build (`npm run lint`, `npm run typecheck`).
-- GitHub Actions (`.github/workflows/ci.yml`) executa lint → typecheck → build a cada push/PR.
-- Arquivo `.env.example` documenta variáveis obrigatórias.
-
-## Deploy Manual (Vercel)
-
-1. `npm run check`
-2. Push para `main`
-3. Na Vercel: importar repositório, definir envs (Production & Preview).
-4. Confirmar logs `npm run build` e publicar.
-
-## Logs de validação
-
-O comando `npm run check` executa lint + typecheck + build localmente. No CI, o workflow “CI” evidencia o log completo do processo em cada commit, garantindo a mesma validação usada na Vercel.
-
----
-
-## Autor
-
-- **GitHub**: [OnofreBR](https://github.com/OnofreBR)
-- **LinkedIn**: [Seu Nome](https://www.linkedin.com/in/SEU-PERFIL)
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

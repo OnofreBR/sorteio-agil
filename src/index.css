@@ -37,17 +37,13 @@
     --input: 220 15% 92%;
     --ring: 145 70% 25%;
 
-    /* Lottery specific colors - Cores oficiais */
-    --lottery-megasena: 150 100% 20%;
-    --lottery-quina: 276 68% 34%;
-    --lottery-lotofacil: 25 91% 54%;
-    --lottery-lotomania: 207 100% 28%;
-    --lottery-timemania: 151 100% 29%;
-    --lottery-dupla: 358 77% 48%;
-    --lottery-diadesorte: 42 93% 53%;
-    --lottery-supersete: 281 47% 31%;
-    --lottery-federal: 220 72% 21%;
-    --lottery-maismilionaria: 280 72% 30%;
+    /* Lottery specific colors */
+    --lottery-megasena: 145 70% 25%;
+    --lottery-quina: 255 70% 55%;
+    --lottery-lotofacil: 285 80% 60%;
+    --lottery-lotomania: 25 85% 55%;
+    --lottery-dupla: 15 90% 55%;
+    --lottery-federal: 195 85% 50%;
 
     /* Gradients for beautiful effects */
     --gradient-hero: linear-gradient(135deg, hsl(145 70% 25%), hsl(145 65% 45%));
@@ -113,17 +109,13 @@
     --input: 220 15% 18%;
     --ring: 145 70% 35%;
 
-    /* Dark mode lottery colors - Cores oficiais ajustadas */
-    --lottery-megasena: 150 100% 30%;
-    --lottery-quina: 276 68% 44%;
-    --lottery-lotofacil: 25 91% 64%;
-    --lottery-lotomania: 207 100% 38%;
-    --lottery-timemania: 151 100% 39%;
-    --lottery-dupla: 358 77% 58%;
-    --lottery-diadesorte: 42 93% 63%;
-    --lottery-supersete: 281 47% 41%;
-    --lottery-federal: 220 72% 31%;
-    --lottery-maismilionaria: 280 72% 40%;
+    /* Dark mode lottery colors */
+    --lottery-megasena: 145 70% 35%;
+    --lottery-quina: 255 70% 65%;
+    --lottery-lotofacil: 285 80% 70%;
+    --lottery-lotomania: 25 85% 65%;
+    --lottery-dupla: 15 90% 65%;
+    --lottery-federal: 195 85% 60%;
 
     /* Dark mode gradients */
     --gradient-hero: linear-gradient(135deg, hsl(145 70% 25%), hsl(145 65% 35%));
@@ -152,80 +144,7 @@
     @apply border-border;
   }
 
-body {
-  @apply bg-background text-foreground;
-}
-
-.site-header {
-  position: relative;
-  width: 100%;
-  background-color: white;
-  border-bottom: 1px solid hsl(var(--border));
-  transition: transform 0.25s ease, opacity 0.25s ease;
-  will-change: transform, opacity;
-  z-index: 30;
-}
-
-.site-header__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 1.5rem;
-  min-height: 68px;
-}
-
-.site-header__brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-}
-
-.site-header__title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: hsl(var(--foreground));
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .site-header__title {
-    display: block;
+  body {
+    @apply bg-background text-foreground;
   }
-}
-
-.site-header__nav {
-  display: none;
-  gap: 0.5rem;
-}
-
-@media (min-width: 768px) {
-  .site-header__nav {
-    display: flex;
-  }
-}
-
-.site-header__link {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: hsl(var(--foreground));
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.site-header__link:hover,
-.site-header__link:focus-visible {
-  background-color: hsl(var(--muted));
-  color: hsl(var(--foreground));
-  outline: none;
-}
-
-.header--hidden {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-}
 }
