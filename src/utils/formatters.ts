@@ -4,24 +4,20 @@ export const formatCurrencyBRL = (value: number) => {
 
 export const formatDate = (dateString: string) => {
   if (!dateString) return '—';
-  // If already in dd/mm/yyyy, return as-is
-  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(dateString)) {
+  
+  // If already in dd/mm/yyyy format, return as-is
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
     return dateString;
   }
-  // Try to parse ISO or yyyy-mm-dd
-  const parts = dateString.split('-');
-  if (parts.length === 3) {
-    const [year, month, day] = parts;
-    // Simple safety: ensure numeric
-    const y = Number(year), m = Number(month), d = Number(day);
-    if (!Number.isNaN(y) && !Number.isNaN(m) && !Number.isNaN(d)) {
-      return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
-    }
+  
+  // Try to parse yyyy-mm-dd format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
   }
-  // Fallback to Date parsing
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return dateString;
-  return new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(date);
+  
+  // Fallback: return original string to avoid errors
+  return dateString;
 };
 
 export const formatNumber = (value: number) => {
