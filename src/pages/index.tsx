@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { GetStaticProps } from 'next'
 import LotteryCard from '@/components/LotteryCard'
 import { Button } from '@/components/ui/button'
-import { buildUrl } from '@/lib/config/site'
+import { lotteryApi } from '@/services/lotteryApi'
 import {
   LOTTERY_SLUGS,
   CardSkeleton,
@@ -80,9 +80,10 @@ export const getStaticProps: GetStaticProps = async () => {
 
   try {
     const promises = LOTTERY_SLUGS.map(slug =>
-      fetch(buildUrl(`/loterias/${slug}`)).then(res => res.json()),
+      lotteryApi.getLatestByLottery(slug),
     )
-    resultados = await Promise.all(promises)
+    const results = await Promise.all(promises)
+    resultados = results.map(result => result.data)
   } catch (error) {
     console.error(error)
   }

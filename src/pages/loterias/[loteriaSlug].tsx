@@ -1,4 +1,5 @@
-import { GetServerSideProps, NextPage } from 'next';
+
+import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import Link from 'next/link';
 import SEOHead from '@/components/SEOHead';
 import NumbersPills from '@/components/NumbersPills';
@@ -139,7 +140,18 @@ const LotteryPage: NextPage<LotteryPageProps> = ({ lottery }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<LotteryPageProps> = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths = LOTTERY_SLUGS.map((slug) => ({
+    params: { loteriaSlug: slug },
+  }));
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps<LotteryPageProps> = async (context) => {
   const slugParam = context.params?.loteriaSlug;
   const slug = typeof slugParam === 'string' ? (slugParam.toLowerCase() as LotterySlug) : null;
 
@@ -153,6 +165,7 @@ export const getServerSideProps: GetServerSideProps<LotteryPageProps> = async (c
       props: {
         lottery: result.data,
       },
+      revalidate: 60, // Revalida a cada 60 segundos
     };
   } catch (error) {
     console.error(`[${slug}] Erro ao obter o último concurso:`, error);
@@ -160,6 +173,7 @@ export const getServerSideProps: GetServerSideProps<LotteryPageProps> = async (c
       props: {
         lottery: null,
       },
+      revalidate: 10, // Tenta revalidar antes se houver erro
     };
   }
 };
