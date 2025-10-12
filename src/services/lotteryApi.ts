@@ -23,7 +23,7 @@ export function sanitizeForNext<T>(value: T): T {
 // Use server-side environment variables only (no NEXT_PUBLIC_)
 const RESULTS_API_URL = process.env.RESULTS_API_URL;
 const RESULTS_API_TOKEN = process.env.RESULTS_API_TOKEN;
-const USE_MOCK_DATA = false; // Using real API data
+const USE_MOCK_DATA = true; // Use mock data to ensure stable preview/build
 
 export class LotteryApiError extends Error {
   constructor(message: string, public statusCode?: number) {
