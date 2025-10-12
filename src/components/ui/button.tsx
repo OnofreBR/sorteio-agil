@@ -15,9 +15,9 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-hero text-primary-foreground hover:bg-gradient-hero/90 shadow-lottery transition-smooth",
-        lottery: "bg-gradient-lottery text-primary-foreground hover:bg-gradient-lottery/90 shadow-lottery transition-smooth",
-        gold: "bg-gradient-gold text-secondary-foreground hover:bg-gradient-gold/90 shadow-glow transition-smooth",
+        hero: "bg-gradient-to-r from-primary to-primary-glow text-primary-foreground hover:opacity-90 shadow-lottery",
+        lottery: "bg-gradient-to-r from-primary to-primary-glow text-primary-foreground hover:opacity-90 shadow-lottery",
+        gold: "bg-gradient-to-r from-[hsl(45,85%,55%)] to-[hsl(45,80%,70%)] text-secondary-foreground hover:opacity-90 shadow-glow",
       },
       size: {
         default: "h-10 px-4 py-2",
