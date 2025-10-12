@@ -18,10 +18,7 @@ const PrizeTable = ({ tiers, caption }: PrizeTableProps) => {
         <thead className="bg-muted/50">
           <tr>
             <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
-              Faixa
-            </th>
-            <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
-              Acertos
+              Descrição
             </th>
             <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
               Ganhadores
@@ -34,8 +31,7 @@ const PrizeTable = ({ tiers, caption }: PrizeTableProps) => {
         <tbody className="divide-y divide-border/40">
           {tiers.map((tier, index) => (
             <tr key={`${tier.faixa}-${index}`} className="hover:bg-muted/40">
-              <td className="px-4 py-3 text-sm font-medium text-foreground">{tier.faixa || '—'}</td>
-              <td className="px-4 py-3 text-sm text-foreground">{tier.acertos || '—'}</td>
+              <td className="px-4 py-3 text-sm font-medium text-foreground">{tier.descricao || '—'}</td>
               <td className="px-4 py-3 text-sm text-foreground">
                 {tier.ganhadores !== null ? formatNumber(tier.ganhadores) : '—'}
               </td>

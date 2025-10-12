@@ -1,5 +1,5 @@
 // Configuration - Use server-side environment variables
-import { getSiteUrl } from '@/src/lib/config/site';
+import { getSiteUrl } from '@/lib/config/site';
 
 const SITE_URL = getSiteUrl();
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY;

@@ -1,13 +1,34 @@
+export interface Prize {
+  descricao: string;
+  faixa: number;
+  ganhadores: number;
+  valorPremio: number;
+}
+
+export interface CidadePremiada {
+  cidade: string;
+  uf: string;
+  ganhadores: number;
+  posicao?: number;
+}
+
+export interface RateioCidade {
+  cidade: string;
+  uf: string;
+  valor: number;
+  ganhadores?: number;
+}
+
 export interface Premiacao {
-  faixa: string;
-  acertos: string;
+  descricao: string;
+  faixa: number;
   ganhadores: number;
   valorPremio: number;
 }
 
 export interface LotteryResult {
   loteria: LotterySlug;
-  nome: string;
+  nome?: string;
   concurso: number;
   data: string;
   local: string;
@@ -15,10 +36,23 @@ export interface LotteryResult {
   dezenas: string[];
   dezenasOrdemSorteio?: string[];
   trevos?: string[];
-  premiacoes: Premiacao[];
+  mesSorte?: string;
+  observacao?: string;
+  premiacoes: Prize[];
+  estadosPremiados?: string[];
+  cidadesPremiadas?: CidadePremiada[];
+  rateioCidades?: RateioCidade[];
   proximoConcurso: number;
   dataProximoConcurso: string;
   valorEstimadoProximoConcurso: number;
+  valorAcumulado?: number;
+  acumuladoConcursoEspecial?: boolean;
+  valorAcumuladoConcursoEspecial?: number;
+  valorAcumuladoConcurso_0_5?: number;
+  valorArrecadado?: number;
+  numeroConcursoProximo?: number;
+  numeroConcursoAnterior?: number;
+  valorEstimado?: number;
 }
 
 export type LotterySlug =

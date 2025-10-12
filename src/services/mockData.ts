@@ -6,8 +6,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 2750,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [45, 12, 33, 23, 54, 18],
-    dezenas: [12, 18, 23, 33, 45, 54],
+    dezenasOrdemSorteio: ['45', '12', '33', '23', '54', '18'],
+    dezenas: ['12', '18', '23', '33', '45', '54'],
     premiacoes: [
       {
         descricao: 'Sena',
@@ -40,8 +40,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 6543,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [23, 45, 12, 67, 78],
-    dezenas: [12, 23, 45, 67, 78],
+    dezenasOrdemSorteio: ['23', '45', '12', '67', '78'],
+    dezenas: ['12', '23', '45', '67', '78'],
     premiacoes: [
       {
         descricao: 'Quina',
@@ -72,8 +72,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 3234,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [1, 2, 3, 5, 6, 8, 9, 11, 13, 15, 17, 19, 21, 23, 25],
-    dezenas: [1, 2, 3, 5, 6, 8, 9, 11, 13, 15, 17, 19, 21, 23, 25],
+    dezenasOrdemSorteio: ['01', '02', '03', '05', '06', '08', '09', '11', '13', '15', '17', '19', '21', '23', '25'],
+    dezenas: ['01', '02', '03', '05', '06', '08', '09', '11', '13', '15', '17', '19', '21', '23', '25'],
     premiacoes: [
       {
         descricao: '15 acertos',
@@ -117,8 +117,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 2567,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [5, 12, 23, 34, 45, 56, 67, 78, 89, 90, 11, 22, 33, 44, 55, 66, 77, 88, 99, 10],
-    dezenas: [5, 10, 11, 12, 22, 23, 33, 34, 44, 45, 55, 56, 66, 67, 77, 78, 88, 89, 90, 99],
+    dezenasOrdemSorteio: ['05', '12', '23', '34', '45', '56', '67', '78', '89', '90', '11', '22', '33', '44', '55', '66', '77', '88', '99', '10'],
+    dezenas: ['05', '10', '11', '12', '22', '23', '33', '34', '44', '45', '55', '56', '66', '67', '77', '78', '88', '89', '90', '99'],
     premiacoes: [
       {
         descricao: '20 acertos',
@@ -161,8 +161,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 2678,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [12, 23, 34, 45, 5, 16],
-    dezenas: [5, 12, 16, 23, 34, 45],
+    dezenasOrdemSorteio: ['12', '23', '34', '45', '05', '16'],
+    dezenas: ['05', '12', '16', '23', '34', '45'],
     premiacoes: [
       {
         descricao: '1º Sorteio - Sena',
@@ -212,8 +212,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 5789,
     data: '21/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [12345, 23456, 34567, 45678, 56789],
-    dezenas: [12345, 23456, 34567, 45678, 56789],
+    dezenasOrdemSorteio: ['12345', '23456', '34567', '45678', '56789'],
+    dezenas: ['12345', '23456', '34567', '45678', '56789'],
     premiacoes: [
       {
         descricao: '1º Prêmio',
@@ -256,8 +256,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 2134,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [12, 23, 34, 45, 56, 67, 78],
-    dezenas: [12, 23, 34, 45, 56, 67, 78],
+    dezenasOrdemSorteio: ['12', '23', '34', '45', '56', '67', '78'],
+    dezenas: ['12', '23', '34', '45', '56', '67', '78'],
     premiacoes: [
       {
         descricao: '7 acertos',
@@ -307,8 +307,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 945,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [3, 7, 12, 15, 21, 27, 30],
-    dezenas: [3, 7, 12, 15, 21, 27, 30],
+    dezenasOrdemSorteio: ['03', '07', '12', '15', '21', '27', '30'],
+    dezenas: ['03', '07', '12', '15', '21', '27', '30'],
     mesSorte: 'DEZEMBRO',
     premiacoes: [
       {
@@ -353,8 +353,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 623,
     data: '23/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [1, 2, 3, 4, 5, 6, 7],
-    dezenas: [1, 2, 3, 4, 5, 6, 7],
+    dezenasOrdemSorteio: ['1', '2', '3', '4', '5', '6', '7'],
+    dezenas: ['1', '2', '3', '4', '5', '6', '7'],
     premiacoes: [
       {
         descricao: '7 acertos',
@@ -397,9 +397,9 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 134,
     data: '21/12/2024',
     local: 'ESPAÇO DA SORTE - SÃO PAULO, SP',
-    dezenasOrdemSorteio: [5, 12, 23, 34, 45, 50],
-    dezenas: [5, 12, 23, 34, 45, 50],
-    trevos: [2, 5],
+    dezenasOrdemSorteio: ['05', '12', '23', '34', '45', '50'],
+    dezenas: ['05', '12', '23', '34', '45', '50'],
+    trevos: ['2', '5'],
     premiacoes: [
       {
         descricao: '6 acertos + 2 trevos',
@@ -449,8 +449,8 @@ export const MOCK_LOTTERY_DATA: Record<string, LotteryResult> = {
     concurso: 1147,
     data: '28/09/2025',
     local: 'ESPAÇO DA SORTE em SÃO PAULO, SP',
-    dezenasOrdemSorteio: [1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 1],
-    dezenas: [1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 1],
+    dezenasOrdemSorteio: ['1', '2', '1', '1', '2', '2', '1', '1', '2', '1', '2', '1', '2', '1'],
+    dezenas: ['1', '2', '1', '1', '2', '2', '1', '1', '2', '1', '2', '1', '2', '1'],
     premiacoes: [
       {
         descricao: '14 acertos',

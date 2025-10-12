@@ -4,7 +4,6 @@ import { getMockLotteryResult, getAllMockResults } from './mockData';
 // Remove keys with undefined values recursively to satisfy Next.js JSON serialization
 export function sanitizeForNext<T>(value: T): T {
   if (Array.isArray(value)) {
-    // @ts-expect-error - Recursive type inference not supported
     return value.map((v) => sanitizeForNext(v)) as unknown as T;
   }
 
@@ -106,7 +105,7 @@ function mapApiResponseToLotteryResult(data: any, lottery: string): LotteryResul
 
   // Build complete LotteryResult with all possible field mappings from API
   const result: LotteryResult = {
-    loteria: getLotterySlugFromName(data.nome || data.loteria || lottery),
+    loteria: getLotterySlugFromName(data.nome || data.loteria || lottery) as LotterySlug,
     concurso: data.concurso || data.numero_concurso || data.numero || 0,
     data: data.data || data.data_sorteio || data.dataSorteio || '',
     local: data.local || data.local_sorteio || data.localSorteio || '',
@@ -274,3 +273,15 @@ export async function getAllContestsByLottery(lottery: LotterySlug): Promise<num
   // This function is just to make getStaticPaths work.
   return [1, 2, 3, 4, 5];
 }
+
+// Export lotteryApi object for compatibility
+export const lotteryApi = {
+  getLotteryResults,
+  getResultByContest,
+  getAllLotteryResults,
+  getAllContestsByLottery,
+  getLatestByLottery: async (slug: LotterySlug) => {
+    const results = await getLotteryResults(slug, 1);
+    return { data: results[0] || null };
+  }
+};

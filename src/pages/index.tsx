@@ -83,7 +83,7 @@ export const getStaticProps: GetStaticProps = async () => {
       lotteryApi.getLatestByLottery(slug),
     )
     const results = await Promise.all(promises)
-    resultados = results.map(result => result.data)
+    resultados = results.map((result: { data: any }) => result.data)
   } catch (error) {
     console.error(error)
   }

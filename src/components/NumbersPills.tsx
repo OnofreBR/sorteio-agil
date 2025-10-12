@@ -3,13 +3,14 @@ import clsx from 'clsx';
 interface NumbersPillsProps {
   numbers: string[];
   variant?: 'default' | 'secondary';
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   ariaLabel?: string;
 }
 
 const sizeClasses: Record<NonNullable<NumbersPillsProps['size']>, string> = {
   sm: 'w-10 h-10 text-sm',
   md: 'w-12 h-12 text-base md:w-14 md:h-14 md:text-lg',
+  lg: 'w-14 h-14 text-lg md:w-16 md:h-16 md:text-xl',
 };
 
 const NumbersPills = ({ numbers, variant = 'default', size = 'md', ariaLabel }: NumbersPillsProps) => {
