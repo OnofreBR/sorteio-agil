@@ -37,12 +37,12 @@ const LotteryPage: NextPage<LotteryPageProps> = ({ lottery }) => {
   const mainPrize = lottery.premiacoes.length > 0 ? lottery.premiacoes[0] : null;
   const prizeLabel = mainPrize ? formatCurrencyBRL(mainPrize.valorPremio) : '—';
   const winnersLabel =
-    mainPrize?.ganhadores === null
+    mainPrize?.ganhadores === null || mainPrize?.ganhadores === undefined
       ? '—'
       : mainPrize?.ganhadores === 0
       ? 'Acumulou'
-      : `${formatNumber(mainPrize?.ganhadores)} ${
-          mainPrize?.ganhadores === 1 ? 'ganhador' : 'ganhadores'
+      : `${formatNumber(mainPrize.ganhadores)} ${
+          mainPrize.ganhadores === 1 ? 'ganhador' : 'ganhadores'
         }`;
 
   const nextContestNumber = lottery.proximoConcurso
