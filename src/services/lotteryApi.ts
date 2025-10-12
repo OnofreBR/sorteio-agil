@@ -186,6 +186,12 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
 }
 
 export async function getResultByContest(lottery: string, contest: string): Promise<LotteryResult | null> {
+  // When using mock data, return the mock result regardless of contest number
+  if (USE_MOCK_DATA) {
+    const result = getMockLotteryResult(lottery);
+    return result ? sanitizeForNext(result) : null;
+  }
+
   if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
     throw new LotteryApiError('API configuration is missing. Please check server configuration.');
   }
