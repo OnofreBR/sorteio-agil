@@ -149,7 +149,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
     return {
       props: {
-        result: result.data,
+        result,
       },
       revalidate: 3600, // Revalidate every hour
     };

@@ -185,7 +185,7 @@ export async function getLotteryResults(lottery: string, limit: number = 1): Pro
   }
 }
 
-export async function getResultByContest(lottery: string, contest: string): Promise<any | null> {
+export async function getResultByContest(lottery: string, contest: string): Promise<LotteryResult | null> {
   if (!RESULTS_API_URL || !RESULTS_API_TOKEN) {
     throw new LotteryApiError('API configuration is missing. Please check server configuration.');
   }
@@ -209,8 +209,9 @@ export async function getResultByContest(lottery: string, contest: string): Prom
       return null;
     }
 
-    // Return the full API response with all fields (premiacoes, cidadesPremiadas, rateioCidades, arrecadacao, acumulado, etc)
-    return data;
+    // Map to LotteryResult for consistency
+    const mapped = mapApiResponseToLotteryResult(data, lottery);
+    return sanitizeForNext(mapped);
   } catch (error) {
     if (error instanceof LotteryApiError) {
       throw error;
