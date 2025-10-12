@@ -7,8 +7,8 @@ import {
   LOTTERY_SLUGS,
   CardSkeleton,
   handlePageRefresh,
-} from './index.utils'
-import type { HomeProps } from './index.utils'
+} from '@/utils/index.utils'
+import type { HomeProps } from '@/utils/index.utils'
 
 export default function Home({ resultados }: HomeProps) {
   const [isRefreshing, setIsRefreshing] = useState(false)
