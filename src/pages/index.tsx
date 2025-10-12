@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next'
 import LotteryCard from '@/components/LotteryCard'
 import { Button } from '@/components/ui/button'
 import { lotteryApi } from '@/services/lotteryApi'
+import { LotteryResult } from '@/types/lottery'
 import {
   LOTTERY_SLUGS,
   CardSkeleton,
@@ -75,17 +76,21 @@ export default function Home({ resultados }: HomeProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-  let resultados: any[] = []
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  let resultados: LotteryResult[] = []
 
   try {
-    const promises = LOTTERY_SLUGS.map(slug =>
+    const promises = LOTTERY_SLUGS.map((slug) =>
       lotteryApi.getLatestByLottery(slug),
     )
     const results = await Promise.all(promises)
-    resultados = results.map((result: { data: any }) => result.data)
+    resultados = results
+      .map((result) => result.data)
+      .filter((data): data is LotteryResult => data !== null && data !== undefined)
   } catch (error) {
-    console.error(error)
+    console.error('Error fetching lottery results:', error)
+    // Return empty array on error to allow page to render
+    resultados = []
   }
 
   return {
